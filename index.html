@@ -58,15 +58,31 @@
             height: 100vh;
             overflow: hidden;
             -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
         }
 
         /* Make text selectable in chat bubbles and logs */
         .chat-bubble-user-content, .chat-bubble-argus-content, .log-content, .detail-value pre, .user-message {
             -webkit-user-select: text;
             user-select: text;
+        }
+
+        /* Ensure all buttons and clickable elements work */
+        button, .nav-tab, .mobile-nav-item, .session-card, .mobile-session-card,
+        .action-btn, .filter-input, .radio-label, .close-btn, .settings-btn,
+        .mobile-filter-btn, .filter-drawer-close, .bottom-sheet-close,
+        .mobile-chat-back, .mobile-log-refresh, .collapsible-header,
+        .bottom-sheet-header-internal, .chat-bubble-user, .chat-bubble-argus,
+        .mobile-chat-bubble, .mobile-tool-log-item, .tool-list-item {
+            -webkit-user-select: none;
+            user-select: none;
+            pointer-events: auto;
+            cursor: pointer;
+            -webkit-tap-highlight-color: rgba(59,130,246,0.2);
+        }
+
+        button:active, .nav-tab:active, .mobile-nav-item:active, .session-card:active,
+        .mobile-session-card:active, .action-btn:active {
+            transform: scale(0.98);
         }
 
         /* Top Navigation - Enhanced */
@@ -195,11 +211,14 @@
         .main-content {
             height: calc(100vh - 72px);
             overflow: hidden;
+            z-index: 10;
         }
 
         .tab-content {
             display: none;
             height: 100%;
+            position: relative;
+            z-index: 1;
         }
 
         .tab-content.active { display: flex; }
@@ -1388,10 +1407,12 @@
             transition: transform var(--transition-slow);
             overflow: hidden;
             box-shadow: 0 -8px 32px rgba(0,0,0,0.5);
+            pointer-events: none;
         }
 
         .mobile-filter-drawer.open {
             transform: translateY(0);
+            pointer-events: auto;
         }
 
         .filter-drawer-overlay {
@@ -1405,11 +1426,13 @@
             backdrop-filter: blur(4px);
             z-index: 199;
             opacity: 0;
+            pointer-events: none;
             transition: opacity var(--transition-normal);
         }
 
         .filter-drawer-overlay.open {
             opacity: 1;
+            pointer-events: auto;
         }
 
         .filter-drawer-header {
@@ -1473,10 +1496,12 @@
             transition: transform var(--transition-slow);
             overflow: hidden;
             box-shadow: 0 -8px 32px rgba(0,0,0,0.5);
+            pointer-events: none;
         }
 
         .mobile-bottom-sheet.open {
             transform: translateY(0);
+            pointer-events: auto;
         }
 
         .bottom-sheet-overlay {
@@ -1490,11 +1515,13 @@
             backdrop-filter: blur(4px);
             z-index: 299;
             opacity: 0;
+            pointer-events: none;
             transition: opacity var(--transition-normal);
         }
 
         .bottom-sheet-overlay.open {
             opacity: 1;
+            pointer-events: auto;
         }
 
         .bottom-sheet-handle {
@@ -1616,10 +1643,12 @@
             z-index: 50;
             overflow: hidden;
             flex-direction: column;
+            pointer-events: none;
         }
 
         .mobile-view.active {
             display: flex;
+            pointer-events: auto;
         }
 
         .mobile-view-header {
@@ -1775,10 +1804,12 @@
             z-index: 60;
             flex-direction: column;
             overflow: hidden;
+            pointer-events: none;
         }
 
         .mobile-conversation-view.active {
             display: flex;
+            pointer-events: auto;
         }
 
         .mobile-chat-header {
@@ -1969,10 +2000,12 @@
             z-index: 50;
             overflow-y: auto;
             padding: 1rem;
+            pointer-events: none;
         }
 
         .mobile-analytics-view.active {
             display: block;
+            pointer-events: auto;
         }
 
         .mobile-stats-grid {
@@ -2142,11 +2175,13 @@
             background: var(--bg-primary);
             z-index: 50;
             overflow: hidden;
+            pointer-events: none;
         }
 
         .mobile-tool-logs-view.active {
             display: flex;
             flex-direction: column;
+            pointer-events: auto;
         }
 
         .mobile-log-header {
