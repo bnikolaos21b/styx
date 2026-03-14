@@ -3081,6 +3081,28 @@
         </div>
     </div>
 
+    <!-- Login Modal (shown when not authenticated) -->
+    <div class="modal-overlay open" id="login-modal">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                <div class="modal-title">🔐 STYX Login</div>
+            </div>
+            <div class="modal-body" style="padding: 2rem;">
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem; text-align: center;">
+                    Enter dashboard password to access conversation data
+                </p>
+                <div style="margin-bottom: 1rem;">
+                    <label class="setting-label">Password</label>
+                    <input type="password" id="login-password" class="setting-input" 
+                           placeholder="Enter dashboard password" 
+                           onkeypress="if(event.key==='Enter') attemptLogin()">
+                </div>
+                <div id="login-error" style="color: #f87171; font-size: 0.8rem; margin-bottom: 1rem; display: none;"></div>
+                <button class="save-btn" onclick="attemptLogin()" style="width: 100%;">Login</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Settings Modal -->
     <div class="modal-overlay" id="settings-modal">
         <div class="modal">
@@ -3316,6 +3338,70 @@
             document.getElementById('setting-time-format').value = CONFIG.timeFormat;
         }
 
+        /* =============================================
+           LOGIN / AUTHENTICATION
+           ============================================= */
+        let isAuthenticated = false;
+
+        // Check authentication on load
+        async function checkAuth() {
+            try {
+                const response = await fetch(`${CONFIG.apiUrl}/api/conversations?limit=1`, {
+                    credentials: 'include',
+                    headers: {'Content-Type': 'application/json'}
+                });
+                
+                if (response.ok) {
+                    isAuthenticated = true;
+                    document.getElementById('login-modal').classList.remove('open');
+                    loadAllData();
+                } else {
+                    isAuthenticated = false;
+                    document.getElementById('login-modal').classList.add('open');
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                document.getElementById('login-modal').classList.add('open');
+            }
+        }
+
+        async function attemptLogin() {
+            const password = document.getElementById('login-password').value;
+            const errorDiv = document.getElementById('login-error');
+            
+            try {
+                const response = await fetch(`${CONFIG.apiUrl}/api/auth/login`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({password})
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    isAuthenticated = true;
+                    document.getElementById('login-modal').classList.remove('open');
+                    errorDiv.style.display = 'none';
+                    loadAllData();
+                } else {
+                    errorDiv.textContent = data.message || 'Invalid password';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (error) {
+                errorDiv.textContent = 'Connection failed. Check dashboard is running.';
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function loadAllData() {
+            loadSessions();
+            loadAnalytics();
+            loadToolLogs();
+            loadActions();
+            updateLastRefresh();
+        }
+
         function saveSettings() {
             CONFIG.apiUrl = document.getElementById('setting-api-url').value;
             CONFIG.autoRefresh = document.getElementById('setting-auto-refresh').value === 'on';
@@ -3408,7 +3494,10 @@
             if (secondPassFilter === 'false') params.set('second_pass', 'false');
 
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/conversations/turns?${params.toString()}`);
+                const response = await fetch(`${CONFIG.apiUrl}/api/conversations/turns?${params.toString()}`, {
+                    credentials: 'include',
+                    headers: {'Content-Type': 'application/json'}
+                });
                 const data = await response.json();
                 allTurns = data.turns || [];
 
@@ -3443,7 +3532,10 @@
         // Load Sessions
         async function loadSessions() {
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/conversations?limit=100`);
+                const response = await fetch(`${CONFIG.apiUrl}/api/conversations?limit=100`, {
+                    credentials: 'include',
+                    headers: {'Content-Type': 'application/json'}
+                });
                 const data = await response.json();
                 sessions = data.sessions || [];
                 allTurns = [];
@@ -3580,7 +3672,10 @@
             turnsList.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/conversations/${sessionId}`);
+                const response = await fetch(`${CONFIG.apiUrl}/api/conversations/${sessionId}`, {
+                    credentials: 'include',
+                    headers: {'Content-Type': 'application/json'}
+                });
                 const data = await response.json();
 
                 if (data.error) {
@@ -3894,7 +3989,10 @@
         // Analytics
         async function loadAnalytics() {
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/conversations/stats`);
+                const response = await fetch(`${CONFIG.apiUrl}/api/conversations/stats`, {
+                    credentials: 'include',
+                    headers: {'Content-Type': 'application/json'}
+                });
                 const data = await response.json();
 
                 document.getElementById('stat-total-sessions').textContent = data.total_sessions || 0;
@@ -3970,7 +4068,10 @@
         // Tool Logs
         async function loadToolLogs() {
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/tools/logs`);
+                const response = await fetch(`${CONFIG.apiUrl}/api/tools/logs`, {
+                    credentials: 'include',
+                    headers: {'Content-Type': 'application/json'}
+                });
                 const data = await response.json();
 
                 const listContent = document.getElementById('tool-list-content');
@@ -4004,7 +4105,10 @@
             if (!currentTool) return;
 
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/tools/logs/${currentTool}?lines=100`);
+                const response = await fetch(`${CONFIG.apiUrl}/api/tools/logs/${currentTool}?lines=100`, {
+                    credentials: 'include',
+                    headers: {'Content-Type': 'application/json'}
+                });
                 const data = await response.json();
 
                 const content = document.getElementById('log-content');
@@ -4061,16 +4165,18 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             loadConfig();
-            loadSessions();
+            checkAuth();  // Check authentication first
 
-            refreshIntervals.sessions = setInterval(loadSessions, 30000);
+            refreshIntervals.sessions = setInterval(() => {
+                if (isAuthenticated) loadSessions();
+            }, 30000);
             refreshIntervals.analytics = setInterval(() => {
-                if (document.getElementById('analytics-tab').classList.contains('active')) {
+                if (isAuthenticated && document.getElementById('analytics-tab').classList.contains('active')) {
                     loadAnalytics();
                 }
             }, 60000);
             refreshIntervals.logs = setInterval(() => {
-                if (document.getElementById('tool-logs-tab').classList.contains('active') && currentTool) {
+                if (isAuthenticated && document.getElementById('tool-logs-tab').classList.contains('active') && currentTool) {
                     refreshLog();
                 }
             }, 10000);
@@ -4098,7 +4204,10 @@
                 const params = new URLSearchParams({ limit: 100 });
                 if (filter === 'failed') params.append('result', 'failed');
                 
-                const response = await fetch(`/api/audit_log?${params}`);
+                const response = await fetch(`${CONFIG.apiUrl}/api/audit_log?${params}`, {
+                    credentials: 'include',
+                    headers: {'Content-Type': 'application/json'}
+                });
                 const data = await response.json();
                 
                 if (data.error) {
@@ -4496,7 +4605,10 @@
         // Mobile analytics
         async function loadMobileAnalytics() {
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/conversations/stats`);
+                const response = await fetch(`${CONFIG.apiUrl}/api/conversations/stats`, {
+                    credentials: 'include',
+                    headers: {'Content-Type': 'application/json'}
+                });
                 const data = await response.json();
 
                 document.getElementById('mobile-stat-total-sessions').textContent = data.total_sessions || 0;
@@ -4568,7 +4680,10 @@
         // Mobile tool logs
         async function loadMobileToolLogs() {
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/tools/logs`);
+                const response = await fetch(`${CONFIG.apiUrl}/api/tools/logs`, {
+                    credentials: 'include',
+                    headers: {'Content-Type': 'application/json'}
+                });
                 const data = await response.json();
                 const listContent = document.getElementById('mobile-tool-list-content');
 
@@ -4614,7 +4729,10 @@
         async function refreshMobileLog() {
             if (!currentTool) return;
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/tools/logs/${currentTool}?lines=100`);
+                const response = await fetch(`${CONFIG.apiUrl}/api/tools/logs/${currentTool}?lines=100`, {
+                    credentials: 'include',
+                    headers: {'Content-Type': 'application/json'}
+                });
                 const data = await response.json();
                 const content = document.getElementById('mobile-tool-list-content');
 
@@ -4640,7 +4758,10 @@
             // Call the async function
             (async () => {
                 try {
-                    const response = await fetch(`${CONFIG.apiUrl}/api/tools/logs`);
+                    const response = await fetch(`${CONFIG.apiUrl}/api/tools/logs`, {
+                        credentials: 'include',
+                        headers: {'Content-Type': 'application/json'}
+                    });
                     const data = await response.json();
                     const listContent = document.getElementById('mobile-tool-list-content');
 
