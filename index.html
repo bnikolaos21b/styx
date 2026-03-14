@@ -2,12 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0a0f1e">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>STYX v4 — Conversation Intelligence</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-primary: #0a0f1e;
+            --bg-secondary: #0d1426;
+            --bg-tertiary: rgba(13,20,38,0.6);
+            --bg-overlay: rgba(0,0,0,0.8);
+            --border-color: rgba(148,163,184,0.08);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #3b82f6;
+            --accent-blue-light: #60a5fa;
+            --accent-green: #22c55e;
+            --accent-yellow: #eab308;
+            --accent-red: #ef4444;
+            --nav-height: 72px;
+            --mobile-nav-height: 60px;
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s ease;
+            --transition-slow: 0.35s ease-out;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         /* Custom Scrollbars - Dark themed */
         ::-webkit-scrollbar {
             width: 6px;
@@ -27,11 +52,21 @@
 
         body {
             font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', monospace;
-            background: #0a0f1e;
+            background: var(--bg-primary);
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-            color: #f1f5f9;
+            color: var(--text-primary);
             height: 100vh;
             overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Make text selectable in chat bubbles and logs */
+        .chat-bubble-user-content, .chat-bubble-argus-content, .log-content, .detail-value pre, .user-message {
+            -webkit-user-select: text;
+            user-select: text;
         }
 
         /* Top Navigation - Enhanced */
@@ -40,12 +75,13 @@
             justify-content: space-between;
             align-items: center;
             padding: 0.75rem 1.5rem;
-            background: linear-gradient(180deg, #0d1426 0%, #0a0f1e 100%);
-            border-bottom: 1px solid rgba(148,163,184,0.08);
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            border-bottom: 1px solid var(--border-color);
             box-shadow: 0 0 0 1px rgba(148,163,184,0.06), 0 4px 24px rgba(0,0,0,0.4);
             position: relative;
+            height: var(--nav-height);
         }
-        
+
         .top-nav::after {
             content: '';
             position: absolute;
@@ -53,7 +89,7 @@
             left: 0;
             right: 0;
             height: 1px;
-            background: linear-gradient(90deg, transparent 0%, #3b82f6 50%, transparent 100%);
+            background: linear-gradient(90deg, transparent 0%, var(--accent-blue) 50%, transparent 100%);
             opacity: 0.5;
         }
 
@@ -66,14 +102,14 @@
             font-size: 20px;
             font-weight: 600;
             letter-spacing: 8px;
-            color: #f1f5f9;
+            color: var(--text-primary);
             text-transform: uppercase;
         }
 
         .nav-brand-subtitle {
             font-size: 9px;
             letter-spacing: 2px;
-            color: #64748b;
+            color: var(--text-muted);
             text-transform: uppercase;
             margin-top: 2px;
         }
@@ -86,25 +122,28 @@
         .nav-tab {
             padding: 0.5rem 1.25rem;
             background: rgba(30,41,59,0.5);
-            border: 1px solid rgba(148,163,184,0.1);
+            border: 1px solid var(--border-color);
             border-radius: 6px;
-            color: #94a3b8;
+            color: var(--text-secondary);
             font-family: inherit;
             font-size: 0.8rem;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all var(--transition-fast);
+            min-height: 44px;
+            display: flex;
+            align-items: center;
         }
 
-        .nav-tab:hover { 
-            background: rgba(51,65,85,0.5); 
-            color: #f1f5f9;
+        .nav-tab:hover {
+            background: rgba(51,65,85,0.5);
+            color: var(--text-primary);
             border-color: rgba(148,163,184,0.2);
         }
-        
-        .nav-tab.active { 
-            background: rgba(59,130,246,0.2); 
-            color: #60a5fa;
+
+        .nav-tab.active {
+            background: rgba(59,130,246,0.2);
+            color: var(--accent-blue-light);
             border-color: rgba(59,130,246,0.3);
         }
 
@@ -116,19 +155,41 @@
 
         .last-refresh {
             font-size: 0.7rem;
-            color: #64748b;
+            color: var(--text-muted);
         }
 
         .settings-btn {
             background: none;
             border: none;
-            color: #94a3b8;
+            color: var(--text-secondary);
             font-size: 1.25rem;
             cursor: pointer;
-            transition: color 0.2s;
+            transition: color var(--transition-fast);
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .settings-btn:hover { color: #f1f5f9; }
+        .settings-btn:hover { color: var(--text-primary); }
+
+        /* Mobile filter button (hidden on desktop) */
+        .mobile-filter-btn {
+            display: none;
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 1.25rem;
+            cursor: pointer;
+            min-width: 44px;
+            min-height: 44px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-filter-btn:active { background: rgba(59,130,246,0.1); }
 
         /* Main Content */
         .main-content {
@@ -1220,9 +1281,1145 @@
             transition: all 0.2s;
         }
 
-        .apply-filter-btn:hover { 
+        .apply-filter-btn:hover {
             background: linear-gradient(180deg, #60a5fa, #3b82f6);
             box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+        }
+
+        /* =============================================
+           MOBILE BOTTOM NAVIGATION
+           ============================================= */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--mobile-nav-height);
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, rgba(10,15,30,0.95) 100%);
+            border-top: 1px solid var(--border-color);
+            box-shadow: 0 -4px 24px rgba(0,0,0,0.4);
+            z-index: 100;
+        }
+
+        .mobile-bottom-nav::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, var(--accent-blue) 50%, transparent 100%);
+            opacity: 0.3;
+        }
+
+        .mobile-nav-items {
+            display: flex;
+            height: 100%;
+            padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+
+        .mobile-nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            min-width: 60px;
+            position: relative;
+        }
+
+        .mobile-nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: var(--accent-blue);
+            transition: width var(--transition-fast);
+        }
+
+        .mobile-nav-item.active {
+            color: var(--accent-blue-light);
+        }
+
+        .mobile-nav-item.active::after {
+            width: 40px;
+        }
+
+        .mobile-nav-item:active {
+            background: rgba(59,130,246,0.1);
+        }
+
+        .mobile-nav-icon {
+            font-size: 1.25rem;
+            line-height: 1;
+        }
+
+        .mobile-nav-label {
+            font-size: 0.625rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        /* =============================================
+           MOBILE FILTER DRAWER
+           ============================================= */
+        .mobile-filter-drawer {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-height: 85vh;
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            border-radius: 16px 16px 0 0;
+            z-index: 200;
+            transform: translateY(100%);
+            transition: transform var(--transition-slow);
+            overflow: hidden;
+            box-shadow: 0 -8px 32px rgba(0,0,0,0.5);
+        }
+
+        .mobile-filter-drawer.open {
+            transform: translateY(0);
+        }
+
+        .filter-drawer-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            z-index: 199;
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+        }
+
+        .filter-drawer-overlay.open {
+            opacity: 1;
+        }
+
+        .filter-drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .filter-drawer-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .filter-drawer-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .filter-drawer-handle {
+            width: 40px;
+            height: 4px;
+            background: var(--text-muted);
+            border-radius: 2px;
+            margin: 8px auto;
+            opacity: 0.5;
+        }
+
+        .filter-drawer-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem 1.25rem;
+        }
+
+        /* =============================================
+           MOBILE BOTTOM SHEET (Turn Details)
+           ============================================= */
+        .mobile-bottom-sheet {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-height: 85vh;
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            border-radius: 16px 16px 0 0;
+            z-index: 300;
+            transform: translateY(100%);
+            transition: transform var(--transition-slow);
+            overflow: hidden;
+            box-shadow: 0 -8px 32px rgba(0,0,0,0.5);
+        }
+
+        .mobile-bottom-sheet.open {
+            transform: translateY(0);
+        }
+
+        .bottom-sheet-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            z-index: 299;
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+        }
+
+        .bottom-sheet-overlay.open {
+            opacity: 1;
+        }
+
+        .bottom-sheet-handle {
+            width: 40px;
+            height: 4px;
+            background: var(--text-muted);
+            border-radius: 2px;
+            margin: 12px auto;
+            opacity: 0.5;
+            cursor: grab;
+        }
+
+        .bottom-sheet-handle:active {
+            cursor: grabbing;
+        }
+
+        .bottom-sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 1.25rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .bottom-sheet-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .bottom-sheet-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bottom-sheet-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        .bottom-sheet-section {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .bottom-sheet-section:last-child {
+            border-bottom: none;
+        }
+
+        .bottom-sheet-label {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .bottom-sheet-value {
+            font-size: 0.8125rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .bottom-sheet-value pre {
+            background: rgba(30,41,59,0.5);
+            padding: 0.75rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            white-space: pre-wrap;
+            word-break: break-word;
+            border: 1px solid var(--border-color);
+        }
+
+        .bottom-sheet-collapsible .bottom-sheet-header-internal {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.5rem 0;
+        }
+
+        .bottom-sheet-collapsible-content {
+            display: none;
+            margin-top: 0.75rem;
+        }
+
+        .bottom-sheet-collapsible-content.open {
+            display: block;
+        }
+
+        /* =============================================
+           MOBILE VIEW CONTAINER (for full-screen views)
+           ============================================= */
+        .mobile-view {
+            display: none;
+            position: fixed;
+            top: var(--nav-height);
+            bottom: var(--mobile-nav-height);
+            left: 0;
+            right: 0;
+            background: var(--bg-primary);
+            z-index: 50;
+            overflow: hidden;
+            flex-direction: column;
+        }
+
+        .mobile-view.active {
+            display: flex;
+        }
+
+        .mobile-view-header {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+        }
+
+        .mobile-view-back {
+            background: none;
+            border: none;
+            color: var(--accent-blue-light);
+            font-size: 1.25rem;
+            cursor: pointer;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-view-title {
+            flex: 1;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .mobile-view-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* =============================================
+           MOBILE SESSIONS VIEW
+           ============================================= */
+        .mobile-sessions-search {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+        }
+
+        .mobile-search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(30,41,59,0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.875rem;
+        }
+
+        .mobile-search-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .mobile-session-card {
+            padding: 1rem;
+            margin: 0;
+            background: var(--bg-tertiary);
+            border-radius: 0;
+            border-bottom: 1px solid var(--border-color);
+            border-left: none;
+            border-top: none;
+            border-right: none;
+            cursor: pointer;
+            transition: background var(--transition-fast);
+            min-height: 80px;
+        }
+
+        .mobile-session-card:active {
+            background: rgba(30,41,59,0.8);
+            transform: scale(0.98);
+        }
+
+        .mobile-session-card.selected {
+            background: rgba(30,58,95,0.5);
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .mobile-session-time {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .mobile-session-message {
+            font-size: 0.8125rem;
+            color: var(--text-primary);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .mobile-session-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.6875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Swipe actions for session cards */
+        .mobile-session-swipe-actions {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            flex-direction: row;
+        }
+
+        .swipe-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 0 1rem;
+            border: none;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .swipe-action-export {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .swipe-action-delete {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        /* =============================================
+           MOBILE CONVERSATION VIEW
+           ============================================= */
+        .mobile-conversation-view {
+            display: none;
+            position: fixed;
+            top: var(--nav-height);
+            bottom: var(--mobile-nav-height);
+            left: 0;
+            right: 0;
+            background: var(--bg-primary);
+            z-index: 60;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .mobile-conversation-view.active {
+            display: flex;
+        }
+
+        .mobile-chat-header {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            gap: 0.5rem;
+        }
+
+        .mobile-chat-back {
+            background: none;
+            border: none;
+            color: var(--accent-blue-light);
+            font-size: 1.25rem;
+            cursor: pointer;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-chat-title {
+            flex: 1;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .mobile-chat-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mobile-turn-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .mobile-turn-divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+        }
+
+        .mobile-turn-divider-number {
+            background: var(--bg-secondary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.625rem;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            z-index: 1;
+        }
+
+        .mobile-chat-bubble {
+            margin-bottom: 1rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .mobile-chat-bubble-user {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .mobile-chat-bubble-user-content {
+            max-width: 85%;
+            background: rgba(148,163,184,0.12);
+            border-radius: 16px 4px 16px 16px;
+            padding: 0.875rem 1rem;
+            min-height: 44px;
+        }
+
+        .mobile-chat-bubble-message {
+            font-size: 0.8125rem;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .mobile-chat-bubble-time {
+            font-size: 0.5625rem;
+            color: var(--text-muted);
+            margin-top: 0.375rem;
+            text-align: right;
+        }
+
+        .mobile-chat-bubble-argus {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .mobile-chat-bubble-argus-content {
+            max-width: 85%;
+            background: rgba(30,58,95,0.4);
+            border-radius: 4px 16px 16px 16px;
+            padding: 0.875rem 1rem;
+            border-left: 2px solid var(--accent-blue);
+            min-height: 44px;
+        }
+
+        .mobile-chat-bubble-argus-label {
+            font-size: 0.5625rem;
+            color: var(--accent-blue-light);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.375rem;
+            font-weight: 600;
+        }
+
+        .mobile-chat-bubble-tool-badge {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            background: rgba(59,130,246,0.2);
+            border-radius: 8px;
+            font-size: 0.5625rem;
+            color: var(--accent-blue-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .mobile-chat-bubble-argus-response {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .mobile-chat-bubble-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .mobile-chat-bubble-duration {
+            font-size: 0.5625rem;
+            color: var(--text-muted);
+        }
+
+        .mobile-chat-bubble-quality {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.5625rem;
+            margin-left: auto;
+        }
+
+        .mobile-chat-bubble-quality-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        /* =============================================
+           MOBILE ANALYTICS VIEW
+           ============================================= */
+        .mobile-analytics-view {
+            display: none;
+            position: fixed;
+            top: var(--nav-height);
+            bottom: var(--mobile-nav-height);
+            left: 0;
+            right: 0;
+            background: var(--bg-primary);
+            z-index: 50;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .mobile-analytics-view.active {
+            display: block;
+        }
+
+        .mobile-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .mobile-stat-card {
+            background: linear-gradient(180deg, rgba(13,20,38,0.8) 0%, rgba(10,15,30,0.6) 100%);
+            border-radius: 10px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .mobile-stat-card-value {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .mobile-stat-card-label {
+            font-size: 0.625rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .mobile-analytics-card {
+            background: linear-gradient(180deg, rgba(13,20,38,0.8) 0%, rgba(10,15,30,0.6) 100%);
+            border-radius: 10px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+
+        .mobile-card-title {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .mobile-tool-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .mobile-tool-item {
+            padding: 0.75rem;
+            background: rgba(30,41,59,0.3);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .mobile-tool-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .mobile-tool-name {
+            font-size: 0.8125rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .mobile-tool-count {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+        }
+
+        .mobile-success-rate {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.375rem;
+        }
+
+        .mobile-success-rate-bar {
+            flex: 1;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(34,197,94,0.3);
+            overflow: hidden;
+        }
+
+        .mobile-success-rate-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-green), #86efac);
+            border-radius: 2px;
+        }
+
+        .mobile-success-rate-text {
+            font-size: 0.6875rem;
+            font-weight: 600;
+            color: var(--accent-green);
+        }
+
+        .mobile-bar-chart {
+            display: flex;
+            align-items: flex-end;
+            height: 120px;
+            gap: 4px;
+            padding-top: 0.5rem;
+            overflow-x: auto;
+        }
+
+        .mobile-bar {
+            flex: 1;
+            min-width: 20px;
+            background: linear-gradient(180deg, var(--accent-blue), #2563eb);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+        }
+
+        .mobile-bar-label {
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.5rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .mobile-error-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .mobile-error-item {
+            padding: 0.75rem;
+            background: rgba(239,68,68,0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(239,68,68,0.2);
+        }
+
+        .mobile-error-type {
+            font-size: 0.75rem;
+            color: var(--accent-red);
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .mobile-error-meta {
+            font-size: 0.625rem;
+            color: var(--text-muted);
+        }
+
+        /* =============================================
+           MOBILE TOOL LOGS VIEW
+           ============================================= */
+        .mobile-tool-logs-view {
+            display: none;
+            position: fixed;
+            top: var(--nav-height);
+            bottom: var(--mobile-nav-height);
+            left: 0;
+            right: 0;
+            background: var(--bg-primary);
+            z-index: 50;
+            overflow: hidden;
+        }
+
+        .mobile-tool-logs-view.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mobile-log-header {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            gap: 0.75rem;
+        }
+
+        .mobile-log-search {
+            flex: 1;
+            padding: 0.5rem 0.75rem;
+            background: rgba(30,41,59,0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.75rem;
+        }
+
+        .mobile-log-refresh {
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            cursor: pointer;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-log-refresh:active {
+            background: rgba(59,130,246,0.1);
+        }
+
+        .mobile-tool-list-panel {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .mobile-tool-log-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+
+        .mobile-tool-log-item:active {
+            background: rgba(30,41,59,0.4);
+        }
+
+        .mobile-tool-log-item.selected {
+            background: rgba(30,58,95,0.3);
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .mobile-log-viewer-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(10,15,30,0.5);
+        }
+
+        .mobile-log-content {
+            flex: 1;
+            overflow-x: auto;
+            overflow-y: auto;
+            padding: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            line-height: 1.6;
+        }
+
+        .mobile-log-line {
+            padding: 0.25rem 0;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .mobile-log-line.success { color: #86efac; }
+        .mobile-log-line.failed { color: #fca5a5; }
+
+        .mobile-log-timestamp {
+            color: var(--text-muted);
+            margin-right: 0.5rem;
+        }
+
+        /* =============================================
+           RESPONSIVE BREAKPOINTS
+           ============================================= */
+
+        /* TABLET (768px - 1024px) */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .filters-sidebar {
+                width: 220px;
+            }
+
+            .turn-detail-panel {
+                width: 400px;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .analytics-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* MOBILE (max-width: 768px) */
+        @media (max-width: 768px) {
+            /* Hide desktop top nav tabs on mobile */
+            .nav-tabs {
+                display: none;
+            }
+
+            /* Show mobile filter button */
+            .mobile-filter-btn {
+                display: flex;
+            }
+
+            /* Hide last-refresh on mobile */
+            .last-refresh {
+                display: none;
+            }
+
+            /* Show mobile bottom nav */
+            .mobile-bottom-nav {
+                display: block;
+            }
+
+            /* Show mobile filter drawer */
+            .mobile-filter-drawer {
+                display: block;
+            }
+
+            /* Show filter drawer overlay */
+            .filter-drawer-overlay {
+                display: block;
+            }
+
+            /* Show mobile bottom sheet */
+            .mobile-bottom-sheet {
+                display: block;
+            }
+
+            /* Show bottom sheet overlay */
+            .bottom-sheet-overlay {
+                display: block;
+            }
+
+            /* Adjust main content for mobile nav */
+            .main-content {
+                height: calc(100vh - var(--nav-height) - var(--mobile-nav-height));
+                padding-bottom: var(--mobile-nav-height);
+            }
+
+            /* Hide filters sidebar on mobile */
+            .filters-sidebar {
+                display: none;
+            }
+
+            /* Hide turn detail panel on mobile */
+            .turn-detail-panel {
+                display: none;
+            }
+
+            /* Hide desktop sessions list container on mobile */
+            .sessions-list-container {
+                display: none;
+            }
+
+            /* Hide desktop turns list container on mobile */
+            .turns-list-container {
+                display: none;
+            }
+
+            /* Hide desktop analytics layout */
+            .analytics-layout {
+                display: none;
+            }
+
+            /* Hide desktop tool logs layout */
+            .tool-logs-layout {
+                display: none;
+            }
+
+            /* Show mobile views */
+            .mobile-sessions-view.mobile-view.active,
+            .mobile-conversation-view.active,
+            .mobile-analytics-view.active,
+            .mobile-tool-logs-view.active {
+                display: flex;
+            }
+
+            /* Session cards full width on mobile */
+            .session-card {
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+            }
+
+            /* Adjust panel headers for mobile */
+            .panel-header {
+                padding: 0.75rem 1rem;
+            }
+
+            /* Stats row 2x2 on mobile */
+            .mobile-stats-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+            }
+
+            /* Ensure touch targets are at least 44px */
+            .session-card,
+            .nav-tab,
+            .action-btn,
+            .filter-input,
+            .radio-label {
+                min-height: 44px;
+            }
+
+            /* Pull to refresh indicator (future enhancement) */
+            .pull-to-refresh {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 1rem;
+                color: var(--text-muted);
+                font-size: 0.75rem;
+            }
+        }
+
+        /* DESKTOP (min-width: 1025px) - ensure proper scrollbars */
+        @media (min-width: 1025px) {
+            .filters-sidebar {
+                overflow-y: auto;
+            }
+
+            .filters-sidebar::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .sessions-list {
+                overflow-y: auto;
+            }
+
+            .sessions-list::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .turns-list {
+                overflow-y: auto;
+            }
+
+            .turns-list::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .turn-detail-panel {
+                overflow-y: auto;
+            }
+
+            .turn-detail-panel::-webkit-scrollbar {
+                width: 6px;
+            }
         }
     </style>
 </head>
@@ -1239,6 +2436,7 @@
             <button class="nav-tab" data-tab="tool-logs">TOOL LOGS</button>
         </div>
         <div class="nav-right">
+            <button class="mobile-filter-btn" onclick="openMobileFilterDrawer()">⚙️</button>
             <span class="last-refresh" id="last-refresh">Last refresh: --:--:--</span>
             <button class="settings-btn" onclick="openSettings()">⚙️</button>
         </div>
@@ -1512,6 +2710,188 @@
         </div>
     </div>
 
+    <!-- MOBILE BOTTOM NAVIGATION -->
+    <nav class="mobile-bottom-nav">
+        <div class="mobile-nav-items">
+            <button class="mobile-nav-item active" data-mobile-tab="sessions" onclick="switchMobileTab('sessions')">
+                <span class="mobile-nav-icon">📋</span>
+                <span class="mobile-nav-label">Sessions</span>
+            </button>
+            <button class="mobile-nav-item" data-mobile-tab="detail" onclick="switchMobileTab('detail')">
+                <span class="mobile-nav-icon">💬</span>
+                <span class="mobile-nav-label">Detail</span>
+            </button>
+            <button class="mobile-nav-item" data-mobile-tab="analytics" onclick="switchMobileTab('analytics')">
+                <span class="mobile-nav-icon">📊</span>
+                <span class="mobile-nav-label">Analytics</span>
+            </button>
+            <button class="mobile-nav-item" data-mobile-tab="tool-logs" onclick="switchMobileTab('tool-logs')">
+                <span class="mobile-nav-icon">🔧</span>
+                <span class="mobile-nav-label">Tool Logs</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MOBILE FILTER DRAWER -->
+    <div class="filter-drawer-overlay" onclick="closeMobileFilterDrawer()"></div>
+    <div class="mobile-filter-drawer" id="mobile-filter-drawer">
+        <div class="filter-drawer-handle"></div>
+        <div class="filter-drawer-header">
+            <div class="filter-drawer-title">Filters</div>
+            <button class="filter-drawer-close" onclick="closeMobileFilterDrawer()">&times;</button>
+        </div>
+        <div class="filter-drawer-content">
+            <div style="margin-bottom: 1rem;">
+                <div class="filter-label">Search</div>
+                <input type="text" class="filter-input" id="mobile-filter-search" placeholder="Search messages..." onkeypress="if(event.key==='Enter'){applyFilters();closeMobileFilterDrawer();}">
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <div class="filter-label">Date</div>
+                <select class="filter-input" id="mobile-filter-date">
+                    <option value="">Any time</option>
+                    <option value="today">Today</option>
+                    <option value="yesterday">Yesterday</option>
+                    <option value="this-week">This week</option>
+                    <option value="custom">Custom...</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <div class="filter-label">Quality</div>
+                <div class="radio-group">
+                    <label class="radio-label"><input type="radio" name="mobile-quality" value=""> Any</label>
+                    <label class="radio-label"><input type="radio" name="mobile-quality" value="good"> Good</label>
+                    <label class="radio-label"><input type="radio" name="mobile-quality" value="warn"> Warn</label>
+                    <label class="radio-label"><input type="radio" name="mobile-quality" value="bad"> Fail</label>
+                </div>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <div class="filter-label">Tool</div>
+                <select class="filter-input" id="mobile-filter-tool">
+                    <option value="">Any tool</option>
+                    <option value="null">No tool selected</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <div class="filter-label">Duration</div>
+                <select class="filter-input" id="mobile-filter-duration">
+                    <option value="">Any</option>
+                    <option value="fast">Fast (&lt;5s)</option>
+                    <option value="normal">Normal (5-15s)</option>
+                    <option value="slow">Slow (&gt;15s)</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <div class="filter-label">Error Type</div>
+                <select class="filter-input" id="mobile-filter-error">
+                    <option value="">Any</option>
+                    <option value="api_error">API Error</option>
+                    <option value="tool_execution">Tool Execution</option>
+                    <option value="llm_call_2">LLM Call 2</option>
+                    <option value="timeout">Timeout</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <div class="filter-label">Second Pass</div>
+                <div class="radio-group">
+                    <label class="radio-label"><input type="radio" name="mobile-secondpass" value=""> Any</label>
+                    <label class="radio-label"><input type="radio" name="mobile-secondpass" value="true"> Used</label>
+                    <label class="radio-label"><input type="radio" name="mobile-secondpass" value="false"> Not used</label>
+                </div>
+            </div>
+            <button class="apply-filter-btn" onclick="applyMobileFilters()">Apply Filters</button>
+            <button class="reset-btn" onclick="resetMobileFilters()">Reset Filters</button>
+        </div>
+    </div>
+
+    <!-- MOBILE BOTTOM SHEET (Turn Details) -->
+    <div class="bottom-sheet-overlay" onclick="closeMobileBottomSheet()"></div>
+    <div class="mobile-bottom-sheet" id="mobile-bottom-sheet">
+        <div class="bottom-sheet-handle" id="bottom-sheet-handle"></div>
+        <div class="bottom-sheet-header">
+            <div class="bottom-sheet-title">Turn Details</div>
+            <button class="bottom-sheet-close" onclick="closeMobileBottomSheet()">&times;</button>
+        </div>
+        <div class="bottom-sheet-content" id="mobile-bottom-sheet-content">
+            <!-- Content populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- MOBILE VIEWS -->
+    <!-- Mobile Sessions View -->
+    <div class="mobile-view mobile-sessions-view active" id="mobile-sessions-view">
+        <div class="mobile-sessions-search">
+            <input type="text" class="mobile-search-input" id="mobile-sessions-search" placeholder="Search sessions..." onkeypress="if(event.key==='Enter'){applyFilters();}">
+        </div>
+        <div class="mobile-view-content" id="mobile-sessions-list">
+            <!-- Sessions populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Mobile Conversation View -->
+    <div class="mobile-conversation-view" id="mobile-conversation-view">
+        <div class="mobile-chat-header">
+            <button class="mobile-chat-back" onclick="closeMobileConversation()">←</button>
+            <div class="mobile-chat-title" id="mobile-chat-title">Conversation</div>
+            <div class="session-quality" id="mobile-chat-quality"></div>
+        </div>
+        <div class="mobile-chat-content" id="mobile-chat-content">
+            <!-- Chat bubbles populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Mobile Analytics View -->
+    <div class="mobile-analytics-view" id="mobile-analytics-view">
+        <div class="mobile-stats-grid">
+            <div class="mobile-stat-card">
+                <div class="mobile-stat-card-value" id="mobile-stat-total-sessions">-</div>
+                <div class="mobile-stat-card-label">Total Sessions</div>
+            </div>
+            <div class="mobile-stat-card">
+                <div class="mobile-stat-card-value" id="mobile-stat-total-turns">-</div>
+                <div class="mobile-stat-card-label">Total Turns</div>
+            </div>
+            <div class="mobile-stat-card">
+                <div class="mobile-stat-card-value" id="mobile-stat-failure-rate">-</div>
+                <div class="mobile-stat-card-label">Failure Rate</div>
+            </div>
+            <div class="mobile-stat-card">
+                <div class="mobile-stat-card-value" id="mobile-stat-avg-response">-</div>
+                <div class="mobile-stat-card-label">Avg Response</div>
+            </div>
+        </div>
+        <div class="mobile-analytics-card">
+            <div class="mobile-card-title">Tool Usage</div>
+            <div class="mobile-tool-list" id="mobile-tool-usage">
+                <!-- Tool usage populated by JavaScript -->
+            </div>
+        </div>
+        <div class="mobile-analytics-card">
+            <div class="mobile-card-title">Hourly Volume (24h)</div>
+            <div class="mobile-bar-chart" id="mobile-hourly-chart"></div>
+        </div>
+        <div class="mobile-analytics-card">
+            <div class="mobile-card-title">Daily Volume (7d)</div>
+            <div class="mobile-bar-chart" id="mobile-daily-chart"></div>
+        </div>
+        <div class="mobile-analytics-card">
+            <div class="mobile-card-title">Top Errors</div>
+            <div class="mobile-error-list" id="mobile-top-errors">
+                <!-- Errors populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Tool Logs View -->
+    <div class="mobile-tool-logs-view" id="mobile-tool-logs-view">
+        <div class="mobile-log-header">
+            <input type="text" class="mobile-log-search" id="mobile-log-search" placeholder="Search logs...">
+            <button class="mobile-log-refresh" onclick="refreshMobileLog()">↻</button>
+        </div>
+        <div class="mobile-tool-list-panel" id="mobile-tool-list-content">
+            <!-- Tool list populated by JavaScript -->
+        </div>
+    </div>
+
     <script>
         // Configuration
         let CONFIG = {
@@ -1671,12 +3051,22 @@
 
         function populateToolDropdown() {
             const toolSelect = document.getElementById('filter-tool');
+            const mobileToolSelect = document.getElementById('mobile-filter-tool');
             const commonTools = ['who_is_home', 'get_internet_speed', 'get_dns_queries', 'block_device', 'get_devices', 'get_device_dns_summary', 'list_unknown_devices'];
+            
             commonTools.forEach(tool => {
                 const option = document.createElement('option');
                 option.value = tool;
                 option.textContent = tool;
                 toolSelect.appendChild(option);
+                
+                // Also add to mobile dropdown
+                if (mobileToolSelect) {
+                    const mobileOption = document.createElement('option');
+                    mobileOption.value = tool;
+                    mobileOption.textContent = tool;
+                    mobileToolSelect.appendChild(mobileOption);
+                }
             });
         }
 
@@ -1715,6 +3105,11 @@
 
             if (filtered.length === 0) {
                 list.innerHTML = '<div class="empty-state"><h3>No sessions</h3><p>Try adjusting filters</p></div>';
+                // Also update mobile list
+                const mobileList = document.getElementById('mobile-sessions-list');
+                if (mobileList) {
+                    mobileList.innerHTML = '<div class="empty-state" style="padding: 2rem;"><h3>No sessions</h3><p>Try adjusting filters</p></div>';
+                }
                 return;
             }
 
@@ -1724,7 +3119,7 @@
                 const time = new Date(session.started_at).toLocaleString();
                 const isSelected = selectedSession?.session_id === session.session_id;
                 const hasMatch = allTurns.length > 0 && allTurns.some(t => t.session_id === session.session_id);
-                const sessionTitle = session.first_message 
+                const sessionTitle = session.first_message
                     ? (session.first_message.length > 60 ? session.first_message.substring(0, 60) + '...' : session.first_message)
                     : session.session_id;
 
@@ -1738,6 +3133,32 @@
                         </div>
                         <div class="session-turns" style="font-weight: 500; color: #e2e8f0; margin-bottom: 0.375rem;">${escapeHtml(sessionTitle)}</div>
                         <div class="session-turns">${session.turn_count || 0} turns • ${session.chat_id}</div>
+                    </div>
+                `;
+            }).join('');
+
+            // Also update mobile sessions list
+            renderMobileSessionsWithFilter(filtered);
+        }
+
+        function renderMobileSessionsWithFilter(filtered) {
+            const mobileList = document.getElementById('mobile-sessions-list');
+            if (!mobileList) return;
+
+            mobileList.innerHTML = filtered.map(session => {
+                const qualityClass = session.quality_score === 'good' ? 'quality-good' :
+                                    session.quality_score === 'warn' ? 'quality-warn' : 'quality-bad';
+                const time = new Date(session.started_at).toLocaleString();
+                const sessionTitle = session.first_message || session.session_id;
+
+                return `
+                    <div class="mobile-session-card ${selectedSession?.session_id === session.session_id ? 'selected' : ''}" onclick="openMobileConversation('${session.session_id}')">
+                        <div class="mobile-session-time">${time}</div>
+                        <div class="mobile-session-message">${escapeHtml(sessionTitle)}</div>
+                        <div class="mobile-session-meta">
+                            <span>${session.turn_count || 0} turns</span>
+                            <div class="quality-dot ${qualityClass}"></div>
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -2257,6 +3678,453 @@
         window.addEventListener('beforeunload', () => {
             Object.values(refreshIntervals).forEach(id => clearInterval(id));
         });
+
+        /* =============================================
+           MOBILE NAVIGATION FUNCTIONS
+           ============================================= */
+
+        // Switch mobile tab
+        function switchMobileTab(tabName) {
+            // Update bottom nav active state
+            document.querySelectorAll('.mobile-nav-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.mobileTab === tabName);
+            });
+
+            // Hide all mobile views
+            document.querySelectorAll('.mobile-view, .mobile-conversation-view, .mobile-analytics-view, .mobile-tool-logs-view').forEach(view => {
+                view.classList.remove('active');
+            });
+
+            // Show selected view
+            if (tabName === 'sessions') {
+                document.getElementById('mobile-sessions-view').classList.add('active');
+                renderMobileSessions();
+            } else if (tabName === 'detail') {
+                if (selectedSession) {
+                    document.getElementById('mobile-conversation-view').classList.add('active');
+                    renderMobileConversation();
+                } else {
+                    // No session selected, go back to sessions
+                    switchMobileTab('sessions');
+                }
+            } else if (tabName === 'analytics') {
+                document.getElementById('mobile-analytics-view').classList.add('active');
+                loadMobileAnalytics();
+            } else if (tabName === 'tool-logs') {
+                document.getElementById('mobile-tool-logs-view').classList.add('active');
+                loadMobileToolLogs();
+            }
+        }
+
+        // Mobile filter drawer
+        function openMobileFilterDrawer() {
+            document.getElementById('mobile-filter-drawer').classList.add('open');
+            document.querySelector('.filter-drawer-overlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileFilterDrawer() {
+            document.getElementById('mobile-filter-drawer').classList.remove('open');
+            document.querySelector('.filter-drawer-overlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function applyMobileFilters() {
+            // Copy mobile filter values to desktop filters
+            document.getElementById('filter-search').value = document.getElementById('mobile-filter-search').value;
+            document.getElementById('filter-date').value = document.getElementById('mobile-filter-date').value;
+            document.getElementById('filter-tool').value = document.getElementById('mobile-filter-tool').value;
+            document.getElementById('filter-duration').value = document.getElementById('mobile-filter-duration').value;
+            document.getElementById('filter-error').value = document.getElementById('mobile-filter-error').value;
+
+            const qualityRadios = document.querySelectorAll('input[name="mobile-quality"]');
+            qualityRadios.forEach(radio => {
+                if (radio.checked) {
+                    const desktopRadio = document.querySelector(`input[name="quality"][value="${radio.value}"]`);
+                    if (desktopRadio) desktopRadio.checked = true;
+                }
+            });
+
+            const secondPassRadios = document.querySelectorAll('input[name="mobile-secondpass"]');
+            secondPassRadios.forEach(radio => {
+                if (radio.checked) {
+                    const desktopRadio = document.querySelector(`input[name="secondpass"][value="${radio.value}"]`);
+                    if (desktopRadio) desktopRadio.checked = true;
+                }
+            });
+
+            applyFilters();
+            closeMobileFilterDrawer();
+        }
+
+        function resetMobileFilters() {
+            document.getElementById('mobile-filter-search').value = '';
+            document.getElementById('mobile-filter-date').value = '';
+            document.getElementById('mobile-filter-tool').value = '';
+            document.getElementById('mobile-filter-duration').value = '';
+            document.getElementById('mobile-filter-error').value = '';
+            document.querySelectorAll('input[name="mobile-quality"]').forEach(r => r.checked = false);
+            document.querySelectorAll('input[name="mobile-secondpass"]').forEach(r => r.checked = false);
+            resetFilters();
+        }
+
+        // Mobile bottom sheet
+        function openMobileBottomSheet(turn, side) {
+            const content = document.getElementById('mobile-bottom-sheet-content');
+            const toolCategory = getToolCategory(turn.tool_selected);
+
+            content.innerHTML = `
+                <div class="bottom-sheet-section">
+                    <div class="bottom-sheet-label">💬 User Message</div>
+                    <div class="bottom-sheet-value">${escapeHtml(turn.user_message || 'N/A')}</div>
+                </div>
+                <div class="bottom-sheet-section">
+                    <div class="bottom-sheet-label">⚙️ Tool</div>
+                    <div class="bottom-sheet-value">
+                        ${turn.tool_selected ? `<span class="tool-badge ${toolCategory}">${turn.tool_selected}</span>` : '<span style="color: #ef4444;">None</span>'}
+                    </div>
+                    <div class="bottom-sheet-value" style="margin-top: 0.5rem;"><pre>${formatJson(turn.tool_params)}</pre></div>
+                </div>
+                <div class="bottom-sheet-section">
+                    <div class="bottom-sheet-label">📊 Result</div>
+                    <div class="bottom-sheet-value ${turn.tool_result_success ? 'success' : 'error'}" style="color: ${turn.tool_result_success ? '#86efac' : '#fca5a5'}">
+                        ${turn.tool_result_success ? '✓ Success' : '✗ Failed'} • ${(turn.duration_seconds || 0).toFixed(2)}s
+                    </div>
+                </div>
+                <div class="bottom-sheet-section">
+                    <div class="bottom-sheet-label">🔍 Execution Trace</div>
+                    <div style="font-size: 0.7rem; color: var(--text-secondary); line-height: 1.6;">
+                        ${renderMobileExecutionTrace(turn.execution_trace)}
+                    </div>
+                </div>
+                <div class="bottom-sheet-section bottom-sheet-collapsible">
+                    <div class="bottom-sheet-header-internal" onclick="toggleBottomSheetCollapse(this)">
+                        <div class="bottom-sheet-label" style="margin: 0;">📝 Final Response</div>
+                        <span class="collapse-icon">▶</span>
+                    </div>
+                    <div class="bottom-sheet-collapsible-content">
+                        <div class="bottom-sheet-value"><pre>${escapeHtml(turn.final_response || 'N/A')}</pre></div>
+                    </div>
+                </div>
+                <div class="bottom-sheet-section bottom-sheet-collapsible">
+                    <div class="bottom-sheet-header-internal" onclick="toggleBottomSheetCollapse(this)">
+                        <div class="bottom-sheet-label" style="margin: 0;">🔬 Raw LLM Output</div>
+                        <span class="collapse-icon">▶</span>
+                    </div>
+                    <div class="bottom-sheet-collapsible-content">
+                        <div class="bottom-sheet-value"><pre>${escapeHtml(turn.llm_raw_response || 'N/A')}</pre></div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('mobile-bottom-sheet').classList.add('open');
+            document.querySelector('.bottom-sheet-overlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileBottomSheet() {
+            document.getElementById('mobile-bottom-sheet').classList.remove('open');
+            document.querySelector('.bottom-sheet-overlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function toggleBottomSheetCollapse(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.collapse-icon');
+            content.classList.toggle('open');
+            icon.classList.toggle('open');
+        }
+
+        function renderMobileExecutionTrace(traceJson) {
+            if (!traceJson) {
+                return '<p style="color: var(--text-muted); font-style: italic;">No trace data</p>';
+            }
+            try {
+                const trace = typeof traceJson === 'string' ? JSON.parse(traceJson) : traceJson;
+                if (!Array.isArray(trace) || trace.length === 0) {
+                    return '<p style="color: var(--text-muted);">No trace events</p>';
+                }
+                let html = '<div style="position: relative; padding-left: 1rem;">';
+                html += '<div style="position: absolute; left: 3px; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, rgba(59,130,246,0.3), rgba(148,163,184,0.1));"></div>';
+                trace.slice(0, 10).forEach(event => {
+                    let color = '#3b82f6';
+                    let icon = '•';
+                    if (event.event.includes('error')) { color = '#ef4444'; icon = '❌'; }
+                    else if (event.event.includes('result')) { color = '#22c55e'; icon = '✅'; }
+                    else if (event.event.includes('llm')) { color = '#8b5cf6'; icon = '🤖'; }
+                    else if (event.event.includes('tool')) { color = '#eab308'; icon = '⚡'; }
+
+                    html += `
+                        <div style="position: relative; padding-left: 0.75rem; margin-bottom: 0.75rem;">
+                            <div style="position: absolute; left: -0.875rem; top: 3px; width: 8px; height: 8px; border-radius: 50%; background: ${color};"></div>
+                            <div style="font-size: 0.6rem; color: var(--text-muted);">${event.timestamp} • ${event.event.replace(/_/g, ' ')}</div>
+                            <div style="font-size: 0.65rem; color: var(--text-secondary);">${escapeHtml(event.detail)}</div>
+                            ${event.duration_ms > 0 ? `<div style="font-size: 0.55rem; color: var(--accent-blue); margin-top: 2px;">${event.duration_ms}ms</div>` : ''}
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                return html;
+            } catch (e) {
+                return `<p style="color: #ef4444;">Failed to parse trace: ${e.message}</p>`;
+            }
+        }
+
+        // Mobile conversation
+        function openMobileConversation(sessionId) {
+            selectSession(sessionId);
+            document.getElementById('mobile-conversation-view').classList.add('active');
+            // Update bottom nav to show detail tab active
+            document.querySelectorAll('.mobile-nav-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.mobileTab === 'detail');
+            });
+        }
+
+        function closeMobileConversation() {
+            document.getElementById('mobile-conversation-view').classList.remove('active');
+            switchMobileTab('sessions');
+        }
+
+        function renderMobileSessions() {
+            const list = document.getElementById('mobile-sessions-list');
+            const searchFilter = document.getElementById('mobile-sessions-search').value.toLowerCase();
+
+            let filtered = sessions;
+            if (searchFilter) {
+                filtered = filtered.filter(s =>
+                    s.chat_id.toLowerCase().includes(searchFilter) ||
+                    s.session_id.toLowerCase().includes(searchFilter) ||
+                    (s.first_message && s.first_message.toLowerCase().includes(searchFilter))
+                );
+            }
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="empty-state" style="padding: 2rem;"><h3>No sessions</h3><p>Try adjusting filters</p></div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map(session => {
+                const qualityClass = session.quality_score === 'good' ? 'quality-good' :
+                                    session.quality_score === 'warn' ? 'quality-warn' : 'quality-bad';
+                const time = new Date(session.started_at).toLocaleString();
+                const sessionTitle = session.first_message
+                    ? session.first_message
+                    : session.session_id;
+
+                return `
+                    <div class="mobile-session-card ${selectedSession?.session_id === session.session_id ? 'selected' : ''}" onclick="openMobileConversation('${session.session_id}')">
+                        <div class="mobile-session-time">${time}</div>
+                        <div class="mobile-session-message">${escapeHtml(sessionTitle)}</div>
+                        <div class="mobile-session-meta">
+                            <span>${session.turn_count || 0} turns</span>
+                            <div class="quality-dot ${qualityClass}"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderMobileConversation() {
+            const content = document.getElementById('mobile-chat-content');
+            const headerTitle = document.getElementById('mobile-chat-title');
+            const headerQuality = document.getElementById('mobile-chat-quality');
+
+            if (!selectedSession) {
+                content.innerHTML = '<div class="empty-state"><h3>No session selected</h3></div>';
+                return;
+            }
+
+            // Update header
+            headerTitle.textContent = selectedSession.first_message?.substring(0, 40) || 'Conversation';
+            const qualityClass = selectedSession.quality_score === 'good' ? 'quality-good' :
+                                selectedSession.quality_score === 'warn' ? 'quality-warn' : 'quality-bad';
+            headerQuality.innerHTML = `<div class="quality-dot ${qualityClass}"></div>`;
+
+            if (turns.length === 0) {
+                content.innerHTML = '<div class="empty-state"><h3>No turns</h3></div>';
+                return;
+            }
+
+            let html = '';
+            turns.forEach((turn, index) => {
+                const qualityClass = turn.quality === 'good' ? 'quality-good' :
+                                    turn.quality === 'warn' ? 'quality-warn' : 'quality-bad';
+                const toolName = turn.tool_selected || 'No tool';
+                const toolCategory = getToolCategory(toolName);
+                const timestamp = new Date(turn.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                const responseTruncated = turn.final_response && turn.final_response.length > 150
+                    ? turn.final_response.substring(0, 150) + '...'
+                    : (turn.final_response || 'No response');
+
+                // Turn divider
+                html += `
+                    <div class="mobile-turn-divider">
+                        <span class="mobile-turn-divider-number">Turn ${index + 1}</span>
+                    </div>
+                `;
+
+                // User bubble
+                html += `
+                    <div class="mobile-chat-bubble mobile-chat-bubble-user" onclick="openMobileBottomSheetFromData(${turn.id}, 'user')">
+                        <div class="mobile-chat-bubble-user-content">
+                            <div class="mobile-chat-bubble-message">${escapeHtml(turn.user_message || 'No message')}</div>
+                            <div class="mobile-chat-bubble-time">${timestamp}</div>
+                        </div>
+                    </div>
+                `;
+
+                // ARGUS bubble
+                html += `
+                    <div class="mobile-chat-bubble mobile-chat-bubble-argus" onclick="openMobileBottomSheetFromData(${turn.id}, 'argus')">
+                        <div class="mobile-chat-bubble-argus-content">
+                            <div class="mobile-chat-bubble-argus-label">ARGUS</div>
+                            ${toolName !== 'No tool' ? `<div class="mobile-chat-bubble-tool-badge tool-badge ${toolCategory}">${toolName}</div>` : ''}
+                            <div class="mobile-chat-bubble-argus-response">${escapeHtml(responseTruncated)}</div>
+                            <div class="mobile-chat-bubble-meta">
+                                <span class="mobile-chat-bubble-duration">${(turn.duration_seconds || 0).toFixed(1)}s</span>
+                                <div class="mobile-chat-bubble-quality">
+                                    <div class="mobile-chat-bubble-quality-dot ${qualityClass}"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            content.innerHTML = html;
+            setTimeout(() => { content.scrollTop = content.scrollHeight; }, 100);
+        }
+
+        function openMobileBottomSheetFromData(turnId, side) {
+            const turn = turns.find(t => t.id === turnId);
+            if (turn) {
+                openMobileBottomSheet(turn, side);
+            }
+        }
+
+        // Mobile analytics
+        async function loadMobileAnalytics() {
+            try {
+                const response = await fetch(`${CONFIG.apiUrl}/api/conversations/stats`);
+                const data = await response.json();
+
+                document.getElementById('mobile-stat-total-sessions').textContent = data.total_sessions || 0;
+                document.getElementById('mobile-stat-total-turns').textContent = data.total_turns || 0;
+                document.getElementById('mobile-stat-failure-rate').textContent = `${data.failure_rate || 0}%`;
+                document.getElementById('mobile-stat-avg-response').textContent = `${data.avg_response_time || 0}s`;
+
+                // Tool usage
+                const toolList = document.getElementById('mobile-tool-usage');
+                if (data.tool_usage) {
+                    toolList.innerHTML = data.tool_usage.map(t => {
+                        const barWidth = Math.round(t.success_rate * 100);
+                        const barColor = t.success_rate >= 0.9 ? '#22c55e' : t.success_rate >= 0.7 ? '#eab308' : '#ef4444';
+                        const textColor = t.success_rate >= 0.9 ? '#22c55e' : t.success_rate >= 0.7 ? '#eab308' : '#ef4444';
+                        return `
+                            <div class="mobile-tool-item">
+                                <div class="mobile-tool-header">
+                                    <div class="mobile-tool-name">${t.tool || 'Unknown'}</div>
+                                    <div class="mobile-tool-count">${t.count} uses</div>
+                                </div>
+                                <div class="mobile-success-rate">
+                                    <div class="mobile-success-rate-bar">
+                                        <div class="mobile-success-rate-fill" style="width: ${barWidth}%; background: ${barColor};"></div>
+                                    </div>
+                                    <div class="mobile-success-rate-text" style="color: ${textColor}">${(t.success_rate * 100).toFixed(0)}%</div>
+                                </div>
+                                <div style="font-size: 0.625rem; color: var(--text-muted); margin-top: 0.375rem;">Avg: ${(t.avg_duration || 0).toFixed(1)}s</div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+                renderMobileBarChart('mobile-hourly-chart', data.hourly_volume || [], 24);
+                renderMobileBarChart('mobile-daily-chart', data.daily_volume || [], 7);
+
+                // Top errors
+                const errorsList = document.getElementById('mobile-top-errors');
+                if (data.top_errors) {
+                    errorsList.innerHTML = data.top_errors.map(e => `
+                        <div class="mobile-error-item">
+                            <div class="mobile-error-type">${e.error}</div>
+                            <div class="mobile-error-meta">Count: ${e.count} • Last: ${new Date(e.last_seen).toLocaleDateString()}</div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Failed to load mobile analytics:', error);
+            }
+        }
+
+        function renderMobileBarChart(containerId, data, maxBars) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div style="color: var(--text-muted); font-size: 0.75rem;">No data</div>';
+                return;
+            }
+            const maxValue = Math.max(...data.map(d => d.count), 1);
+            container.innerHTML = data.slice(0, maxBars).map(d => {
+                const height = (d.count / maxValue) * 100;
+                return `
+                    <div class="mobile-bar" style="height: ${height}%;">
+                        <span class="mobile-bar-label">${d.hour !== undefined ? d.hour : d.date?.slice(5) || ''}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Mobile tool logs
+        async function loadMobileToolLogs() {
+            try {
+                const response = await fetch(`${CONFIG.apiUrl}/api/tools/logs`);
+                const data = await response.json();
+                const listContent = document.getElementById('mobile-tool-list-content');
+
+                if (data.logs && data.logs.length > 0) {
+                    listContent.innerHTML = data.logs.map(log => `
+                        <div class="mobile-tool-log-item" onclick="selectMobileToolLog('${log.tool_name}')">
+                            <div style="font-size: 0.8125rem; color: var(--text-primary); font-weight: 500;">${log.tool_name}</div>
+                            <div style="font-size: 0.625rem; color: var(--text-muted); margin-top: 0.25rem;">${log.size_human} • ${new Date(log.modified).toLocaleString()}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    listContent.innerHTML = '<div class="empty-state" style="padding: 2rem;"><h3>No logs</h3><p>Tool logs will appear here</p></div>';
+                }
+            } catch (error) {
+                console.error('Failed to load mobile tool logs:', error);
+            }
+        }
+
+        async function selectMobileToolLog(toolName) {
+            currentTool = toolName;
+            document.querySelectorAll('.mobile-tool-log-item').forEach(item => {
+                item.classList.toggle('selected', item.textContent.includes(toolName));
+            });
+            await refreshMobileLog();
+        }
+
+        async function refreshMobileLog() {
+            if (!currentTool) return;
+            try {
+                const response = await fetch(`${CONFIG.apiUrl}/api/tools/logs/${currentTool}?lines=100`);
+                const data = await response.json();
+                const content = document.getElementById('mobile-tool-list-content');
+
+                if (data.lines && data.lines.length > 0) {
+                    content.innerHTML = data.lines.map(line => {
+                        const isFailed = line.includes('FAILED');
+                        const isSuccess = line.includes('SUCCESS');
+                        const lineClass = isFailed ? 'failed' : isSuccess ? 'success' : '';
+                        return `<div class="mobile-log-line ${lineClass}">${escapeHtml(line)}</div>`;
+                    }).join('');
+                } else {
+                    content.innerHTML = '<div class="empty-state" style="padding: 2rem;"><h3>Empty log</h3></div>';
+                }
+            } catch (error) {
+                console.error('Failed to load mobile log:', error);
+            }
+        }
     </script>
 </body>
 </html>
