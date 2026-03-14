@@ -656,7 +656,7 @@
         function showTurnDetail(turn) {
             const panel = document.getElementById('detail-panel');
             const content = document.getElementById('detail-content');
-            
+
             content.innerHTML = `
                 <div class="detail-section">
                     <div class="detail-label">User Message</div>
@@ -707,8 +707,24 @@
                         ${turn.quality || 'N/A'}
                     </div>
                 </div>
+                <hr style="border-color: #1e293b; margin: 1.5rem 0;">
+                <div class="detail-section">
+                    <div class="detail-label" style="color: #f59e0b;">Failure Diagnostics</div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">LLM Raw Response (first 300 chars)</div>
+                    <div class="detail-value"><pre>${escapeHtml(turn.llm_raw_response || 'N/A')}</pre></div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Failure Stage</div>
+                    <div class="detail-value ${turn.failure_stage ? 'error' : ''}">${turn.failure_stage || 'None'}</div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">LLM Error Code</div>
+                    <div class="detail-value ${turn.llm_error_code ? 'error' : ''}">${escapeHtml(turn.llm_error_code || 'None')}</div>
+                </div>
             `;
-            
+
             panel.classList.add('open');
         }
         
