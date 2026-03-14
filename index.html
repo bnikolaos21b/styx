@@ -7,7 +7,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0a0f1e">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>STYX v4 — Conversation Intelligence</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>STYX v4.3 — Mobile Fixed</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -1713,6 +1716,8 @@
         .mobile-view-content {
             flex: 1;
             overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* =============================================
@@ -2548,7 +2553,7 @@
     <nav class="top-nav">
         <div class="nav-brand">
             <div class="nav-brand-title">STYX</div>
-            <div class="nav-brand-subtitle">CONVERSATION INTELLIGENCE</div>
+            <div class="nav-brand-subtitle">MOBILE FIXED v4.3</div>
         </div>
         <div class="nav-tabs">
             <button class="nav-tab active" data-tab="sessions">SESSIONS</button>
