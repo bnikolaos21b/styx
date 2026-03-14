@@ -1713,6 +1713,7 @@
             padding: 0.75rem 1rem;
             border-bottom: 1px solid var(--border-color);
             background: var(--bg-secondary);
+            flex-shrink: 0;
         }
 
         .mobile-search-input {
@@ -1743,6 +1744,8 @@
             cursor: pointer;
             transition: background var(--transition-fast);
             min-height: 80px;
+            max-width: 100%;
+            overflow: hidden;
         }
 
         .mobile-session-card:active {
@@ -1770,6 +1773,7 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
             margin-bottom: 0.5rem;
+            word-break: break-word;
         }
 
         .mobile-session-meta {
@@ -1778,6 +1782,7 @@
             gap: 0.75rem;
             font-size: 0.6875rem;
             color: var(--text-secondary);
+            flex-wrap: wrap;
         }
 
         /* Swipe actions for session cards */
@@ -1925,12 +1930,16 @@
             border-radius: 16px 4px 16px 16px;
             padding: 0.875rem 1rem;
             min-height: 44px;
+            overflow-wrap: break-word;
+            word-break: break-word;
         }
 
         .mobile-chat-bubble-message {
             font-size: 0.8125rem;
             color: var(--text-primary);
             line-height: 1.5;
+            overflow-wrap: break-word;
+            word-break: break-word;
         }
 
         .mobile-chat-bubble-time {
@@ -1952,6 +1961,8 @@
             padding: 0.875rem 1rem;
             border-left: 2px solid var(--accent-blue);
             min-height: 44px;
+            overflow-wrap: break-word;
+            word-break: break-word;
         }
 
         .mobile-chat-bubble-argus-label {
@@ -2028,6 +2039,7 @@
             padding: 1rem;
             pointer-events: none;
             -webkit-overflow-scrolling: touch;
+            max-width: 100vw;
         }
 
         .mobile-analytics-view.active {
@@ -2040,6 +2052,7 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 0.75rem;
             margin-bottom: 1rem;
+            max-width: 100%;
         }
 
         .mobile-stat-card {
@@ -2047,6 +2060,8 @@
             border-radius: 10px;
             padding: 1rem;
             border: 1px solid var(--border-color);
+            min-width: 0;
+            max-width: 100%;
         }
 
         .mobile-stat-card-value {
@@ -2069,6 +2084,8 @@
             padding: 1rem;
             border: 1px solid var(--border-color);
             margin-bottom: 1rem;
+            max-width: 100%;
+            min-width: 0;
         }
 
         .mobile-card-title {
@@ -2077,12 +2094,16 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
             margin-bottom: 1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .mobile-tool-list {
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
+            max-width: 100%;
         }
 
         .mobile-tool-item {
@@ -2090,6 +2111,8 @@
             background: rgba(30,41,59,0.3);
             border-radius: 8px;
             border: 1px solid var(--border-color);
+            max-width: 100%;
+            min-width: 0;
         }
 
         .mobile-tool-header {
@@ -2097,17 +2120,24 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 0.5rem;
+            gap: 0.5rem;
         }
 
         .mobile-tool-name {
             font-size: 0.8125rem;
             color: var(--text-primary);
             font-weight: 500;
+            flex: 1;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .mobile-tool-count {
             font-size: 0.6875rem;
             color: var(--text-muted);
+            flex-shrink: 0;
         }
 
         .mobile-success-rate {
@@ -2222,10 +2252,12 @@
             border-bottom: 1px solid var(--border-color);
             background: var(--bg-secondary);
             gap: 0.75rem;
+            max-width: 100%;
         }
 
         .mobile-log-search {
             flex: 1;
+            min-width: 0;
             padding: 0.5rem 0.75rem;
             background: rgba(30,41,59,0.5);
             border: 1px solid var(--border-color);
@@ -2265,6 +2297,8 @@
             border-bottom: 1px solid var(--border-color);
             cursor: pointer;
             transition: background var(--transition-fast);
+            max-width: 100%;
+            min-width: 0;
         }
 
         .mobile-tool-log-item:active {
@@ -2281,6 +2315,8 @@
             display: flex;
             flex-direction: column;
             background: rgba(10,15,30,0.5);
+            max-width: 100%;
+            min-width: 0;
         }
 
         .mobile-log-content {
@@ -2292,6 +2328,8 @@
             font-size: 0.625rem;
             line-height: 1.6;
             -webkit-overflow-scrolling: touch;
+            max-width: 100%;
+            min-width: 0;
         }
 
         .mobile-log-line {
@@ -2299,6 +2337,8 @@
             border-bottom: 1px solid var(--border-color);
             white-space: pre-wrap;
             word-break: break-all;
+            max-width: 100%;
+            overflow-wrap: break-word;
         }
 
         .mobile-log-line.success { color: #86efac; }
@@ -3941,13 +3981,14 @@
         }
 
         // Mobile conversation
-        function openMobileConversation(sessionId) {
-            selectSession(sessionId);
+        async function openMobileConversation(sessionId) {
+            await selectSession(sessionId);
             document.getElementById('mobile-conversation-view').classList.add('active');
             // Update bottom nav to show detail tab active
             document.querySelectorAll('.mobile-nav-item').forEach(item => {
                 item.classList.toggle('active', item.dataset.mobileTab === 'detail');
             });
+            renderMobileConversation();
         }
 
         function closeMobileConversation() {
