@@ -1427,6 +1427,7 @@
             left: 0;
             right: 0;
             max-height: 85vh;
+            height: 85vh;
             background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
             border-radius: 16px 16px 0 0;
             z-index: 200;
@@ -1435,9 +1436,11 @@
             overflow: hidden;
             box-shadow: 0 -8px 32px rgba(0,0,0,0.5);
             pointer-events: none;
+            flex-direction: column;
         }
 
         .mobile-filter-drawer.open {
+            display: flex;
             transform: translateY(0);
             pointer-events: auto;
         }
@@ -1468,6 +1471,7 @@
             align-items: center;
             padding: 1rem 1.25rem;
             border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
         }
 
         .filter-drawer-title {
@@ -1496,8 +1500,9 @@
             height: 4px;
             background: var(--text-muted);
             border-radius: 2px;
-            margin: 8px auto;
+            margin: 12px auto;
             opacity: 0.5;
+            flex-shrink: 0;
         }
 
         .filter-drawer-content {
@@ -1506,6 +1511,25 @@
             overflow-x: hidden;
             padding: 1rem 1.25rem;
             -webkit-overflow-scrolling: touch;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-drawer-content .filter-group {
+            flex-shrink: 0;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .filter-drawer-content .filter-group:last-of-type {
+            border-bottom: none;
+        }
+
+        .filter-drawer-content .apply-filter-btn,
+        .filter-drawer-content .reset-btn {
+            flex-shrink: 0;
+            width: 100%;
         }
 
         /* =============================================
@@ -2319,10 +2343,11 @@
         .mobile-tool-list-panel {
             flex: 1;
             overflow-y: auto;
-            overflow-x: hidden;
+            overflow-x: hidden !important;
             -webkit-overflow-scrolling: touch;
             max-width: 100%;
             width: 100%;
+            box-sizing: border-box;
         }
 
         .mobile-tool-log-item {
@@ -2334,6 +2359,7 @@
             min-width: 0;
             width: 100%;
             box-sizing: border-box;
+            overflow: hidden;
         }
 
         .mobile-tool-log-item:active {
@@ -2356,7 +2382,7 @@
 
         .mobile-log-content {
             flex: 1;
-            overflow-x: hidden;
+            overflow-x: hidden !important;
             overflow-y: auto;
             padding: 0.75rem;
             font-family: 'JetBrains Mono', monospace;
@@ -2366,6 +2392,7 @@
             max-width: 100%;
             min-width: 0;
             width: 100%;
+            box-sizing: border-box;
         }
 
         .mobile-log-line {
@@ -2375,8 +2402,10 @@
             word-break: break-all !important;
             overflow-wrap: break-word !important;
             hyphens: auto;
-            max-width: 100%;
-            width: 100%;
+            max-width: 100% !important;
+            width: 100% !important;
+            box-sizing: border-box;
+            display: block;
         }
 
         .mobile-log-line.success { color: #86efac; }
