@@ -1524,9 +1524,11 @@
             overflow: hidden;
             box-shadow: 0 -8px 32px rgba(0,0,0,0.5);
             pointer-events: none;
+            flex-direction: column;
         }
 
         .mobile-bottom-sheet.open {
+            display: flex;
             transform: translateY(0);
             pointer-events: auto;
         }
@@ -1559,6 +1561,7 @@
             margin: 12px auto;
             opacity: 0.5;
             cursor: grab;
+            flex-shrink: 0;
         }
 
         .bottom-sheet-handle:active {
@@ -1571,6 +1574,7 @@
             align-items: center;
             padding: 0.5rem 1.25rem 1rem;
             border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
         }
 
         .bottom-sheet-title {
@@ -2054,6 +2058,7 @@
             pointer-events: none;
             -webkit-overflow-scrolling: touch;
             max-width: 100vw;
+            width: 100vw;
         }
 
         .mobile-analytics-view.active {
@@ -2067,6 +2072,7 @@
             gap: 0.75rem;
             margin-bottom: 1rem;
             max-width: 100%;
+            width: 100%;
         }
 
         .mobile-stat-card {
@@ -2076,6 +2082,7 @@
             border: 1px solid var(--border-color);
             min-width: 0;
             max-width: 100%;
+            width: 100%;
         }
 
         .mobile-stat-card-value {
@@ -2083,6 +2090,7 @@
             font-weight: 300;
             color: var(--text-primary);
             margin-bottom: 0.25rem;
+            word-break: break-word;
         }
 
         .mobile-stat-card-label {
