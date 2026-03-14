@@ -3,14 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STYX — Conversation Log Viewer</title>
+    <title>STYX v2 — Conversation Analytics</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
             background: #0a0f1e;
@@ -18,90 +13,100 @@
             height: 100vh;
             overflow: hidden;
         }
-        
-        /* Stats Bar */
-        .stats-bar {
+
+        /* Top Navigation */
+        .top-nav {
             display: flex;
-            gap: 2rem;
-            padding: 1rem 2rem;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
             background: #0d1426;
             border-bottom: 1px solid #1e293b;
         }
-        
-        .stat {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #94a3b8;
-        }
-        
-        .stat-label {
-            font-size: 0.75rem;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        /* Main Layout */
-        .main {
-            display: flex;
-            height: calc(100vh - 80px);
-        }
-        
-        /* Left Panel - Sessions */
-        .sessions-panel {
-            width: 300px;
-            background: #0d1426;
-            border-right: 1px solid #1e293b;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .panel-header {
-            padding: 1rem;
-            border-bottom: 1px solid #1e293b;
-        }
-        
-        .panel-title {
-            font-size: 0.875rem;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.75rem;
-        }
-        
-        .filter-buttons {
+
+        .nav-tabs {
             display: flex;
             gap: 0.5rem;
         }
-        
-        .filter-btn {
-            flex: 1;
-            padding: 0.375rem 0.5rem;
+
+        .nav-tab {
+            padding: 0.5rem 1.25rem;
             background: #1e293b;
             border: none;
             border-radius: 4px;
             color: #94a3b8;
-            font-size: 0.75rem;
+            font-family: inherit;
+            font-size: 0.875rem;
             cursor: pointer;
             transition: all 0.2s;
         }
-        
-        .filter-btn:hover, .filter-btn.active {
-            background: #334155;
-            color: #f1f5f9;
+
+        .nav-tab:hover { background: #334155; color: #f1f5f9; }
+        .nav-tab.active { background: #3b82f6; color: #fff; }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
-        
-        .search-box {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid #1e293b;
+
+        .last-refresh {
+            font-size: 0.75rem;
+            color: #64748b;
         }
-        
-        .search-input {
+
+        .settings-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.25rem;
+            cursor: pointer;
+        }
+
+        .settings-btn:hover { color: #f1f5f9; }
+
+        /* Main Content */
+        .main-content {
+            height: calc(100vh - 56px);
+            overflow: hidden;
+        }
+
+        .tab-content {
+            display: none;
+            height: 100%;
+        }
+
+        .tab-content.active { display: flex; }
+
+        /* SESSIONS TAB LAYOUT */
+        .sessions-layout {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Filters Sidebar */
+        .filters-sidebar {
+            width: 250px;
+            background: #0d1426;
+            border-right: 1px solid #1e293b;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .filter-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .filter-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .filter-input {
             width: 100%;
             padding: 0.5rem;
             background: #1e293b;
@@ -111,156 +116,230 @@
             font-family: inherit;
             font-size: 0.875rem;
         }
-        
-        .search-input:focus {
-            outline: none;
-            border-color: #475569;
+
+        .filter-input:focus { outline: none; border-color: #475569; }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.375rem;
         }
-        
-        .sessions-list {
-            flex: 1;
-            overflow-y: auto;
-        }
-        
-        .session-item {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid #1e293b;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        
-        .session-item:hover, .session-item.selected {
-            background: #1e293b;
-        }
-        
-        .session-time {
-            font-size: 0.75rem;
-            color: #64748b;
-            margin-bottom: 0.25rem;
-        }
-        
-        .session-info {
+
+        .radio-label {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            font-size: 0.875rem;
+            color: #94a3b8;
+            cursor: pointer;
         }
-        
+
+        .radio-label input[type="radio"] {
+            accent-color: #3b82f6;
+        }
+
+        .reset-btn {
+            width: 100%;
+            padding: 0.5rem;
+            background: #1e293b;
+            border: none;
+            border-radius: 4px;
+            color: #94a3b8;
+            font-family: inherit;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .reset-btn:hover { background: #334155; color: #f1f5f9; }
+
+        /* Sessions List */
+        .sessions-list-panel {
+            width: 350px;
+            background: #0a0f1e;
+            border-right: 1px solid #1e293b;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            padding: 1rem;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .panel-title {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .sessions-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.75rem;
+        }
+
+        .session-card {
+            padding: 0.875rem;
+            background: #0d1426;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            border: 1px solid #1e293b;
+            transition: all 0.2s;
+        }
+
+        .session-card:hover, .session-card.selected {
+            border-color: #475569;
+            background: #111827;
+        }
+
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .session-time {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .session-quality {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
         .quality-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            flex-shrink: 0;
         }
-        
         .quality-good { background: #22c55e; }
         .quality-warn { background: #eab308; }
         .quality-bad { background: #ef4444; }
-        
+
         .session-turns {
             font-size: 0.75rem;
             color: #94a3b8;
+            margin-bottom: 0.375rem;
         }
-        
-        /* Middle Panel - Turns */
-        .turns-panel {
+
+        .session-tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+
+        .tool-badge {
+            padding: 0.125rem 0.375rem;
+            background: #1e293b;
+            border-radius: 3px;
+            font-size: 0.625rem;
+            color: #94a3b8;
+        }
+
+        /* Session Detail Panel */
+        .session-detail-panel {
             flex: 1;
             background: #0a0f1e;
             display: flex;
-            flex-direction: column;
+            position: relative;
             overflow: hidden;
         }
-        
+
         .turns-list {
             flex: 1;
-            overflow-y: auto;
             padding: 1rem;
+            overflow-y: auto;
         }
-        
+
         .turn-item {
             padding: 1rem;
             background: #0d1426;
-            border-radius: 8px;
+            border-radius: 6px;
             margin-bottom: 0.75rem;
             cursor: pointer;
-            transition: all 0.2s;
             border: 1px solid #1e293b;
+            transition: all 0.2s;
         }
-        
+
         .turn-item:hover, .turn-item.selected {
             border-color: #475569;
             background: #111827;
         }
-        
+
         .turn-header {
             display: flex;
             align-items: center;
             gap: 0.75rem;
             margin-bottom: 0.5rem;
         }
-        
+
         .turn-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 0.75rem;
-            color: #64748b;
+            font-weight: bold;
         }
-        
-        .tool-badge {
+        .turn-good { background: #22c55e; color: #000; }
+        .turn-warn { background: #eab308; color: #000; }
+        .turn-bad { background: #ef4444; color: #fff; }
+
+        .turn-tool-badge {
             padding: 0.25rem 0.5rem;
             background: #1e293b;
             border-radius: 4px;
             font-size: 0.75rem;
             color: #94a3b8;
         }
-        
+
         .turn-duration {
             margin-left: auto;
             font-size: 0.75rem;
             color: #64748b;
         }
-        
+
         .turn-message {
             font-style: italic;
             color: #94a3b8;
             font-size: 0.875rem;
-            line-height: 1.5;
         }
-        
-        .turn-error {
-            margin-top: 0.5rem;
-            padding: 0.5rem;
-            background: rgba(239, 68, 68, 0.1);
-            border-radius: 4px;
-            font-size: 0.75rem;
-            color: #ef4444;
-        }
-        
-        /* Right Panel - Turn Detail */
-        .detail-panel {
-            width: 400px;
-            background: #0d1426;
-            border-left: 1px solid #1e293b;
-            display: flex;
-            flex-direction: column;
-            transform: translateX(100%);
-            transition: transform 0.3s;
+
+        /* Turn Detail Slide-in */
+        .turn-detail {
             position: absolute;
             right: 0;
             top: 0;
+            width: 500px;
             height: 100%;
+            background: #0d1426;
+            border-left: 1px solid #1e293b;
+            transform: translateX(100%);
+            transition: transform 0.3s;
+            overflow-y: auto;
             z-index: 10;
         }
-        
-        .detail-panel.open {
-            transform: translateX(0);
-        }
-        
+
+        .turn-detail.open { transform: translateX(0); }
+
         .detail-header {
             padding: 1rem;
             border-bottom: 1px solid #1e293b;
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: #0d1426;
         }
-        
+
         .close-btn {
             background: none;
             border: none;
@@ -268,17 +347,17 @@
             font-size: 1.5rem;
             cursor: pointer;
         }
-        
-        .detail-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1rem;
-        }
-        
+
+        .detail-content { padding: 1rem; }
+
         .detail-section {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #1e293b;
         }
-        
+
+        .detail-section:last-child { border-bottom: none; }
+
         .detail-label {
             font-size: 0.75rem;
             color: #64748b;
@@ -286,13 +365,13 @@
             letter-spacing: 0.05em;
             margin-bottom: 0.5rem;
         }
-        
+
         .detail-value {
             font-size: 0.875rem;
             color: #f1f5f9;
             line-height: 1.6;
         }
-        
+
         .detail-value pre {
             background: #1e293b;
             padding: 0.75rem;
@@ -300,18 +379,390 @@
             overflow-x: auto;
             font-size: 0.75rem;
             color: #94a3b8;
+            white-space: pre-wrap;
+            word-break: break-word;
         }
-        
-        .detail-value.error {
-            color: #ef4444;
+
+        .detail-value.error { color: #ef4444; }
+        .detail-value.success { color: #22c55e; }
+
+        .detail-section h4 {
+            color: #f59e0b;
+            margin-bottom: 0.75rem;
         }
-        
-        .detail-value.success {
-            color: #22c55e;
+
+        /* Execution Trace Timeline */
+        .trace-timeline {
+            position: relative;
+            padding-left: 1.5rem;
         }
-        
-        /* Error State */
-        .error-state {
+
+        .trace-timeline::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #334155;
+        }
+
+        .trace-event {
+            position: relative;
+            padding-left: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .trace-event::before {
+            content: '';
+            position: absolute;
+            left: -1.375rem;
+            top: 4px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #3b82f6;
+        }
+
+        .trace-event.error::before { background: #ef4444; }
+        .trace-event.success::before { background: #22c55e; }
+
+        .trace-time {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .trace-detail {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        .trace-duration {
+            font-size: 0.75rem;
+            color: #3b82f6;
+        }
+
+        /* Collapsible Section */
+        .collapsible-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.5rem 0;
+        }
+
+        .collapsible-header:hover { color: #f1f5f9; }
+
+        .collapsible-content {
+            display: none;
+            margin-top: 0.75rem;
+        }
+
+        .collapsible-content.open { display: block; }
+
+        .collapse-icon {
+            transition: transform 0.3s;
+        }
+
+        .collapse-icon.open { transform: rotate(90deg); }
+
+        /* ANALYTICS TAB */
+        .analytics-layout {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: #0d1426;
+            border-radius: 8px;
+            padding: 1.25rem;
+            border: 1px solid #1e293b;
+        }
+
+        .stat-card-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #f1f5f9;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-card-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+
+        .analytics-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .analytics-card {
+            background: #0d1426;
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid #1e293b;
+        }
+
+        .card-title {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        /* Tool Usage Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th, .data-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .data-table th {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .data-table th:hover { color: #94a3b8; }
+
+        .data-table tr:hover { background: #111827; }
+
+        .success-rate {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+        .success-high { background: #22c55e; color: #000; }
+        .success-medium { background: #eab308; color: #000; }
+        .success-low { background: #ef4444; color: #fff; }
+
+        /* Bar Chart */
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            height: 150px;
+            gap: 4px;
+            padding-top: 1rem;
+        }
+
+        .bar {
+            flex: 1;
+            background: #3b82f6;
+            border-radius: 2px 2px 0 0;
+            min-width: 8px;
+            position: relative;
+        }
+
+        .bar:hover { background: #60a5fa; }
+
+        .bar-label {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.625rem;
+            color: #64748b;
+        }
+
+        /* TOOL LOGS TAB */
+        .tool-logs-layout {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        .tool-list-panel {
+            width: 300px;
+            background: #0d1426;
+            border-right: 1px solid #1e293b;
+            overflow-y: auto;
+        }
+
+        .tool-list-item {
+            padding: 1rem;
+            border-bottom: 1px solid #1e293b;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .tool-list-item:hover, .tool-list-item.selected {
+            background: #1e293b;
+        }
+
+        .tool-name {
+            font-size: 0.875rem;
+            color: #f1f5f9;
+            margin-bottom: 0.25rem;
+        }
+
+        .tool-meta {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .log-viewer-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #0a0f1e;
+        }
+
+        .log-header {
+            padding: 1rem;
+            border-bottom: 1px solid #1e293b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .log-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            background: #1e293b;
+            border: none;
+            border-radius: 4px;
+            color: #94a3b8;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .action-btn:hover { background: #334155; color: #f1f5f9; }
+
+        .log-search {
+            padding: 0.5rem;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            color: #f1f5f9;
+            font-family: inherit;
+            width: 250px;
+        }
+
+        .log-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            font-family: 'SF Mono', 'Monaco', monospace;
+            font-size: 0.75rem;
+            line-height: 1.8;
+        }
+
+        .log-line {
+            padding: 0.25rem 0;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .log-line.success { color: #22c55e; }
+        .log-line.failed { color: #ef4444; }
+
+        .log-timestamp {
+            color: #64748b;
+            margin-right: 0.5rem;
+        }
+
+        /* Settings Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .modal-overlay.open { display: flex; }
+
+        .modal {
+            background: #0d1426;
+            border-radius: 8px;
+            padding: 1.5rem;
+            width: 400px;
+            border: 1px solid #1e293b;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1rem;
+            color: #f1f5f9;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .setting-label {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        .setting-input {
+            padding: 0.5rem;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            color: #f1f5f9;
+            font-family: inherit;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: #3b82f6;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-family: inherit;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .save-btn:hover { background: #2563eb; }
+
+        /* Empty State */
+        .empty-state {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -319,343 +770,539 @@
             height: 100%;
             color: #64748b;
         }
-        
-        .error-state h2 {
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
+
+        .empty-state h3 {
             color: #94a3b8;
+            margin-bottom: 0.5rem;
         }
-        
-        .retry-btn {
-            padding: 0.75rem 1.5rem;
-            background: #1e293b;
-            border: none;
-            border-radius: 4px;
-            color: #f1f5f9;
-            cursor: pointer;
-            font-family: inherit;
-        }
-        
-        .retry-btn:hover {
-            background: #334155;
-        }
-        
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #0a0f1e;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: #475569;
-        }
-        
-        /* Loading */
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: #64748b;
-        }
-        
+
+        /* Loading Spinner */
         .spinner {
             width: 24px;
             height: 24px;
             border: 2px solid #1e293b;
-            border-top-color: #475569;
+            border-top-color: #3b82f6;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-        
+
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: #64748b;
+        }
+
+        /* Replay Button */
+        .replay-btn {
+            padding: 0.5rem 1rem;
+            background: #3b82f6;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.75rem;
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+
+        .replay-btn:hover { background: #2563eb; }
+
+        .export-btn {
+            padding: 0.5rem 1rem;
+            background: #1e293b;
+            border: none;
+            border-radius: 4px;
+            color: #94a3b8;
+            font-family: inherit;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        .export-btn:hover { background: #334155; }
     </style>
 </head>
 <body>
-    <!-- Stats Bar -->
-    <div class="stats-bar">
-        <div class="stat">
-            <div class="stat-value" id="stat-sessions">-</div>
-            <div class="stat-label">Sessions Today</div>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="sessions">SESSIONS</button>
+            <button class="nav-tab" data-tab="analytics">ANALYTICS</button>
+            <button class="nav-tab" data-tab="tool-logs">TOOL LOGS</button>
         </div>
-        <div class="stat">
-            <div class="stat-value" id="stat-turns">-</div>
-            <div class="stat-label">Turns Today</div>
+        <div class="nav-right">
+            <span class="last-refresh" id="last-refresh">Last refresh: --:--:--</span>
+            <button class="settings-btn" onclick="openSettings()">⚙️</button>
         </div>
-        <div class="stat">
-            <div class="stat-value" id="stat-failures">-</div>
-            <div class="stat-label">Failures Today</div>
-        </div>
-        <div class="stat">
-            <div class="stat-value" id="stat-avg-time">-</div>
-            <div class="stat-label">Avg Response</div>
-        </div>
-    </div>
-    
+    </nav>
+
     <!-- Main Content -->
-    <div class="main">
-        <!-- Left Panel: Sessions -->
-        <div class="sessions-panel">
-            <div class="panel-header">
-                <div class="panel-title">Sessions</div>
-                <div class="filter-buttons">
-                    <button class="filter-btn active" data-filter="all">ALL</button>
-                    <button class="filter-btn" data-filter="good">GOOD</button>
-                    <button class="filter-btn" data-filter="warn">WARN</button>
-                    <button class="filter-btn" data-filter="bad">FAIL</button>
+    <div class="main-content">
+        <!-- SESSIONS TAB -->
+        <div class="tab-content active" id="sessions-tab">
+            <div class="sessions-layout">
+                <!-- Filters Sidebar -->
+                <aside class="filters-sidebar">
+                    <div class="filter-group">
+                        <div class="filter-label">Search</div>
+                        <input type="text" class="filter-input" id="filter-search" placeholder="Search messages...">
+                    </div>
+
+                    <div class="filter-group">
+                        <div class="filter-label">Date</div>
+                        <select class="filter-input" id="filter-date">
+                            <option value="">Any time</option>
+                            <option value="today">Today</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="this-week">This week</option>
+                            <option value="custom">Custom...</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <div class="filter-label">Quality</div>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="quality" value=""> Any
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="quality" value="good"> Good
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="quality" value="warn"> Warn
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="quality" value="bad"> Fail
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <div class="filter-label">Tool</div>
+                        <select class="filter-input" id="filter-tool">
+                            <option value="">Any tool</option>
+                            <option value="null">No tool selected</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <div class="filter-label">Duration</div>
+                        <select class="filter-input" id="filter-duration">
+                            <option value="">Any</option>
+                            <option value="fast">Fast (&lt;5s)</option>
+                            <option value="normal">Normal (5-15s)</option>
+                            <option value="slow">Slow (&gt;15s)</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <div class="filter-label">Error Type</div>
+                        <select class="filter-input" id="filter-error">
+                            <option value="">Any</option>
+                            <option value="api_error">API Error</option>
+                            <option value="tool_execution">Tool Execution</option>
+                            <option value="llm_call_2">LLM Call 2</option>
+                            <option value="timeout">Timeout</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <div class="filter-label">Second Pass</div>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="secondpass" value=""> Any
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="secondpass" value="true"> Used
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="secondpass" value="false"> Not used
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="reset-btn" onclick="resetFilters()">Reset Filters</button>
+                </aside>
+
+                <!-- Sessions List -->
+                <div class="sessions-list-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">Sessions</div>
+                    </div>
+                    <div class="sessions-list" id="sessions-list">
+                        <div class="loading"><div class="spinner"></div></div>
+                    </div>
                 </div>
-            </div>
-            <div class="search-box">
-                <input type="text" class="search-input" placeholder="Search sessions..." id="search-input">
-            </div>
-            <div class="sessions-list" id="sessions-list">
-                <div class="loading">
-                    <div class="spinner"></div>
+
+                <!-- Session Detail -->
+                <div class="session-detail-panel" id="session-detail">
+                    <div class="empty-state">
+                        <h3>No session selected</h3>
+                        <p>Select a session to view its turns</p>
+                    </div>
+                </div>
+
+                <!-- Turn Detail Slide-in -->
+                <div class="turn-detail" id="turn-detail">
+                    <div class="detail-header">
+                        <div class="panel-title">Turn Details</div>
+                        <button class="close-btn" onclick="closeTurnDetail()">&times;</button>
+                    </div>
+                    <div class="detail-content" id="turn-detail-content"></div>
                 </div>
             </div>
         </div>
-        
-        <!-- Middle Panel: Turns -->
-        <div class="turns-panel">
-            <div class="panel-header" style="border-bottom: 1px solid #1e293b;">
-                <div class="panel-title" id="turns-panel-title">Select a session</div>
-            </div>
-            <div class="turns-list" id="turns-list">
-                <div class="error-state">
-                    <h2>No session selected</h2>
-                    <p>Click on a session to view its turns</p>
+
+        <!-- ANALYTICS TAB -->
+        <div class="tab-content" id="analytics-tab">
+            <div class="analytics-layout">
+                <!-- Stats Row -->
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="stat-total-sessions">-</div>
+                        <div class="stat-card-label">Total Sessions (30d)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="stat-total-turns">-</div>
+                        <div class="stat-card-label">Total Turns (30d)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="stat-failure-rate">-</div>
+                        <div class="stat-card-label">Failure Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="stat-avg-response">-</div>
+                        <div class="stat-card-label">Avg Response Time</div>
+                    </div>
+                </div>
+
+                <!-- Tool Usage Table -->
+                <div class="analytics-card" style="margin-bottom: 1rem;">
+                    <div class="card-title">Tool Usage</div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th data-sort="tool">Tool Name</th>
+                                <th data-sort="count">Uses</th>
+                                <th data-sort="avg_duration">Avg Duration</th>
+                                <th data-sort="success_rate">Success Rate</th>
+                                <th data-sort="last_used">Last Used</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tool-usage-body"></tbody>
+                    </table>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="analytics-row">
+                    <div class="analytics-card">
+                        <div class="card-title">Hourly Volume (24h)</div>
+                        <div class="bar-chart" id="hourly-chart"></div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="card-title">Daily Volume (7d)</div>
+                        <div class="bar-chart" id="daily-chart"></div>
+                    </div>
+                </div>
+
+                <!-- Top Errors -->
+                <div class="analytics-card">
+                    <div class="card-title">Top Errors</div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Error Type</th>
+                                <th>Count</th>
+                                <th>Last Seen</th>
+                                <th>Example</th>
+                            </tr>
+                        </thead>
+                        <tbody id="top-errors-body"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
-        
-        <!-- Right Panel: Turn Detail -->
-        <div class="detail-panel" id="detail-panel">
-            <div class="detail-header">
-                <div class="panel-title">Turn Details</div>
-                <button class="close-btn" onclick="closeDetail()">&times;</button>
-            </div>
-            <div class="detail-content" id="detail-content">
-                <!-- Filled dynamically -->
+
+        <!-- TOOL LOGS TAB -->
+        <div class="tab-content" id="tool-logs-tab">
+            <div class="tool-logs-layout">
+                <!-- Tool List -->
+                <div class="tool-list-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">Tool Logs</div>
+                    </div>
+                    <div id="tool-list-content">
+                        <div class="loading"><div class="spinner"></div></div>
+                    </div>
+                </div>
+
+                <!-- Log Viewer -->
+                <div class="log-viewer-panel">
+                    <div class="log-header">
+                        <div>
+                            <span class="panel-title" id="log-viewer-title">Select a tool log</span>
+                        </div>
+                        <div class="log-actions">
+                            <input type="text" class="log-search" id="log-search" placeholder="Search logs...">
+                            <button class="action-btn" onclick="refreshLog()">↻ Refresh</button>
+                            <button class="action-btn" onclick="downloadLog()">↓ Download</button>
+                        </div>
+                    </div>
+                    <div class="log-content" id="log-content">
+                        <div class="empty-state">
+                            <h3>No log selected</h3>
+                            <p>Select a tool from the list to view its log</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settings-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">STYX Settings</div>
+                <button class="modal-close" onclick="closeSettings()">&times;</button>
+            </div>
+            <div class="setting-row">
+                <span class="setting-label">API URL</span>
+                <input type="text" class="setting-input" id="setting-api-url" value="http://192.168.2.23:8080">
+            </div>
+            <div class="setting-row">
+                <span class="setting-label">Auto-refresh</span>
+                <select class="setting-input" id="setting-auto-refresh">
+                    <option value="on">On</option>
+                    <option value="off">Off</option>
+                </select>
+            </div>
+            <div class="setting-row">
+                <span class="setting-label">Time Format</span>
+                <select class="setting-input" id="setting-time-format">
+                    <option value="12h">12-hour</option>
+                    <option value="24h">24-hour</option>
+                </select>
+            </div>
+            <button class="save-btn" onclick="saveSettings()">Save Settings</button>
+        </div>
+    </div>
+
     <script>
-        const API_BASE = 'http://192.168.2.23:8080/api';
+        // Configuration
+        let CONFIG = {
+            apiUrl: 'http://192.168.2.23:8080',
+            autoRefresh: true,
+            timeFormat: '24h'
+        };
+
+        // Load config from localStorage
+        function loadConfig() {
+            const saved = localStorage.getItem('styx-config');
+            if (saved) {
+                CONFIG = { ...CONFIG, ...JSON.parse(saved) };
+            }
+            document.getElementById('setting-api-url').value = CONFIG.apiUrl;
+            document.getElementById('setting-auto-refresh').value = CONFIG.autoRefresh ? 'on' : 'off';
+            document.getElementById('setting-time-format').value = CONFIG.timeFormat;
+        }
+
+        function saveSettings() {
+            CONFIG.apiUrl = document.getElementById('setting-api-url').value;
+            CONFIG.autoRefresh = document.getElementById('setting-auto-refresh').value === 'on';
+            CONFIG.timeFormat = document.getElementById('setting-time-format').value;
+            localStorage.setItem('styx-config', JSON.stringify(CONFIG));
+            closeSettings();
+            loadSessions();
+        }
+
+        function openSettings() {
+            document.getElementById('settings-modal').classList.add('open');
+        }
+
+        function closeSettings() {
+            document.getElementById('settings-modal').classList.remove('open');
+        }
+
+        // State
         let sessions = [];
         let selectedSession = null;
         let selectedTurn = null;
-        let currentFilter = 'all';
-        let refreshInterval;
-        
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadSessions();
-            setupFilters();
-            setupSearch();
-            // Auto-refresh every 30 seconds
-            refreshInterval = setInterval(loadSessions, 30000);
+        let currentTool = null;
+        let refreshIntervals = {};
+
+        // Tab Navigation
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+
+                // Load data for selected tab
+                if (tab.dataset.tab === 'analytics') loadAnalytics();
+                if (tab.dataset.tab === 'tool-logs') loadToolLogs();
+            });
         });
-        
-        // Setup filter buttons
-        function setupFilters() {
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    currentFilter = btn.dataset.filter;
-                    renderSessions();
-                });
-            });
+
+        // Update last refresh time
+        function updateLastRefresh() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString(CONFIG.timeFormat === '12h' ? 'en-US' : 'en-GB');
+            document.getElementById('last-refresh').textContent = `Last refresh: ${timeStr}`;
         }
-        
-        // Setup search
-        function setupSearch() {
-            document.getElementById('search-input').addEventListener('input', (e) => {
-                renderSessions();
-            });
-        }
-        
-        // Load sessions from API
+
+        // Load Sessions
         async function loadSessions() {
             try {
-                const response = await fetch(`${API_BASE}/conversations?limit=100`);
+                const response = await fetch(`${CONFIG.apiUrl}/api/conversations?limit=100`);
                 const data = await response.json();
-                
-                if (data.error) {
-                    showError(data.error);
-                    return;
-                }
-                
                 sessions = data.sessions || [];
-                updateStats(data);
                 renderSessions();
+                updateLastRefresh();
             } catch (error) {
-                showError('Cannot connect to ARGUS');
+                console.error('Failed to load sessions:', error);
             }
         }
-        
-        // Update stats bar
-        function updateStats(data) {
-            document.getElementById('stat-sessions').textContent = data.sessions?.length || 0;
-            document.getElementById('stat-turns').textContent = data.turns_today ?? '-';
-            document.getElementById('stat-failures').textContent = data.bad_today || 0;
-            document.getElementById('stat-avg-time').textContent = data.avg_response_time ? `${data.avg_response_time}s` : '-';
-        }
-        
-        // Show error state
-        function showError(message) {
-            const list = document.getElementById('sessions-list');
-            list.innerHTML = `
-                <div class="error-state">
-                    <h2>${message}</h2>
-                    <button class="retry-btn" onclick="loadSessions()">Retry</button>
-                </div>
-            `;
-        }
-        
-        // Render sessions list
+
         function renderSessions() {
             const list = document.getElementById('sessions-list');
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            
+            const qualityFilter = document.querySelector('input[name="quality"]:checked')?.value;
+            const dateFilter = document.getElementById('filter-date').value;
+            const searchFilter = document.getElementById('filter-search').value.toLowerCase();
+
             let filtered = sessions;
-            
-            // Apply quality filter
-            if (currentFilter !== 'all') {
-                filtered = filtered.filter(s => {
-                    if (currentFilter === 'good') return s.quality_score === 'good';
-                    if (currentFilter === 'warn') return s.quality_score === 'warn';
-                    if (currentFilter === 'bad') return s.quality_score === 'bad';
-                    return true;
-                });
+
+            if (qualityFilter) {
+                filtered = filtered.filter(s => s.quality_score === qualityFilter);
             }
-            
-            // Apply search filter
-            if (searchTerm) {
+
+            if (dateFilter === 'today') {
+                const today = new Date().toISOString().split('T')[0];
+                filtered = filtered.filter(s => s.started_at.startsWith(today));
+            }
+
+            if (searchFilter) {
                 filtered = filtered.filter(s => 
-                    s.chat_id?.toLowerCase().includes(searchTerm) ||
-                    s.session_id?.toLowerCase().includes(searchTerm)
+                    s.chat_id.toLowerCase().includes(searchFilter) ||
+                    s.session_id.toLowerCase().includes(searchFilter)
                 );
             }
-            
+
             if (filtered.length === 0) {
-                list.innerHTML = '<div class="error-state"><p>No sessions found</p></div>';
+                list.innerHTML = '<div class="empty-state"><h3>No sessions</h3><p>Try adjusting filters</p></div>';
                 return;
             }
-            
+
             list.innerHTML = filtered.map(session => {
                 const qualityClass = session.quality_score === 'good' ? 'quality-good' :
                                     session.quality_score === 'warn' ? 'quality-warn' : 'quality-bad';
                 const time = new Date(session.started_at).toLocaleString();
                 const isSelected = selectedSession?.session_id === session.session_id;
-                
+
                 return `
-                    <div class="session-item ${isSelected ? 'selected' : ''}" 
-                         onclick="selectSession('${session.session_id}')">
-                        <div class="session-time">${time}</div>
-                        <div class="session-info">
-                            <div class="quality-dot ${qualityClass}"></div>
-                            <div class="session-turns">${session.turn_count || 0} turns</div>
+                    <div class="session-card ${isSelected ? 'selected' : ''}" onclick="selectSession('${session.session_id}')">
+                        <div class="session-header">
+                            <span class="session-time">${time}</span>
+                            <div class="session-quality">
+                                <div class="quality-dot ${qualityClass}"></div>
+                            </div>
                         </div>
+                        <div class="session-turns">${session.turn_count || 0} turns</div>
                     </div>
                 `;
             }).join('');
         }
-        
-        // Select session and load turns
+
+        // Select Session
         async function selectSession(sessionId) {
             selectedSession = sessions.find(s => s.session_id === sessionId);
             selectedTurn = null;
             renderSessions();
-            
-            const turnsList = document.getElementById('turns-list');
-            const title = document.getElementById('turns-panel-title');
-            
-            title.textContent = `Session ${sessionId.slice(-8)}`;
-            turnsList.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-            
+
+            const detail = document.getElementById('session-detail');
+            detail.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
             try {
-                const response = await fetch(`${API_BASE}/conversations/${sessionId}`);
+                const response = await fetch(`${CONFIG.apiUrl}/api/conversations/${sessionId}`);
                 const data = await response.json();
-                
+
                 if (data.error) {
-                    turnsList.innerHTML = `<div class="error-state"><p>${data.error}</p></div>`;
+                    detail.innerHTML = `<div class="empty-state"><h3>${data.error}</h3></div>`;
                     return;
                 }
-                
+
                 renderTurns(data.turns || []);
             } catch (error) {
-                turnsList.innerHTML = '<div class="error-state"><p>Failed to load turns</p></div>';
+                detail.innerHTML = '<div class="empty-state"><h3>Failed to load turns</h3></div>';
             }
         }
-        
-        // Render turns list
+
         function renderTurns(turns) {
-            const list = document.getElementById('turns-list');
-            
+            const detail = document.getElementById('session-detail');
+
             if (turns.length === 0) {
-                list.innerHTML = '<div class="error-state"><p>No turns in this session</p></div>';
+                detail.innerHTML = '<div class="empty-state"><h3>No turns</h3></div>';
                 return;
             }
-            
-            list.innerHTML = turns.map((turn, index) => {
-                const qualityClass = turn.quality === 'good' ? 'quality-good' :
-                                    turn.quality === 'warn' ? 'quality-warn' : 'quality-bad';
-                const time = new Date(turn.timestamp).toLocaleTimeString();
-                const isSelected = selectedTurn?.id === turn.id;
-                
-                return `
-                    <div class="turn-item ${isSelected ? 'selected' : ''}" 
-                         onclick="selectTurn(${turn.id})">
+
+            let html = `
+                <div class="panel-header" style="border-bottom: 1px solid #1e293b; display: flex; justify-content: space-between;">
+                    <div class="panel-title">${turns.length} Turns</div>
+                    <div>
+                        <button class="replay-btn" onclick="replaySession()">▶ Replay</button>
+                        <button class="export-btn" onclick="exportSession()">↓ Export</button>
+                    </div>
+                </div>
+                <div class="turns-list">
+            `;
+
+            turns.forEach((turn, index) => {
+                const qualityClass = turn.quality === 'good' ? 'turn-good' :
+                                    turn.quality === 'warn' ? 'turn-warn' : 'turn-bad';
+                const toolName = turn.tool_selected || 'No tool';
+
+                html += `
+                    <div class="turn-item" onclick="selectTurn(${turn.id || index})">
                         <div class="turn-header">
-                            <span class="turn-number">#${turn.turn_number}</span>
-                            <span class="tool-badge">${turn.tool_selected || 'No tool'}</span>
-                            <span class="turn-duration">${turn.duration_seconds?.toFixed(1) || '-'}s</span>
-                            <div class="quality-dot ${qualityClass}"></div>
+                            <div class="turn-number ${qualityClass}">${index + 1}</div>
+                            <span class="turn-tool-badge">${toolName}</span>
+                            <span class="turn-duration">${(turn.duration_seconds || 0).toFixed(1)}s</span>
                         </div>
                         <div class="turn-message">${escapeHtml(turn.user_message || 'No message')}</div>
-                        ${turn.error ? `<div class="turn-error">${escapeHtml(turn.error)}</div>` : ''}
+                        ${turn.error ? `<div style="color: #ef4444; font-size: 0.75rem; margin-top: 0.5rem;">${escapeHtml(turn.error)}</div>` : ''}
                     </div>
                 `;
-            }).join('');
+            });
+
+            html += '</div>';
+            detail.innerHTML = html;
         }
-        
-        // Select turn and show detail
+
+        // Select Turn
         function selectTurn(turnId) {
             const session = selectedSession;
             if (!session) return;
-            
-            // Find turn in rendered list (we'd need to fetch full session data)
-            // For now, just show the panel
-            selectedTurn = { id: turnId };
-            renderTurns([]); // Re-render to show selection
-            
-            // Fetch full session data for detail
-            fetch(`${API_BASE}/conversations/${session.session_id}`)
+
+            fetch(`${CONFIG.apiUrl}/api/conversations/${session.session_id}`)
                 .then(r => r.json())
                 .then(data => {
-                    const turn = data.turns?.find(t => t.id === turnId);
+                    const turn = data.turns?.find(t => t.id === turnId || data.turns.indexOf(t) === turnId);
                     if (turn) {
                         showTurnDetail(turn);
                     }
                 });
         }
-        
-        // Show turn detail panel
+
         function showTurnDetail(turn) {
-            const panel = document.getElementById('detail-panel');
-            const content = document.getElementById('detail-content');
+            const panel = document.getElementById('turn-detail');
+            const content = document.getElementById('turn-detail-content');
 
             content.innerHTML = `
                 <div class="detail-section">
@@ -664,7 +1311,7 @@
                 </div>
                 <div class="detail-section">
                     <div class="detail-label">Tool Selected</div>
-                    <div class="detail-value">${turn.tool_selected || 'None'}</div>
+                    <div class="detail-value">${turn.tool_selected || '<span style="color: #ef4444;">None</span>'}</div>
                 </div>
                 <div class="detail-section">
                     <div class="detail-label">Tool Params</div>
@@ -673,7 +1320,7 @@
                 <div class="detail-section">
                     <div class="detail-label">Tool Result</div>
                     <div class="detail-value ${turn.tool_result_success ? 'success' : 'error'}">
-                        ${turn.tool_result_success ? '✅ Success' : '❌ Failed'}
+                        ${turn.tool_result_success ? '✓ Success' : '✗ Failed'}
                     </div>
                 </div>
                 <div class="detail-section">
@@ -686,7 +1333,7 @@
                 </div>
                 <div class="detail-section">
                     <div class="detail-label">Duration</div>
-                    <div class="detail-value">${turn.duration_seconds?.toFixed(2) || '-'}s</div>
+                    <div class="detail-value">${(turn.duration_seconds || 0).toFixed(2)}s</div>
                 </div>
                 ${turn.used_second_pass ? `
                 <div class="detail-section">
@@ -700,48 +1347,247 @@
                     <div class="detail-value error">${escapeHtml(turn.error)}</div>
                 </div>
                 ` : ''}
+                ${turn.failure_stage ? `
                 <div class="detail-section">
-                    <div class="detail-label">Quality</div>
-                    <div class="detail-value">
-                        <span class="quality-dot ${turn.quality === 'good' ? 'quality-good' : turn.quality === 'warn' ? 'quality-warn' : 'quality-bad'}"></span>
-                        ${turn.quality || 'N/A'}
+                    <div class="detail-label" style="color: #ef4444;">Failure Stage</div>
+                    <div class="detail-value error">${turn.failure_stage}</div>
+                </div>
+                ` : ''}
+                ${turn.llm_error_code ? `
+                <div class="detail-section">
+                    <div class="detail-label" style="color: #f59e0b;">LLM Error Code</div>
+                    <div class="detail-value" style="color: #f59e0b;">${escapeHtml(turn.llm_error_code)}</div>
+                </div>
+                ` : ''}
+                <div class="detail-section">
+                    <div class="collapsible-header" onclick="toggleCollapse(this)">
+                        <div class="detail-label" style="margin: 0;">LLM Raw Response</div>
+                        <span class="collapse-icon">▶</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="detail-value"><pre>${escapeHtml(turn.llm_raw_response || 'N/A')}</pre></div>
                     </div>
                 </div>
-                <hr style="border-color: #1e293b; margin: 1.5rem 0;">
                 <div class="detail-section">
-                    <div class="detail-label" style="color: #f59e0b;">Failure Diagnostics</div>
-                </div>
-                <div class="detail-section">
-                    <div class="detail-label">LLM Raw Response (first 300 chars)</div>
-                    <div class="detail-value"><pre>${escapeHtml(turn.llm_raw_response || 'N/A')}</pre></div>
-                </div>
-                <div class="detail-section">
-                    <div class="detail-label">Failure Stage</div>
-                    <div class="detail-value ${turn.failure_stage ? 'error' : ''}">${turn.failure_stage || 'None'}</div>
-                </div>
-                <div class="detail-section">
-                    <div class="detail-label">LLM Error Code</div>
-                    <div class="detail-value ${turn.llm_error_code ? 'error' : ''}">${escapeHtml(turn.llm_error_code || 'None')}</div>
+                    <div class="collapsible-header" onclick="toggleCollapse(this)">
+                        <div class="detail-label" style="margin: 0;">Execution Trace</div>
+                        <span class="collapse-icon">▶</span>
+                    </div>
+                    <div class="collapsible-content">
+                        ${renderExecutionTrace(turn.execution_trace)}
+                    </div>
                 </div>
             `;
 
             panel.classList.add('open');
         }
-        
-        // Close detail panel
-        function closeDetail() {
-            document.getElementById('detail-panel').classList.remove('open');
+
+        function renderExecutionTrace(traceJson) {
+            if (!traceJson) return '<div class="detail-value">No trace available</div>';
+
+            try {
+                const trace = typeof traceJson === 'string' ? JSON.parse(traceJson) : traceJson;
+                if (!Array.isArray(trace) || trace.length === 0) {
+                    return '<div class="detail-value">No trace events</div>';
+                }
+
+                let html = '<div class="trace-timeline">';
+                trace.forEach(event => {
+                    const eventClass = event.event.includes('error') ? 'error' : 
+                                      event.event.includes('result') ? 'success' : '';
+                    html += `
+                        <div class="trace-event ${eventClass}">
+                            <div class="trace-time">${event.timestamp} (${event.event})</div>
+                            <div class="trace-detail">${escapeHtml(event.detail)}</div>
+                            ${event.duration_ms !== undefined ? `<div class="trace-duration">${event.duration_ms}ms</div>` : ''}
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                return html;
+            } catch (e) {
+                return `<div class="detail-value error">Failed to parse trace: ${e.message}</div>`;
+            }
         }
-        
-        // Utility: Escape HTML
+
+        function closeTurnDetail() {
+            document.getElementById('turn-detail').classList.remove('open');
+        }
+
+        function toggleCollapse(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.collapse-icon');
+            content.classList.toggle('open');
+            icon.classList.toggle('open');
+        }
+
+        // Analytics
+        async function loadAnalytics() {
+            try {
+                const response = await fetch(`${CONFIG.apiUrl}/api/conversations/stats`);
+                const data = await response.json();
+
+                document.getElementById('stat-total-sessions').textContent = data.total_sessions || 0;
+                document.getElementById('stat-total-turns').textContent = data.total_turns || 0;
+                document.getElementById('stat-failure-rate').textContent = `${data.failure_rate || 0}%`;
+                document.getElementById('stat-avg-response').textContent = `${data.avg_response_time || 0}s`;
+
+                // Tool usage table
+                const toolBody = document.getElementById('tool-usage-body');
+                if (data.tool_usage) {
+                    toolBody.innerHTML = data.tool_usage.map(t => {
+                        const successClass = t.success_rate >= 0.9 ? 'success-high' :
+                                            t.success_rate >= 0.7 ? 'success-medium' : 'success-low';
+                        return `
+                            <tr>
+                                <td>${t.tool || 'Unknown'}</td>
+                                <td>${t.count}</td>
+                                <td>${(t.avg_duration || 0).toFixed(1)}s</td>
+                                <td><span class="success-rate ${successClass}">${(t.success_rate * 100).toFixed(0)}%</span></td>
+                                <td>${new Date(t.last_used).toLocaleDateString()}</td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+
+                // Hourly chart
+                renderBarChart('hourly-chart', data.hourly_volume || [], 24);
+
+                // Daily chart
+                renderBarChart('daily-chart', data.daily_volume || [], 7);
+
+                // Top errors
+                const errorsBody = document.getElementById('top-errors-body');
+                if (data.top_errors) {
+                    errorsBody.innerHTML = data.top_errors.map(e => `
+                        <tr>
+                            <td>${e.error}</td>
+                            <td>${e.count}</td>
+                            <td>${new Date(e.last_seen).toLocaleDateString()}</td>
+                            <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(e.example || '-')}</td>
+                        </tr>
+                    `).join('');
+                }
+
+                updateLastRefresh();
+            } catch (error) {
+                console.error('Failed to load analytics:', error);
+            }
+        }
+
+        function renderBarChart(containerId, data, maxBars) {
+            const container = document.getElementById(containerId);
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No data</p></div>';
+                return;
+            }
+
+            const maxValue = Math.max(...data.map(d => d.count), 1);
+            
+            container.innerHTML = data.slice(0, maxBars).map(d => {
+                const height = (d.count / maxValue) * 100;
+                return `
+                    <div class="bar" style="height: ${height}%">
+                        <span class="bar-label">${d.hour !== undefined ? d.hour : d.date?.slice(5) || ''}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Tool Logs
+        async function loadToolLogs() {
+            try {
+                const response = await fetch(`${CONFIG.apiUrl}/api/tools/logs`);
+                const data = await response.json();
+
+                const listContent = document.getElementById('tool-list-content');
+                if (data.logs && data.logs.length > 0) {
+                    listContent.innerHTML = data.logs.map(log => `
+                        <div class="tool-list-item" onclick="selectToolLog('${log.tool_name}')">
+                            <div class="tool-name">${log.tool_name}</div>
+                            <div class="tool-meta">${log.size_human} • ${new Date(log.modified).toLocaleString()}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    listContent.innerHTML = '<div class="empty-state"><h3>No logs</h3><p>Tool logs will appear here</p></div>';
+                }
+            } catch (error) {
+                console.error('Failed to load tool logs:', error);
+            }
+        }
+
+        async function selectToolLog(toolName) {
+            currentTool = toolName;
+            document.getElementById('log-viewer-title').textContent = toolName;
+
+            // Highlight selected
+            document.querySelectorAll('.tool-list-item').forEach(item => {
+                item.classList.toggle('selected', item.textContent.includes(toolName));
+            });
+
+            await refreshLog();
+        }
+
+        async function refreshLog() {
+            if (!currentTool) return;
+
+            try {
+                const response = await fetch(`${CONFIG.apiUrl}/api/tools/logs/${currentTool}?lines=100`);
+                const data = await response.json();
+
+                const content = document.getElementById('log-content');
+                if (data.lines && data.lines.length > 0) {
+                    content.innerHTML = data.lines.map(line => {
+                        const isFailed = line.includes('FAILED');
+                        const isSuccess = line.includes('SUCCESS');
+                        const lineClass = isFailed ? 'failed' : isSuccess ? 'success' : '';
+                        return `<div class="log-line ${lineClass}">${escapeHtml(line)}</div>`;
+                    }).join('');
+                } else {
+                    content.innerHTML = '<div class="empty-state"><h3>Empty log</h3></div>';
+                }
+            } catch (error) {
+                console.error('Failed to load log:', error);
+            }
+        }
+
+        function downloadLog() {
+            if (!currentTool) return;
+            // Implementation for downloading log file
+            alert('Download functionality - would download ' + currentTool + '.log');
+        }
+
+        // Filter handlers
+        function resetFilters() {
+            document.getElementById('filter-search').value = '';
+            document.getElementById('filter-date').value = '';
+            document.getElementById('filter-tool').value = '';
+            document.getElementById('filter-duration').value = '';
+            document.getElementById('filter-error').value = '';
+            document.querySelectorAll('input[name="quality"]').forEach(r => r.checked = false);
+            document.querySelectorAll('input[name="secondpass"]').forEach(r => r.checked = false);
+            renderSessions();
+        }
+
+        // Export session
+        function exportSession() {
+            if (!selectedSession) return;
+            alert('Export functionality - would download session as text file');
+        }
+
+        // Replay session
+        function replaySession() {
+            alert('Replay functionality - would show chat-like replay');
+        }
+
+        // Utility functions
         function escapeHtml(text) {
             if (!text) return '';
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
-        
-        // Utility: Format JSON
+
         function formatJson(text) {
             if (!text) return '{}';
             try {
@@ -750,6 +1596,37 @@
                 return text;
             }
         }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadConfig();
+            loadSessions();
+
+            // Auto-refresh
+            refreshIntervals.sessions = setInterval(loadSessions, 30000);
+            refreshIntervals.analytics = setInterval(() => {
+                if (document.getElementById('analytics-tab').classList.contains('active')) {
+                    loadAnalytics();
+                }
+            }, 60000);
+            refreshIntervals.logs = setInterval(() => {
+                if (document.getElementById('tool-logs-tab').classList.contains('active') && currentTool) {
+                    refreshLog();
+                }
+            }, 10000);
+
+            // Filter event listeners
+            document.getElementById('filter-search').addEventListener('input', renderSessions);
+            document.getElementById('filter-date').addEventListener('change', renderSessions);
+            document.querySelectorAll('input[name="quality"]').forEach(r => {
+                r.addEventListener('change', renderSessions);
+            });
+        });
+
+        // Cleanup on unload
+        window.addEventListener('beforeunload', () => {
+            Object.values(refreshIntervals).forEach(id => clearInterval(id));
+        });
     </script>
 </body>
 </html>
