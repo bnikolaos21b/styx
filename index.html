@@ -3,25 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STYX v3 — Conversation Analytics</title>
+    <title>STYX v4 — Conversation Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* Custom Scrollbars - Dark themed */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.03);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(148,163,184,0.2);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(148,163,184,0.4);
+        }
+
         body {
-            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', monospace;
             background: #0a0f1e;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
             color: #f1f5f9;
             height: 100vh;
             overflow: hidden;
         }
 
-        /* Top Navigation */
+        /* Top Navigation - Enhanced */
         .top-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0.75rem 1.5rem;
-            background: #0d1426;
-            border-bottom: 1px solid #1e293b;
+            background: linear-gradient(180deg, #0d1426 0%, #0a0f1e 100%);
+            border-bottom: 1px solid rgba(148,163,184,0.08);
+            box-shadow: 0 0 0 1px rgba(148,163,184,0.06), 0 4px 24px rgba(0,0,0,0.4);
+            position: relative;
+        }
+        
+        .top-nav::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, #3b82f6 50%, transparent 100%);
+            opacity: 0.5;
+        }
+
+        .nav-brand {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-brand-title {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 8px;
+            color: #f1f5f9;
+            text-transform: uppercase;
+        }
+
+        .nav-brand-subtitle {
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-top: 2px;
         }
 
         .nav-tabs {
@@ -31,18 +85,28 @@
 
         .nav-tab {
             padding: 0.5rem 1.25rem;
-            background: #1e293b;
-            border: none;
-            border-radius: 4px;
+            background: rgba(30,41,59,0.5);
+            border: 1px solid rgba(148,163,184,0.1);
+            border-radius: 6px;
             color: #94a3b8;
             font-family: inherit;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
         }
 
-        .nav-tab:hover { background: #334155; color: #f1f5f9; }
-        .nav-tab.active { background: #3b82f6; color: #fff; }
+        .nav-tab:hover { 
+            background: rgba(51,65,85,0.5); 
+            color: #f1f5f9;
+            border-color: rgba(148,163,184,0.2);
+        }
+        
+        .nav-tab.active { 
+            background: rgba(59,130,246,0.2); 
+            color: #60a5fa;
+            border-color: rgba(59,130,246,0.3);
+        }
 
         .nav-right {
             display: flex;
@@ -51,7 +115,7 @@
         }
 
         .last-refresh {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #64748b;
         }
 
@@ -61,13 +125,14 @@
             color: #94a3b8;
             font-size: 1.25rem;
             cursor: pointer;
+            transition: color 0.2s;
         }
 
         .settings-btn:hover { color: #f1f5f9; }
 
         /* Main Content */
         .main-content {
-            height: calc(100vh - 56px);
+            height: calc(100vh - 72px);
             overflow: hidden;
         }
 
@@ -78,62 +143,80 @@
 
         .tab-content.active { display: flex; }
 
-        /* SESSIONS TAB LAYOUT - NEW 3-PANEL DESIGN */
+        /* SESSIONS TAB LAYOUT */
         .sessions-layout {
             display: flex;
             width: 100%;
             height: 100%;
         }
 
-        /* LEFT PANEL (220px) - Filters only */
+        /* LEFT PANEL (280px) - Filters - ENHANCED */
         .filters-sidebar {
-            width: 220px;
-            background: #0d1426;
-            border-right: 1px solid #1e293b;
-            padding: 1rem;
+            width: 280px;
+            background: linear-gradient(180deg, #0d1426 0%, #0a0f1e 100%);
+            border-right: 1px solid rgba(148,163,184,0.08);
+            padding: 1.25rem;
             overflow-y: auto;
             flex-shrink: 0;
         }
 
         .filter-group {
             margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(148,163,184,0.06);
+        }
+
+        .filter-group:last-of-type {
+            border-bottom: none;
         }
 
         .filter-label {
-            font-size: 0.7rem;
+            font-size: 0.6875rem;
             color: #64748b;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.5rem;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.625rem;
             font-weight: 600;
         }
 
         .filter-input {
             width: 100%;
-            padding: 0.5rem;
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 4px;
+            padding: 0.625rem 0.75rem;
+            background: rgba(30,41,59,0.5);
+            border: 1px solid rgba(148,163,184,0.1);
+            border-radius: 6px;
             color: #f1f5f9;
             font-family: inherit;
-            font-size: 0.8rem;
+            font-size: 0.8125rem;
+            transition: all 0.2s;
         }
 
-        .filter-input:focus { outline: none; border-color: #475569; }
+        .filter-input:focus { 
+            outline: none; 
+            border-color: rgba(59,130,246,0.4);
+            background: rgba(30,41,59,0.8);
+        }
 
         .radio-group {
             display: flex;
             flex-direction: column;
-            gap: 0.375rem;
+            gap: 0.5rem;
         }
 
         .radio-label {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 0.8rem;
+            gap: 0.625rem;
+            font-size: 0.8125rem;
             color: #94a3b8;
             cursor: pointer;
+            padding: 0.375rem 0.5rem;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .radio-label:hover {
+            background: rgba(59,130,246,0.1);
         }
 
         .radio-label input[type="radio"] {
@@ -142,18 +225,23 @@
 
         .reset-btn {
             width: 100%;
-            padding: 0.5rem;
-            background: #ef4444;
-            border: none;
-            border-radius: 4px;
-            color: #fff;
+            padding: 0.625rem;
+            background: rgba(239,68,68,0.15);
+            border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 6px;
+            color: #fca5a5;
             font-family: inherit;
             cursor: pointer;
-            margin-top: 1rem;
+            margin-top: 0.5rem;
             font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s;
         }
 
-        .reset-btn:hover { background: #dc2626; }
+        .reset-btn:hover { 
+            background: rgba(239,68,68,0.25);
+            border-color: rgba(239,68,68,0.5);
+        }
 
         /* CENTER PANEL (flex) - Sessions TOP, Turns BOTTOM */
         .center-panel {
@@ -161,7 +249,7 @@
             display: flex;
             flex-direction: column;
             min-width: 0;
-            border-right: 1px solid #1e293b;
+            border-right: 1px solid rgba(148,163,184,0.08);
         }
 
         /* TOP HALF - Sessions List */
@@ -170,23 +258,23 @@
             display: flex;
             flex-direction: column;
             min-height: 0;
-            border-bottom: 1px solid #1e293b;
+            border-bottom: 1px solid rgba(148,163,184,0.08);
         }
 
         .panel-header {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid #1e293b;
-            background: #0d1426;
+            padding: 0.875rem 1rem;
+            border-bottom: 1px solid rgba(148,163,184,0.08);
+            background: rgba(13,20,38,0.8);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .panel-title {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #94a3b8;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.08em;
             font-weight: 600;
         }
 
@@ -197,23 +285,54 @@
         }
 
         .session-card {
-            padding: 0.75rem;
-            background: #0d1426;
-            border-radius: 6px;
+            padding: 0.875rem;
+            background: rgba(13,20,38,0.6);
+            border-radius: 8px;
             margin-bottom: 0.5rem;
             cursor: pointer;
-            border: 1px solid #1e293b;
+            border: 1px solid rgba(148,163,184,0.08);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .session-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: transparent;
             transition: all 0.2s;
         }
 
-        .session-card:hover, .session-card.selected {
-            border-color: #475569;
-            background: #111827;
+        .session-card:hover {
+            border-color: rgba(148,163,184,0.2);
+            background: rgba(17,24,39,0.8);
+        }
+
+        .session-card:hover::before {
+            background: rgba(148,163,184,0.3);
+        }
+
+        .session-card.selected {
+            border-color: rgba(59,130,246,0.4);
+            background: rgba(30,41,59,0.6);
+        }
+
+        .session-card.selected::before {
+            background: #3b82f6;
+            box-shadow: 0 0 12px rgba(59,130,246,0.4);
         }
 
         .session-card.has-filter-match {
-            border-color: #3b82f6;
-            background: #1e3a5f;
+            border-color: rgba(59,130,246,0.3);
+            background: rgba(30,58,95,0.4);
+        }
+
+        .session-card.has-filter-match::before {
+            background: #3b82f6;
         }
 
         .session-header {
@@ -239,31 +358,37 @@
             height: 8px;
             border-radius: 50%;
         }
-        .quality-good { background: #22c55e; }
-        .quality-warn { background: #eab308; }
-        .quality-bad { background: #ef4444; }
+        .quality-good { background: #22c55e; box-shadow: 0 0 8px rgba(34,197,94,0.4); }
+        .quality-warn { background: #eab308; box-shadow: 0 0 8px rgba(234,179,8,0.4); }
+        .quality-bad { background: #ef4444; box-shadow: 0 0 8px rgba(239,68,68,0.4); }
 
         .session-turns {
             font-size: 0.7rem;
             color: #94a3b8;
-            margin-bottom: 0.375rem;
+            margin-bottom: 0.5rem;
         }
 
         .session-tools {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.25rem;
+            gap: 0.375rem;
         }
 
         .tool-badge {
-            padding: 0.125rem 0.375rem;
-            background: #1e293b;
-            border-radius: 3px;
+            padding: 0.1875rem 0.5rem;
+            border-radius: 12px;
             font-size: 0.625rem;
-            color: #94a3b8;
+            font-weight: 500;
         }
+        
+        /* Tool badge colors by category */
+        .tool-badge.network { background: rgba(59,130,246,0.2); color: #93c5fd; }
+        .tool-badge.presence { background: rgba(34,197,94,0.2); color: #86efac; }
+        .tool-badge.security { background: rgba(245,158,11,0.2); color: #fcd34d; }
+        .tool-badge.system { background: rgba(139,92,246,0.2); color: #c4b5fd; }
+        .tool-badge.default { background: rgba(148,163,184,0.2); color: #cbd5e1; }
 
-        /* BOTTOM HALF - Turns List */
+        /* BOTTOM HALF - Turns List (CHAT REPLAY VIEW) */
         .turns-list-container {
             flex: 1;
             display: flex;
@@ -274,90 +399,174 @@
         .turns-list {
             flex: 1;
             overflow-y: auto;
-            padding: 0.75rem;
+            padding: 1rem;
+            background: rgba(10,15,30,0.5);
         }
 
-        .turn-item {
-            padding: 0.75rem;
-            background: #0d1426;
-            border-radius: 6px;
-            margin-bottom: 0.5rem;
-            cursor: pointer;
-            border: 1px solid #1e293b;
-            transition: all 0.2s;
-        }
-
-        .turn-item:hover, .turn-item.selected {
-            border-color: #475569;
-            background: #111827;
-        }
-
-        .turn-item.has-filter-match {
-            border-color: #22c55e;
-            background: #14532d;
-        }
-
-        .turn-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .turn-number {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
+        /* Chat bubble divider */
+        .turn-divider {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.7rem;
-            font-weight: bold;
-        }
-        .turn-good { background: #22c55e; color: #000; }
-        .turn-warn { background: #eab308; color: #000; }
-        .turn-bad { background: #ef4444; color: #fff; }
-
-        .turn-tool-badge {
-            padding: 0.2rem 0.4rem;
-            background: #1e293b;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            color: #94a3b8;
+            margin: 1rem 0;
+            position: relative;
         }
 
-        .turn-duration {
-            margin-left: auto;
-            font-size: 0.7rem;
+        .turn-divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(148,163,184,0.15), transparent);
+        }
+
+        .turn-divider-number {
+            background: rgba(13,20,38,0.9);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.6875rem;
+            color: #64748b;
+            border: 1px solid rgba(148,163,184,0.1);
+            z-index: 1;
+        }
+
+        /* USER BUBBLE (right aligned) */
+        .chat-bubble-user {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+            animation: slideInRight 0.3s ease;
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .chat-bubble-user-content {
+            max-width: 70%;
+            background: rgba(148,163,184,0.12);
+            border-radius: 16px 4px 16px 16px;
+            padding: 0.875rem 1rem;
+            position: relative;
+        }
+
+        .chat-bubble-user-message {
+            font-size: 0.875rem;
+            color: #e2e8f0;
+            line-height: 1.5;
+        }
+
+        .chat-bubble-user-time {
+            font-size: 0.625rem;
+            color: #64748b;
+            margin-top: 0.375rem;
+            text-align: right;
+        }
+
+        /* ARGUS BUBBLE (left aligned) */
+        .chat-bubble-argus {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 1rem;
+            animation: slideInLeft 0.3s ease;
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .chat-bubble-argus-content {
+            max-width: 75%;
+            background: rgba(30,58,95,0.4);
+            border-radius: 4px 16px 16px 16px;
+            padding: 0.875rem 1rem;
+            position: relative;
+            border-left: 2px solid #3b82f6;
+        }
+
+        .chat-bubble-argus-label {
+            font-size: 0.625rem;
+            color: #60a5fa;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.375rem;
+            font-weight: 600;
+        }
+
+        .chat-bubble-tool-badge {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            background: rgba(59,130,246,0.2);
+            border-radius: 8px;
+            font-size: 0.625rem;
+            color: #93c5fd;
+            margin-bottom: 0.5rem;
+        }
+
+        .chat-bubble-argus-response {
+            font-size: 0.8125rem;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+
+        .chat-bubble-argus-response.truncated {
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .chat-bubble-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(148,163,184,0.1);
+        }
+
+        .chat-bubble-duration {
+            font-size: 0.625rem;
             color: #64748b;
         }
 
-        .turn-message {
-            font-style: italic;
-            color: #94a3b8;
-            font-size: 0.8rem;
-            line-height: 1.4;
+        .chat-bubble-quality {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.625rem;
+            margin-left: auto;
+        }
+
+        .chat-bubble-quality-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
         }
 
         /* RIGHT PANEL (500px) - Turn Detail */
         .turn-detail-panel {
             width: 500px;
-            background: #0d1426;
-            border-left: 1px solid #1e293b;
+            background: linear-gradient(180deg, #0d1426 0%, #0a0f1e 100%);
+            border-left: 1px solid rgba(148,163,184,0.08);
             overflow-y: auto;
             flex-shrink: 0;
         }
 
         .detail-header {
             padding: 1rem;
-            border-bottom: 1px solid #1e293b;
+            border-bottom: 1px solid rgba(148,163,184,0.08);
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
-            background: #0d1426;
+            background: linear-gradient(180deg, #0d1426 0%, rgba(13,20,38,0.9) 100%);
             z-index: 10;
+            backdrop-filter: blur(8px);
         }
 
         .close-btn {
@@ -366,31 +575,39 @@
             color: #94a3b8;
             font-size: 1.5rem;
             cursor: pointer;
+            transition: color 0.2s;
         }
 
         .close-btn:hover { color: #f1f5f9; }
 
-        .detail-content { padding: 1rem; }
+        .detail-content { padding: 1.25rem; }
 
         .detail-section {
-            margin-bottom: 1.25rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #1e293b;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid rgba(148,163,184,0.08);
         }
 
         .detail-section:last-child { border-bottom: none; }
 
         .detail-section.collapsible {
-            border-bottom: 1px solid #1e293b;
+            border-bottom: 1px solid rgba(148,163,184,0.08);
         }
 
         .detail-label {
-            font-size: 0.7rem;
+            font-size: 0.6875rem;
             color: #64748b;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.5rem;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.625rem;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-label-icon {
+            font-size: 0.875rem;
         }
 
         .detail-value {
@@ -404,9 +621,9 @@
             font-size: 1rem;
             font-style: italic;
             color: #e2e8f0;
-            padding: 0.75rem;
-            background: #1e293b;
-            border-radius: 6px;
+            padding: 1rem;
+            background: rgba(30,41,59,0.5);
+            border-radius: 8px;
             border-left: 3px solid #3b82f6;
         }
 
@@ -414,13 +631,13 @@
         .side-by-side {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
+            gap: 1rem;
         }
 
         .detail-value pre {
-            background: #1e293b;
-            padding: 0.75rem;
-            border-radius: 4px;
+            background: rgba(30,41,59,0.5);
+            padding: 0.875rem;
+            border-radius: 6px;
             overflow-x: auto;
             font-size: 0.7rem;
             color: #94a3b8;
@@ -428,16 +645,17 @@
             word-break: break-word;
             max-height: 200px;
             overflow-y: auto;
+            border: 1px solid rgba(148,163,184,0.08);
         }
 
-        .detail-value.error { color: #ef4444; }
-        .detail-value.success { color: #22c55e; }
+        .detail-value.error { color: #fca5a5; }
+        .detail-value.success { color: #86efac; }
 
         /* Execution Trace - Most Prominent */
         .trace-container {
-            background: #0a0f1e;
-            border: 1px solid #334155;
-            border-radius: 6px;
+            background: rgba(10,15,30,0.6);
+            border: 1px solid rgba(148,163,184,0.1);
+            border-radius: 8px;
             padding: 1rem;
             min-height: 200px;
         }
@@ -449,12 +667,7 @@
             padding: 2rem;
         }
 
-        .trace-placeholder a {
-            color: #3b82f6;
-            text-decoration: underline;
-        }
-
-        /* Execution Trace Timeline */
+        /* Execution Trace Timeline - Enhanced */
         .trace-timeline {
             position: relative;
             padding-left: 1.5rem;
@@ -467,13 +680,13 @@
             top: 0;
             bottom: 0;
             width: 2px;
-            background: #334155;
+            background: linear-gradient(180deg, rgba(59,130,246,0.3), rgba(148,163,184,0.1));
         }
 
         .trace-event {
             position: relative;
             padding-left: 1rem;
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
         }
 
         .trace-event::before {
@@ -485,18 +698,39 @@
             height: 10px;
             border-radius: 50%;
             background: #3b82f6;
+            box-shadow: 0 0 8px rgba(59,130,246,0.4);
         }
 
-        .trace-event.error::before { background: #ef4444; }
-        .trace-event.success::before { background: #22c55e; }
-        .trace-event.llm-call::before { background: #8b5cf6; }
-        .trace-event.tool-call::before { background: #eab308; }
+        .trace-event.error::before { 
+            background: #ef4444; 
+            box-shadow: 0 0 8px rgba(239,68,68,0.4);
+        }
+        .trace-event.success::before { 
+            background: #22c55e; 
+            box-shadow: 0 0 8px rgba(34,197,94,0.4);
+        }
+        .trace-event.llm-call::before { 
+            background: #8b5cf6; 
+            box-shadow: 0 0 8px rgba(139,92,246,0.4);
+        }
+        .trace-event.tool-call::before { 
+            background: #eab308; 
+            box-shadow: 0 0 8px rgba(234,179,8,0.4);
+        }
+        .trace-event.db-result::before {
+            background: #06b6d4;
+            box-shadow: 0 0 8px rgba(6,182,212,0.4);
+        }
+        .trace-event.resolver::before {
+            background: #a855f7;
+            box-shadow: 0 0 8px rgba(168,85,247,0.4);
+        }
 
         .trace-event-header {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.375rem;
         }
 
         .trace-icon {
@@ -506,19 +740,22 @@
         .trace-time {
             font-size: 0.7rem;
             color: #64748b;
-            font-family: 'SF Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .trace-detail {
             font-size: 0.8rem;
-            color: #94a3b8;
-            line-height: 1.4;
+            color: #cbd5e1;
+            line-height: 1.5;
         }
 
         .trace-duration {
-            font-size: 0.7rem;
-            color: #3b82f6;
+            font-size: 0.6875rem;
+            color: #60a5fa;
             margin-left: 0.5rem;
+            padding: 0.125rem 0.375rem;
+            background: rgba(59,130,246,0.15);
+            border-radius: 4px;
         }
 
         /* Collapsible Section */
@@ -527,15 +764,22 @@
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
-            padding: 0.5rem 0;
+            padding: 0.625rem 0;
             user-select: none;
+            transition: color 0.2s;
         }
 
         .collapsible-header:hover { color: #f1f5f9; }
 
         .collapsible-content {
             display: none;
-            margin-top: 0.75rem;
+            margin-top: 0.875rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .collapsible-content.open { display: block; }
@@ -543,13 +787,14 @@
         .collapse-icon {
             transition: transform 0.3s;
             font-size: 0.75rem;
+            color: #64748b;
         }
 
         .collapse-icon.open { transform: rotate(90deg); }
 
         /* LLM Raw Response - monospace */
         .llm-raw-response {
-            font-family: 'SF Mono', 'Monaco', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.7rem;
             white-space: pre-wrap;
             word-break: break-word;
@@ -557,11 +802,11 @@
 
         /* Failure Diagnostics */
         .failure-diagnostics {
-            background: #450a0a;
-            border: 1px solid #ef4444;
-            border-radius: 6px;
-            padding: 0.75rem;
-            margin-top: 0.5rem;
+            background: rgba(69,10,10,0.4);
+            border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 0.75rem;
         }
 
         .failure-diagnostics .detail-label {
@@ -587,23 +832,39 @@
         }
 
         .stat-card {
-            background: #0d1426;
-            border-radius: 8px;
+            background: linear-gradient(180deg, rgba(13,20,38,0.8) 0%, rgba(10,15,30,0.6) 100%);
+            border-radius: 10px;
             padding: 1.25rem;
-            border: 1px solid #1e293b;
+            border: 1px solid rgba(148,163,184,0.08);
+            box-shadow: 0 0 0 1px rgba(148,163,184,0.06), 0 4px 24px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            opacity: 0.5;
         }
 
         .stat-card-value {
-            font-size: 2rem;
-            font-weight: bold;
+            font-size: 28px;
+            font-weight: 300;
             color: #f1f5f9;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.375rem;
+            letter-spacing: -0.5px;
         }
 
         .stat-card-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #64748b;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .analytics-row {
@@ -614,16 +875,17 @@
         }
 
         .analytics-card {
-            background: #0d1426;
-            border-radius: 8px;
+            background: linear-gradient(180deg, rgba(13,20,38,0.8) 0%, rgba(10,15,30,0.6) 100%);
+            border-radius: 10px;
             padding: 1rem;
-            border: 1px solid #1e293b;
+            border: 1px solid rgba(148,163,184,0.08);
         }
 
         .card-title {
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             color: #94a3b8;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
             margin-bottom: 1rem;
         }
 
@@ -634,49 +896,63 @@
         }
 
         .data-table th, .data-table td {
-            padding: 0.75rem;
+            padding: 0.875rem;
             text-align: left;
-            border-bottom: 1px solid #1e293b;
+            border-bottom: 1px solid rgba(148,163,184,0.08);
         }
 
         .data-table th {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #64748b;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
             cursor: pointer;
+            transition: color 0.2s;
         }
 
         .data-table th:hover { color: #94a3b8; }
 
-        .data-table tr:hover { background: #111827; }
+        .data-table tr:hover { background: rgba(17,24,39,0.4); }
 
-        .success-rate {
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
+        .success-rate-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        .success-high { background: #22c55e; color: #000; }
-        .success-medium { background: #eab308; color: #000; }
-        .success-low { background: #ef4444; color: #fff; }
+
+        .success-rate-bar-fill {
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, #22c55e, #86efac);
+        }
+
+        .success-rate-text {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
 
         /* Bar Chart */
         .bar-chart {
             display: flex;
             align-items: flex-end;
             height: 150px;
-            gap: 4px;
+            gap: 6px;
             padding-top: 1rem;
         }
 
         .bar {
             flex: 1;
-            background: #3b82f6;
-            border-radius: 2px 2px 0 0;
-            min-width: 8px;
+            background: linear-gradient(180deg, #3b82f6, #2563eb);
+            border-radius: 4px 4px 0 0;
+            min-width: 12px;
             position: relative;
+            transition: all 0.2s;
         }
 
-        .bar:hover { background: #60a5fa; }
+        .bar:hover { 
+            background: linear-gradient(180deg, #60a5fa, #3b82f6);
+            transform: scaleY(1.02);
+        }
 
         .bar-label {
             position: absolute;
@@ -696,30 +972,31 @@
 
         .tool-list-panel {
             width: 300px;
-            background: #0d1426;
-            border-right: 1px solid #1e293b;
+            background: linear-gradient(180deg, #0d1426 0%, #0a0f1e 100%);
+            border-right: 1px solid rgba(148,163,184,0.08);
             overflow-y: auto;
         }
 
         .tool-list-item {
             padding: 1rem;
-            border-bottom: 1px solid #1e293b;
+            border-bottom: 1px solid rgba(148,163,184,0.06);
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s;
         }
 
         .tool-list-item:hover, .tool-list-item.selected {
-            background: #1e293b;
+            background: rgba(30,41,59,0.4);
         }
 
         .tool-name {
             font-size: 0.875rem;
             color: #f1f5f9;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.375rem;
+            font-weight: 500;
         }
 
         .tool-meta {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #64748b;
         }
 
@@ -727,12 +1004,12 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            background: #0a0f1e;
+            background: rgba(10,15,30,0.5);
         }
 
         .log-header {
             padding: 1rem;
-            border-bottom: 1px solid #1e293b;
+            border-bottom: 1px solid rgba(148,163,184,0.08);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -745,42 +1022,49 @@
 
         .action-btn {
             padding: 0.5rem 1rem;
-            background: #1e293b;
-            border: none;
-            border-radius: 4px;
+            background: rgba(30,41,59,0.5);
+            border: 1px solid rgba(148,163,184,0.1);
+            border-radius: 6px;
             color: #94a3b8;
             font-family: inherit;
+            font-size: 0.75rem;
             cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .action-btn:hover { background: #334155; color: #f1f5f9; }
+        .action-btn:hover { 
+            background: rgba(51,65,85,0.5); 
+            color: #f1f5f9;
+            border-color: rgba(148,163,184,0.2);
+        }
 
         .log-search {
-            padding: 0.5rem;
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 4px;
+            padding: 0.5rem 0.75rem;
+            background: rgba(30,41,59,0.5);
+            border: 1px solid rgba(148,163,184,0.1);
+            border-radius: 6px;
             color: #f1f5f9;
             font-family: inherit;
             width: 250px;
+            font-size: 0.8rem;
         }
 
         .log-content {
             flex: 1;
             overflow-y: auto;
             padding: 1rem;
-            font-family: 'SF Mono', 'Monaco', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.75rem;
             line-height: 1.8;
         }
 
         .log-line {
-            padding: 0.25rem 0;
-            border-bottom: 1px solid #1e293b;
+            padding: 0.375rem 0;
+            border-bottom: 1px solid rgba(148,163,184,0.06);
         }
 
-        .log-line.success { color: #22c55e; }
-        .log-line.failed { color: #ef4444; }
+        .log-line.success { color: #86efac; }
+        .log-line.failed { color: #fca5a5; }
 
         .log-timestamp {
             color: #64748b;
@@ -794,7 +1078,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
             display: none;
             align-items: center;
             justify-content: center;
@@ -804,11 +1089,12 @@
         .modal-overlay.open { display: flex; }
 
         .modal {
-            background: #0d1426;
-            border-radius: 8px;
+            background: linear-gradient(180deg, #0d1426 0%, #0a0f1e 100%);
+            border-radius: 12px;
             padding: 1.5rem;
-            width: 400px;
-            border: 1px solid #1e293b;
+            width: 420px;
+            border: 1px solid rgba(148,163,184,0.1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
         }
 
         .modal-header {
@@ -821,6 +1107,7 @@
         .modal-title {
             font-size: 1rem;
             color: #f1f5f9;
+            font-weight: 600;
         }
 
         .modal-close {
@@ -829,43 +1116,53 @@
             color: #94a3b8;
             font-size: 1.5rem;
             cursor: pointer;
+            transition: color 0.2s;
         }
+
+        .modal-close:hover { color: #f1f5f9; }
 
         .setting-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #1e293b;
+            padding: 0.875rem 0;
+            border-bottom: 1px solid rgba(148,163,184,0.08);
         }
 
         .setting-label {
-            font-size: 0.875rem;
+            font-size: 0.8125rem;
             color: #94a3b8;
         }
 
         .setting-input {
-            padding: 0.5rem;
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 4px;
+            padding: 0.5rem 0.75rem;
+            background: rgba(30,41,59,0.5);
+            border: 1px solid rgba(148,163,184,0.1);
+            border-radius: 6px;
             color: #f1f5f9;
             font-family: inherit;
+            font-size: 0.8125rem;
         }
 
         .save-btn {
             width: 100%;
-            padding: 0.75rem;
-            background: #3b82f6;
+            padding: 0.875rem;
+            background: linear-gradient(180deg, #3b82f6, #2563eb);
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             color: #fff;
             font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 500;
             cursor: pointer;
-            margin-top: 1rem;
+            margin-top: 1.25rem;
+            transition: all 0.2s;
         }
 
-        .save-btn:hover { background: #2563eb; }
+        .save-btn:hover { 
+            background: linear-gradient(180deg, #60a5fa, #3b82f6);
+            box-shadow: 0 4px 16px rgba(59,130,246,0.3);
+        }
 
         /* Empty State */
         .empty-state {
@@ -880,13 +1177,14 @@
         .empty-state h3 {
             color: #94a3b8;
             margin-bottom: 0.5rem;
+            font-weight: 500;
         }
 
         /* Loading Spinner */
         .spinner {
             width: 24px;
             height: 24px;
-            border: 2px solid #1e293b;
+            border: 2px solid rgba(30,41,59,0.5);
             border-top-color: #3b82f6;
             border-radius: 50%;
             animation: spin 1s linear infinite;
@@ -904,53 +1202,35 @@
             color: #64748b;
         }
 
-        /* Replay Button */
-        .replay-btn {
-            padding: 0.5rem 1rem;
-            background: #3b82f6;
-            border: none;
-            border-radius: 4px;
-            color: #fff;
-            font-family: inherit;
-            font-size: 0.75rem;
-            cursor: pointer;
-            margin-left: 0.5rem;
-        }
-
-        .replay-btn:hover { background: #2563eb; }
-
-        .export-btn {
-            padding: 0.5rem 1rem;
-            background: #1e293b;
-            border: none;
-            border-radius: 4px;
-            color: #94a3b8;
-            font-family: inherit;
-            font-size: 0.75rem;
-            cursor: pointer;
-        }
-
-        .export-btn:hover { background: #334155; }
-
+        /* Apply filter button */
         .apply-filter-btn {
-            padding: 0.5rem 1rem;
-            background: #3b82f6;
+            width: 100%;
+            padding: 0.625rem;
+            background: linear-gradient(180deg, #3b82f6, #2563eb);
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             color: #fff;
             font-family: inherit;
             font-size: 0.75rem;
+            font-weight: 500;
             cursor: pointer;
-            margin-top: 0.5rem;
-            width: 100%;
+            margin-top: 0.625rem;
+            transition: all 0.2s;
         }
 
-        .apply-filter-btn:hover { background: #2563eb; }
+        .apply-filter-btn:hover { 
+            background: linear-gradient(180deg, #60a5fa, #3b82f6);
+            box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+        }
     </style>
 </head>
 <body>
     <!-- Top Navigation -->
     <nav class="top-nav">
+        <div class="nav-brand">
+            <div class="nav-brand-title">STYX</div>
+            <div class="nav-brand-subtitle">CONVERSATION INTELLIGENCE</div>
+        </div>
         <div class="nav-tabs">
             <button class="nav-tab active" data-tab="sessions">SESSIONS</button>
             <button class="nav-tab" data-tab="analytics">ANALYTICS</button>
@@ -967,7 +1247,7 @@
         <!-- SESSIONS TAB -->
         <div class="tab-content active" id="sessions-tab">
             <div class="sessions-layout">
-                <!-- LEFT PANEL (220px) - Filters only -->
+                <!-- LEFT PANEL (280px) - Filters -->
                 <aside class="filters-sidebar">
                     <div class="filter-group">
                         <div class="filter-label">Search</div>
@@ -1064,16 +1344,16 @@
                         </div>
                     </div>
 
-                    <!-- BOTTOM HALF - Turns List -->
+                    <!-- BOTTOM HALF - Turns List (Chat Replay) -->
                     <div class="turns-list-container">
                         <div class="panel-header">
-                            <div class="panel-title">Turns</div>
+                            <div class="panel-title">Conversation</div>
                             <span id="turns-count" style="font-size: 0.7rem; color: #64748b;">0</span>
                         </div>
                         <div class="turns-list" id="turns-list">
                             <div class="empty-state">
                                 <h3>No session selected</h3>
-                                <p>Select a session to view its turns</p>
+                                <p>Select a session to view the conversation</p>
                             </div>
                         </div>
                     </div>
@@ -1088,7 +1368,7 @@
                     <div class="detail-content" id="turn-detail-content">
                         <div class="empty-state">
                             <h3>No turn selected</h3>
-                            <p>Select a turn to view details</p>
+                            <p>Click on a message to view details</p>
                         </div>
                     </div>
                 </div>
@@ -1124,11 +1404,11 @@
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th data-sort="tool">Tool Name</th>
-                                <th data-sort="count">Uses</th>
-                                <th data-sort="avg_duration">Avg Duration</th>
-                                <th data-sort="success_rate">Success Rate</th>
-                                <th data-sort="last_used">Last Used</th>
+                                <th>Tool Name</th>
+                                <th>Uses</th>
+                                <th>Avg Duration</th>
+                                <th>Success Rate</th>
+                                <th>Last Used</th>
                             </tr>
                         </thead>
                         <tbody id="tool-usage-body"></tbody>
@@ -1273,7 +1553,26 @@
         let selectedTurn = null;
         let currentTool = null;
         let refreshIntervals = {};
-        let allTurns = []; // All turns for filtering
+        let allTurns = [];
+
+        // Tool category mapping
+        const TOOL_CATEGORIES = {
+            'who_is_home': 'presence',
+            'get_devices': 'network',
+            'block_device': 'security',
+            'unblock_device': 'security',
+            'get_internet_speed': 'system',
+            'get_dns_queries': 'network',
+            'get_device_dns_summary': 'network',
+            'list_unknown_devices': 'network',
+            'get_outage_history': 'system',
+            'check_health': 'system',
+            'get_pihole_stats': 'system'
+        };
+
+        function getToolCategory(toolName) {
+            return TOOL_CATEGORIES[toolName] || 'default';
+        }
 
         // Tab Navigation
         document.querySelectorAll('.nav-tab').forEach(tab => {
@@ -1284,7 +1583,6 @@
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
 
-                // Load data for selected tab
                 if (tab.dataset.tab === 'analytics') loadAnalytics();
                 if (tab.dataset.tab === 'tool-logs') loadToolLogs();
             });
@@ -1297,7 +1595,7 @@
             document.getElementById('last-refresh').textContent = `Last refresh: ${timeStr}`;
         }
 
-        // Apply Filters - Call API with filter params
+        // Apply Filters
         async function applyFilters() {
             const qualityFilter = document.querySelector('input[name="quality"]:checked')?.value;
             const toolFilter = document.getElementById('filter-tool').value;
@@ -1307,7 +1605,6 @@
             const errorFilter = document.getElementById('filter-error').value;
             const secondPassFilter = document.querySelector('input[name="secondpass"]:checked')?.value;
 
-            // Build query params
             const params = new URLSearchParams();
             params.set('limit', '200');
 
@@ -1327,7 +1624,6 @@
                 const data = await response.json();
                 allTurns = data.turns || [];
 
-                // Group turns by session_id
                 const sessionMap = new Map();
                 allTurns.forEach(turn => {
                     if (!sessionMap.has(turn.session_id)) {
@@ -1336,16 +1632,13 @@
                     sessionMap.get(turn.session_id).push(turn);
                 });
 
-                // Update sessions list to show only sessions with matching turns
                 const filteredSessionIds = Array.from(sessionMap.keys());
                 renderSessions(filteredSessionIds);
 
-                // Show turns for first session or keep current selection
                 if (filteredSessionIds.length > 0) {
                     if (!selectedSession || !filteredSessionIds.includes(selectedSession.session_id)) {
                         selectSession(filteredSessionIds[0]);
                     } else {
-                        // Re-render turns with highlights
                         renderTurns(turns);
                     }
                 } else {
@@ -1365,11 +1658,9 @@
                 const response = await fetch(`${CONFIG.apiUrl}/api/conversations?limit=100`);
                 const data = await response.json();
                 sessions = data.sessions || [];
-                allTurns = []; // Reset filtered turns
+                allTurns = [];
                 renderSessions();
                 updateLastRefresh();
-
-                // Populate tool dropdown
                 populateToolDropdown();
             } catch (error) {
                 console.error('Failed to load sessions:', error);
@@ -1378,13 +1669,7 @@
 
         function populateToolDropdown() {
             const toolSelect = document.getElementById('filter-tool');
-            const tools = new Set();
-            sessions.forEach(session => {
-                // Fetch turns to get tools - this is a simplification
-                // In production, you'd get this from the API
-            });
-            // Add common tools
-            const commonTools = ['who_is_home', 'get_internet_speed', 'get_dns_queries', 'block_device', 'get_devices'];
+            const commonTools = ['who_is_home', 'get_internet_speed', 'get_dns_queries', 'block_device', 'get_devices', 'get_device_dns_summary', 'list_unknown_devices'];
             commonTools.forEach(tool => {
                 const option = document.createElement('option');
                 option.value = tool;
@@ -1401,15 +1686,12 @@
 
             let filtered = sessions;
 
-            // If we have filtered session IDs from applyFilters, use those
             if (filteredSessionIds) {
                 filtered = filtered.filter(s => filteredSessionIds.includes(s.session_id));
             } else {
-                // Otherwise apply simple client-side filters
                 if (qualityFilter) {
                     filtered = filtered.filter(s => s.quality_score === qualityFilter);
                 }
-
                 if (dateFilter === 'today') {
                     const today = new Date().toISOString().split('T')[0];
                     filtered = filtered.filter(s => s.started_at.startsWith(today));
@@ -1419,7 +1701,6 @@
                     const yesterdayStr = yesterday.toISOString().split('T')[0];
                     filtered = filtered.filter(s => s.started_at.startsWith(yesterdayStr));
                 }
-
                 if (searchFilter) {
                     filtered = filtered.filter(s =>
                         s.chat_id.toLowerCase().includes(searchFilter) ||
@@ -1477,13 +1758,14 @@
 
                 turns = data.turns || [];
                 document.getElementById('turns-count').textContent = turns.length;
-                renderTurns(turns);
+                renderChatReplay(turns);
             } catch (error) {
                 turnsList.innerHTML = '<div class="empty-state"><h3>Failed to load turns</h3></div>';
             }
         }
 
-        function renderTurns(turns) {
+        // Render Chat Replay View
+        function renderChatReplay(turns) {
             const list = document.getElementById('turns-list');
 
             if (turns.length === 0) {
@@ -1494,57 +1776,99 @@
             let html = '';
 
             turns.forEach((turn, index) => {
-                const qualityClass = turn.quality === 'good' ? 'turn-good' :
-                                    turn.quality === 'warn' ? 'turn-warn' : 'turn-bad';
+                const qualityClass = turn.quality === 'good' ? 'quality-good' :
+                                    turn.quality === 'warn' ? 'quality-warn' : 'quality-bad';
                 const toolName = turn.tool_selected || 'No tool';
+                const toolCategory = getToolCategory(toolName);
                 const isSelected = selectedTurn?.id === turn.id;
                 const hasMatch = allTurns.length > 0 && allTurns.some(t => t.id === turn.id);
+                const timestamp = new Date(turn.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                const responseTruncated = turn.final_response && turn.final_response.length > 150 
+                    ? turn.final_response.substring(0, 150) + '...' 
+                    : (turn.final_response || 'No response');
 
+                // Turn divider
                 html += `
-                    <div class="turn-item ${isSelected ? 'selected' : ''} ${hasMatch ? 'has-filter-match' : ''}" onclick="selectTurn(${turn.id})">
-                        <div class="turn-header">
-                            <div class="turn-number ${qualityClass}">${index + 1}</div>
-                            <span class="turn-tool-badge">${toolName}</span>
-                            <span class="turn-duration">${(turn.duration_seconds || 0).toFixed(1)}s</span>
+                    <div class="turn-divider">
+                        <span class="turn-divider-number">Turn ${index + 1}</span>
+                    </div>
+                `;
+
+                // USER BUBBLE (right)
+                html += `
+                    <div class="chat-bubble-user ${isSelected && selectedTurn?.side === 'user' ? 'selected' : ''}" onclick="selectTurn(${turn.id}, 'user')">
+                        <div class="chat-bubble-user-content">
+                            <div class="chat-bubble-user-message">${escapeHtml(turn.user_message || 'No message')}</div>
+                            <div class="chat-bubble-user-time">${timestamp}</div>
                         </div>
-                        <div class="turn-message">${escapeHtml(turn.user_message || 'No message')}</div>
-                        ${turn.error ? `<div style="color: #ef4444; font-size: 0.7rem; margin-top: 0.375rem;">${escapeHtml(turn.error)}</div>` : ''}
+                    </div>
+                `;
+
+                // ARGUS BUBBLE (left)
+                html += `
+                    <div class="chat-bubble-argus ${isSelected && selectedTurn?.side === 'argus' ? 'selected' : ''}" onclick="selectTurn(${turn.id}, 'argus')">
+                        <div class="chat-bubble-argus-content">
+                            <div class="chat-bubble-argus-label">ARGUS</div>
+                            ${toolName !== 'No tool' ? `<div class="chat-bubble-tool-badge tool-badge ${toolCategory}">${toolName}</div>` : ''}
+                            <div class="chat-bubble-argus-response ${turn.final_response && turn.final_response.length > 150 ? 'truncated' : ''}">${escapeHtml(responseTruncated)}</div>
+                            <div class="chat-bubble-meta">
+                                <span class="chat-bubble-duration">${(turn.duration_seconds || 0).toFixed(1)}s</span>
+                                <div class="chat-bubble-quality">
+                                    <div class="chat-bubble-quality-dot ${qualityClass}"></div>
+                                    <span>${turn.quality === 'good' ? 'Good' : turn.quality === 'warn' ? 'Warn' : 'Fail'}</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 `;
             });
 
             list.innerHTML = html;
+            
+            // Scroll to bottom
+            setTimeout(() => {
+                list.scrollTop = list.scrollHeight;
+            }, 100);
         }
 
         // Select Turn
-        function selectTurn(turnId) {
+        function selectTurn(turnId, side) {
             const session = selectedSession;
             if (!session) return;
 
             const turn = turns.find(t => t.id === turnId);
             if (turn) {
-                selectedTurn = turn;
-                renderTurns(turns);
+                selectedTurn = { ...turn, side };
+                renderChatReplay(turns);
                 showTurnDetail(turn);
             }
         }
 
         function showTurnDetail(turn) {
             const content = document.getElementById('turn-detail-content');
+            const toolCategory = getToolCategory(turn.tool_selected);
 
             content.innerHTML = `
-                <!-- 1. USER MESSAGE (large, italic) -->
+                <!-- 1. USER MESSAGE -->
                 <div class="detail-section">
-                    <div class="detail-label">User Message</div>
+                    <div class="detail-label">
+                        <span class="detail-label-icon">💬</span>
+                        User Message
+                    </div>
                     <div class="user-message">${escapeHtml(turn.user_message || 'N/A')}</div>
                 </div>
 
-                <!-- 2. TOOL SELECTED + TOOL PARAMS side by side -->
+                <!-- 2. TOOL SELECTED + TOOL PARAMS -->
                 <div class="detail-section">
                     <div class="side-by-side">
                         <div>
-                            <div class="detail-label">Tool Selected</div>
-                            <div class="detail-value">${turn.tool_selected || '<span style="color: #ef4444;">None</span>'}</div>
+                            <div class="detail-label">
+                                <span class="detail-label-icon">⚙️</span>
+                                Tool Selected
+                            </div>
+                            <div class="detail-value">
+                                ${turn.tool_selected ? `<span class="tool-badge ${toolCategory}">${turn.tool_selected}</span>` : '<span style="color: #ef4444;">None</span>'}
+                            </div>
                         </div>
                         <div>
                             <div class="detail-label">Tool Params</div>
@@ -1553,11 +1877,14 @@
                     </div>
                 </div>
 
-                <!-- 3. TOOL RESULT + DURATION side by side -->
+                <!-- 3. TOOL RESULT + DURATION -->
                 <div class="detail-section">
                     <div class="side-by-side">
                         <div>
-                            <div class="detail-label">Tool Result</div>
+                            <div class="detail-label">
+                                <span class="detail-label-icon">📊</span>
+                                Tool Result
+                            </div>
                             <div class="detail-value ${turn.tool_result_success ? 'success' : 'error'}">
                                 ${turn.tool_result_success ? '✓ Success' : '✗ Failed'}
                             </div>
@@ -1569,18 +1896,24 @@
                     </div>
                 </div>
 
-                <!-- 4. EXECUTION TRACE (most prominent, large box) -->
+                <!-- 4. EXECUTION TRACE -->
                 <div class="detail-section">
-                    <div class="detail-label">Execution Trace</div>
+                    <div class="detail-label">
+                        <span class="detail-label-icon">🔍</span>
+                        Execution Trace
+                    </div>
                     <div class="trace-container">
                         ${renderExecutionTrace(turn.execution_trace)}
                     </div>
                 </div>
 
-                <!-- 5. RESULT SUMMARY (collapsible, collapsed by default) -->
+                <!-- 5. RESULT SUMMARY -->
                 <div class="detail-section collapsible">
                     <div class="collapsible-header" onclick="toggleCollapse(this)">
-                        <div class="detail-label" style="margin: 0;">Result Summary</div>
+                        <div class="detail-label" style="margin: 0;">
+                            <span class="detail-label-icon">📋</span>
+                            Result Summary
+                        </div>
                         <span class="collapse-icon">▶</span>
                     </div>
                     <div class="collapsible-content">
@@ -1588,10 +1921,13 @@
                     </div>
                 </div>
 
-                <!-- 6. FINAL RESPONSE (collapsible, collapsed by default) -->
+                <!-- 6. FINAL RESPONSE -->
                 <div class="detail-section collapsible">
                     <div class="collapsible-header" onclick="toggleCollapse(this)">
-                        <div class="detail-label" style="margin: 0;">Final Response</div>
+                        <div class="detail-label" style="margin: 0;">
+                            <span class="detail-label-icon">📝</span>
+                            Final Response
+                        </div>
                         <span class="collapse-icon">▶</span>
                     </div>
                     <div class="collapsible-content">
@@ -1599,10 +1935,13 @@
                     </div>
                 </div>
 
-                <!-- 7. LLM RAW RESPONSE (collapsible, collapsed by default, monospace) -->
+                <!-- 7. LLM RAW RESPONSE -->
                 <div class="detail-section collapsible">
                     <div class="collapsible-header" onclick="toggleCollapse(this)">
-                        <div class="detail-label" style="margin: 0;">LLM Raw Response</div>
+                        <div class="detail-label" style="margin: 0;">
+                            <span class="detail-label-icon">🔬</span>
+                            Raw LLM Output
+                        </div>
                         <span class="collapse-icon">▶</span>
                     </div>
                     <div class="collapsible-content">
@@ -1610,10 +1949,13 @@
                     </div>
                 </div>
 
-                <!-- 8. FAILURE DIAGNOSTICS (only shown if quality != good) -->
+                <!-- 8. FAILURE DIAGNOSTICS -->
                 ${turn.quality !== 'good' && (turn.failure_stage || turn.llm_error_code) ? `
                 <div class="detail-section">
-                    <div class="detail-label" style="color: #ef4444;">Failure Diagnostics</div>
+                    <div class="detail-label" style="color: #ef4444;">
+                        <span class="detail-label-icon">⚠️</span>
+                        Failure Diagnostics
+                    </div>
                     <div class="failure-diagnostics">
                         ${turn.failure_stage ? `
                         <div style="margin-bottom: 0.5rem;">
@@ -1662,19 +2004,28 @@
 
                     if (event.event.includes('error')) {
                         eventClass = 'error';
-                        icon = '✗';
+                        icon = '❌';
                     } else if (event.event.includes('result')) {
                         eventClass = 'success';
-                        icon = '✓';
+                        icon = '✅';
                     } else if (event.event.includes('llm_call')) {
                         eventClass = 'llm-call';
                         icon = '🤖';
                     } else if (event.event.includes('tool_exec')) {
                         eventClass = 'tool-call';
-                        icon = '🔧';
+                        icon = '⚡';
                     } else if (event.event.includes('selected')) {
                         eventClass = 'tool-call';
                         icon = '📋';
+                    } else if (event.event.includes('db_result')) {
+                        eventClass = 'db-result';
+                        icon = '📊';
+                    } else if (event.event.includes('resolver')) {
+                        eventClass = 'resolver';
+                        icon = '🔍';
+                    } else if (event.event.includes('response_ready')) {
+                        eventClass = 'success';
+                        icon = '⏱️';
                     }
 
                     html += `
@@ -1682,7 +2033,7 @@
                             <div class="trace-event-header">
                                 <span class="trace-icon">${icon}</span>
                                 <span class="trace-time">${event.timestamp}</span>
-                                <span style="color: #94a3b8; font-size: 0.75rem;">${event.event}</span>
+                                <span style="color: #64748b; font-size: 0.7rem;">${event.event.replace(/_/g, ' ')}</span>
                                 ${event.duration_ms !== undefined ? `<span class="trace-duration">${event.duration_ms}ms</span>` : ''}
                             </div>
                             <div class="trace-detail">${escapeHtml(event.detail)}</div>
@@ -1698,7 +2049,7 @@
 
         function closeTurnDetail() {
             selectedTurn = null;
-            renderTurns(turns);
+            renderChatReplay(turns);
         }
 
         function toggleCollapse(header) {
@@ -1719,10 +2070,10 @@
                 document.getElementById('stat-failure-rate').textContent = `${data.failure_rate || 0}%`;
                 document.getElementById('stat-avg-response').textContent = `${data.avg_response_time || 0}s`;
 
-                // Tool usage table
                 const toolBody = document.getElementById('tool-usage-body');
                 if (data.tool_usage) {
                     toolBody.innerHTML = data.tool_usage.map(t => {
+                        const barWidth = Math.round(t.success_rate * 100);
                         const successClass = t.success_rate >= 0.9 ? 'success-high' :
                                             t.success_rate >= 0.7 ? 'success-medium' : 'success-low';
                         return `
@@ -1730,20 +2081,21 @@
                                 <td>${t.tool || 'Unknown'}</td>
                                 <td>${t.count}</td>
                                 <td>${(t.avg_duration || 0).toFixed(1)}s</td>
-                                <td><span class="success-rate ${successClass}">${(t.success_rate * 100).toFixed(0)}%</span></td>
+                                <td>
+                                    <div class="success-rate-bar">
+                                        <div class="success-rate-bar-fill" style="width: ${barWidth}%; background: linear-gradient(90deg, ${t.success_rate >= 0.9 ? '#22c55e' : t.success_rate >= 0.7 ? '#eab308' : '#ef4444'}, transparent);"></div>
+                                        <span class="success-rate-text" style="color: ${t.success_rate >= 0.9 ? '#22c55e' : t.success_rate >= 0.7 ? '#eab308' : '#ef4444'}">${(t.success_rate * 100).toFixed(0)}%</span>
+                                    </div>
+                                </td>
                                 <td>${new Date(t.last_used).toLocaleDateString()}</td>
                             </tr>
                         `;
                     }).join('');
                 }
 
-                // Hourly chart
                 renderBarChart('hourly-chart', data.hourly_volume || [], 24);
-
-                // Daily chart
                 renderBarChart('daily-chart', data.daily_volume || [], 7);
 
-                // Top errors
                 const errorsBody = document.getElementById('top-errors-body');
                 if (data.top_errors) {
                     errorsBody.innerHTML = data.top_errors.map(e => `
@@ -1809,7 +2161,6 @@
             currentTool = toolName;
             document.getElementById('log-viewer-title').textContent = toolName;
 
-            // Highlight selected
             document.querySelectorAll('.tool-list-item').forEach(item => {
                 item.classList.toggle('selected', item.textContent.includes(toolName));
             });
@@ -1858,17 +2209,6 @@
             loadSessions();
         }
 
-        // Export session
-        function exportSession() {
-            if (!selectedSession) return;
-            alert('Export functionality - would download session as text file');
-        }
-
-        // Replay session
-        function replaySession() {
-            alert('Replay functionality - would show chat-like replay');
-        }
-
         // Utility functions
         function escapeHtml(text) {
             if (!text) return '';
@@ -1891,7 +2231,6 @@
             loadConfig();
             loadSessions();
 
-            // Auto-refresh
             refreshIntervals.sessions = setInterval(loadSessions, 30000);
             refreshIntervals.analytics = setInterval(() => {
                 if (document.getElementById('analytics-tab').classList.contains('active')) {
@@ -1904,7 +2243,6 @@
                 }
             }, 10000);
 
-            // Enter key to apply search filter
             document.getElementById('filter-search').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') applyFilters();
             });
