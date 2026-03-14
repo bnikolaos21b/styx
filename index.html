@@ -2576,7 +2576,7 @@
     <nav class="top-nav">
         <div class="nav-brand">
             <div class="nav-brand-title">STYX</div>
-            <div class="nav-brand-subtitle">MOBILE FIXED v4.3</div>
+            <div class="nav-brand-subtitle">CONVERSATION INTELLIGENCE</div>
         </div>
         <div class="nav-tabs">
             <button class="nav-tab active" data-tab="sessions">SESSIONS</button>
@@ -2584,7 +2584,7 @@
             <button class="nav-tab" data-tab="tool-logs">TOOL LOGS</button>
         </div>
         <div class="nav-right">
-            <button class="mobile-filter-btn" onclick="openMobileFilterDrawer()">⚙️</button>
+            <button class="mobile-filter-btn" onclick="openMobileFilterDrawer()">🔧</button>
             <span class="last-refresh" id="last-refresh">Last refresh: --:--:--</span>
             <button class="settings-btn" onclick="openSettings()">⚙️</button>
         </div>
@@ -3032,6 +3032,7 @@
     <!-- Mobile Tool Logs View -->
     <div class="mobile-tool-logs-view" id="mobile-tool-logs-view">
         <div class="mobile-log-header">
+            <button class="mobile-chat-back" id="mobile-tool-logs-back" onclick="backToToolList()" style="display: none;">←</button>
             <input type="text" class="mobile-log-search" id="mobile-log-search" placeholder="Search logs...">
             <button class="mobile-log-refresh" onclick="refreshMobileLog()">↻</button>
         </div>
@@ -4245,12 +4246,28 @@
             }
         }
 
+        // Store tool list HTML for back navigation
+        let mobileToolListHTML = '';
+
         async function selectMobileToolLog(toolName) {
             currentTool = toolName;
-            document.querySelectorAll('.mobile-tool-log-item').forEach(item => {
-                item.classList.toggle('selected', item.textContent.includes(toolName));
-            });
+            // Store current tool list
+            mobileToolListHTML = document.getElementById('mobile-tool-list-content').innerHTML;
+            // Show back button
+            document.getElementById('mobile-tool-logs-back').style.display = 'flex';
             await refreshMobileLog();
+        }
+
+        function backToToolList() {
+            currentTool = null;
+            // Restore tool list
+            if (mobileToolListHTML) {
+                document.getElementById('mobile-tool-list-content').innerHTML = mobileToolListHTML;
+            }
+            // Hide back button
+            document.getElementById('mobile-tool-logs-back').style.display = 'none';
+            // Reload tool list
+            loadMobileToolLogs();
         }
 
         async function refreshMobileLog() {
@@ -4273,6 +4290,35 @@
             } catch (error) {
                 console.error('Failed to load mobile log:', error);
             }
+        }
+
+        // Load tool logs when view is shown
+        function loadMobileToolLogs() {
+            // Hide back button when loading fresh
+            document.getElementById('mobile-tool-logs-back').style.display = 'none';
+            // Call the async function
+            (async () => {
+                try {
+                    const response = await fetch(`${CONFIG.apiUrl}/api/tools/logs`);
+                    const data = await response.json();
+                    const listContent = document.getElementById('mobile-tool-list-content');
+
+                    if (data.logs && data.logs.length > 0) {
+                        listContent.innerHTML = data.logs.map(log => `
+                            <div class="mobile-tool-log-item" onclick="selectMobileToolLog('${log.tool_name}')">
+                                <div style="font-size: 0.8125rem; color: var(--text-primary); font-weight: 500;">${log.tool_name}</div>
+                                <div style="font-size: 0.625rem; color: var(--text-muted); margin-top: 0.25rem;">${log.size_human} • ${new Date(log.modified).toLocaleString()}</div>
+                            </div>
+                        `).join('');
+                        // Store for back navigation
+                        mobileToolListHTML = listContent.innerHTML;
+                    } else {
+                        listContent.innerHTML = '<div class="empty-state" style="padding: 2rem;"><h3>No logs</h3><p>Tool logs will appear here</p></div>';
+                    }
+                } catch (error) {
+                    console.error('Failed to load mobile tool logs:', error);
+                }
+            })();
         }
     </script>
 </body>
