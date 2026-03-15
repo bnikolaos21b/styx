@@ -3038,7 +3038,6 @@
             .nav-tabs,
             .sessions-layout,
             .filters-sidebar,
-            .center-panel,
             .sessions-list-container,
             .turns-list-container,
             .turn-detail-panel,
@@ -3052,9 +3051,10 @@
                 display: grid !important;
                 grid-template-columns: 220px 280px 1fr 500px !important;
                 gap: 0 !important;
+                height: 100% !important;
             }
 
-            /* Panel styling */
+            /* Panel 1: Filters */
             .filters-sidebar {
                 width: 220px !important;
                 background: var(--bg-secondary) !important;
@@ -3062,34 +3062,46 @@
                 overflow-y: auto !important;
             }
 
+            /* Panel 2: Sessions list */
             .sessions-list-container {
                 width: 280px !important;
                 background: var(--bg-primary) !important;
                 border-right: 1px solid var(--border-color) !important;
                 display: flex !important;
                 flex-direction: column !important;
+                overflow: hidden !important;
             }
 
-            .center-panel {
-                display: flex !important;
-                flex-direction: column !important;
-                background: var(--bg-primary) !important;
-                border-right: 1px solid var(--border-color) !important;
-            }
-
+            /* Panel 3: Conversation (chat replay) */
             .turns-list-container {
                 flex: 1 !important;
+                min-width: 0 !important;
+                background: var(--bg-primary) !important;
+                border-right: 1px solid var(--border-color) !important;
                 display: flex !important;
                 flex-direction: column !important;
-                background: var(--bg-primary) !important;
+                overflow: hidden !important;
             }
 
+            .turns-list {
+                flex: 1 !important;
+                overflow-y: auto !important;
+                overflow-x: hidden !important;
+            }
+
+            /* Panel 4: Turn detail */
             .turn-detail-panel {
                 width: 500px !important;
                 background: var(--bg-primary) !important;
                 display: flex !important;
                 flex-direction: column !important;
                 border-left: 1px solid var(--border-color) !important;
+                overflow: hidden !important;
+            }
+
+            .detail-content {
+                flex: 1 !important;
+                overflow-y: auto !important;
             }
 
             /* Session cards clickable */
@@ -3109,7 +3121,8 @@
             .filters-sidebar::-webkit-scrollbar,
             .sessions-list::-webkit-scrollbar,
             .turns-list::-webkit-scrollbar,
-            .turn-detail-panel::-webkit-scrollbar {
+            .turn-detail-panel::-webkit-scrollbar,
+            .detail-content::-webkit-scrollbar {
                 width: 6px;
             }
         }
@@ -3223,35 +3236,32 @@
                     <button class="reset-btn" onclick="resetFilters()">Reset Filters</button>
                 </aside>
 
-                <!-- CENTER PANEL - Sessions TOP, Turns BOTTOM -->
-                <div class="center-panel">
-                    <!-- TOP HALF - Sessions List -->
-                    <div class="sessions-list-container">
-                        <div class="panel-header">
-                            <div class="panel-title">Sessions</div>
-                            <span id="sessions-count" style="font-size: 0.7rem; color: #64748b;">0</span>
-                        </div>
-                        <div class="sessions-list" id="sessions-list">
-                            <div class="loading"><div class="spinner"></div></div>
-                        </div>
+                <!-- PANEL 2: SESSIONS LIST -->
+                <div class="sessions-list-container">
+                    <div class="panel-header">
+                        <div class="panel-title">Sessions</div>
+                        <span id="sessions-count" style="font-size: 0.7rem; color: #64748b;">0</span>
                     </div>
+                    <div class="sessions-list" id="sessions-list">
+                        <div class="loading"><div class="spinner"></div></div>
+                    </div>
+                </div>
 
-                    <!-- BOTTOM HALF - Turns List (Chat Replay) -->
-                    <div class="turns-list-container">
-                        <div class="panel-header">
-                            <div class="panel-title">Conversation</div>
-                            <span id="turns-count" style="font-size: 0.7rem; color: #64748b;">0</span>
-                        </div>
-                        <div class="turns-list" id="turns-list">
-                            <div class="empty-state">
-                                <h3>No session selected</h3>
-                                <p>Select a session to view the conversation</p>
-                            </div>
+                <!-- PANEL 3: CONVERSATION (CHAT REPLAY) -->
+                <div class="turns-list-container">
+                    <div class="panel-header">
+                        <div class="panel-title">Conversation</div>
+                        <span id="turns-count" style="font-size: 0.7rem; color: #64748b;">0</span>
+                    </div>
+                    <div class="turns-list" id="turns-list">
+                        <div class="empty-state">
+                            <h3>No session selected</h3>
+                            <p>Select a session to view the conversation</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- RIGHT PANEL (500px) - Turn Detail -->
+                <!-- PANEL 4: TURN DETAIL -->
                 <div class="turn-detail-panel" id="turn-detail-panel">
                     <div class="detail-header">
                         <div class="panel-title">Turn Details</div>
