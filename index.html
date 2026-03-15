@@ -851,6 +851,32 @@
             border-radius: 4px;
         }
 
+        /* Trace event specific styles */
+        .trace-event.context { border-left-color: #8b5cf6; }
+        
+        /* Collapsible section within trace events */
+        .trace-event .collapsible-section {
+            border-top: 1px solid rgba(148,163,184,0.1);
+            padding-top: 8px;
+        }
+        
+        .trace-event .collapsible-header {
+            font-size: 0.7rem;
+            color: #60a5fa;
+            cursor: pointer;
+        }
+        
+        .trace-event .collapsible-header:hover {
+            color: #93c5fd;
+        }
+        
+        .trace-event .collapsible-content pre {
+            background: rgba(15,23,42,0.8);
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(148,163,184,0.1);
+        }
+
         /* Collapsible Section */
         .collapsible-header {
             display: flex;
@@ -4067,7 +4093,7 @@
                 }
 
                 let html = '<div class="trace-timeline">';
-                trace.forEach(event => {
+                trace.forEach((event, idx) => {
                     let eventClass = '';
                     let icon = '•';
 
@@ -4095,6 +4121,80 @@
                     } else if (event.event.includes('response_ready')) {
                         eventClass = 'success';
                         icon = '⏱️';
+                    } else if (event.event.includes('context')) {
+                        eventClass = 'context';
+                        icon = '📚';
+                    }
+
+                    // Build expandable content for enhanced traces
+                    let expandableContent = '';
+                    
+                    // Full result for tool_result events
+                    if (event.full_result) {
+                        expandableContent += `
+                            <div class="collapsible-section" style="margin-top: 8px;">
+                                <div class="collapsible-header" onclick="this.classList.toggle('open')">
+                                    <span class="collapse-icon">▶</span>
+                                    <span>Show full tool result</span>
+                                </div>
+                                <div class="collapsible-content">
+                                    <pre style="font-size: 0.65rem; white-space: pre-wrap; word-break: break-word;">${escapeHtml(JSON.stringify(JSON.parse(event.full_result), null, 2))}</pre>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    // Raw LLM response
+                    if (event.raw_response) {
+                        expandableContent += `
+                            <div class="collapsible-section" style="margin-top: 8px;">
+                                <div class="collapsible-header" onclick="this.classList.toggle('open')">
+                                    <span class="collapse-icon">▶</span>
+                                    <span>Show raw LLM response</span>
+                                </div>
+                                <div class="collapsible-content">
+                                    <pre style="font-size: 0.65rem; white-space: pre-wrap; word-break: break-word;">${escapeHtml(event.raw_response)}</pre>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    // Context summary
+                    if (event.context_summary) {
+                        try {
+                            const ctx = JSON.parse(event.context_summary);
+                            expandableContent += `
+                                <div class="collapsible-section" style="margin-top: 8px;">
+                                    <div class="collapsible-header" onclick="this.classList.toggle('open')">
+                                        <span class="collapse-icon">▶</span>
+                                        <span>Show context summary</span>
+                                    </div>
+                                    <div class="collapsible-content">
+                                        <div style="font-size: 0.7rem; padding: 8px; background: rgba(59,130,246,0.1); border-radius: 4px;">
+                                            <div><strong>Size:</strong> ${ctx.total_chars} chars (~${ctx.total_tokens} tokens)</div>
+                                            <div><strong>Memories:</strong> ${ctx.has_memories ? 'Yes' : 'No'}</div>
+                                            <div><strong>Time context:</strong> ${ctx.has_time_context ? 'Yes' : 'No'}</div>
+                                            <div><strong>Conversation history:</strong> ${ctx.has_conv_context ? 'Yes' : 'No'}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        } catch(e) {}
+                    }
+                    
+                    // Full context
+                    if (event.full_context) {
+                        expandableContent += `
+                            <div class="collapsible-section" style="margin-top: 8px;">
+                                <div class="collapsible-header" onclick="this.classList.toggle('open')">
+                                    <span class="collapse-icon">▶</span>
+                                    <span>Show full context (${event.detail.match(/\d+/)?.[0] || ''} chars)</span>
+                                </div>
+                                <div class="collapsible-content">
+                                    <pre style="font-size: 0.6rem; white-space: pre-wrap; word-break: break-word; max-height: 400px; overflow-y: auto;">${escapeHtml(event.full_context)}</pre>
+                                </div>
+                            </div>
+                        `;
                     }
 
                     html += `
@@ -4106,6 +4206,7 @@
                                 ${event.duration_ms > 0 ? `<span class="trace-duration">${event.duration_ms}ms</span>` : ''}
                             </div>
                             <div class="trace-detail">${escapeHtml(event.detail)}</div>
+                            ${expandableContent}
                         </div>
                     `;
                 });
