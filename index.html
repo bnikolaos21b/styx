@@ -3063,13 +3063,16 @@
 
             /* Show desktop elements */
             .sessions-layout,
-            .filters-sidebar,
             .sessions-list-container,
             .turns-list-container,
             .turn-detail-panel,
             .analytics-layout,
             .stats-row {
                 display: flex;
+            }
+
+            .filters-sidebar {
+                display: block;
             }
 
             .nav-tabs,
@@ -3091,120 +3094,11 @@
                 padding: 0;
             }
 
-            /* Panel 1: Filters (220px default) */
+            /* Panel 1: Filters - width override for desktop */
             .filters-sidebar {
                 width: 220px;
                 min-width: 180px;
-                background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
-                border-right: 1px solid var(--border-color);
-                padding: 1.25rem;
-                overflow-y: auto;
-                overflow-x: hidden;
                 flex-shrink: 0;
-            }
-
-            .filter-group {
-                margin-bottom: 1.25rem;
-                padding-bottom: 1rem;
-                border-bottom: 1px solid rgba(148,163,184,0.06);
-            }
-
-            .filter-group:last-of-type {
-                border-bottom: none;
-            }
-
-            .filter-label {
-                font-size: 0.6875rem;
-                color: #64748b;
-                text-transform: uppercase;
-                letter-spacing: 0.08em;
-                margin-bottom: 0.625rem;
-                font-weight: 600;
-            }
-
-            .filter-input {
-                width: 100%;
-                padding: 0.625rem 0.75rem;
-                background: rgba(30,41,59,0.5);
-                border: 1px solid rgba(148,163,184,0.1);
-                border-radius: 6px;
-                color: #f1f5f9;
-                font-family: inherit;
-                font-size: 0.8125rem;
-                transition: all 0.2s;
-            }
-
-            .filter-input:focus {
-                outline: none;
-                border-color: rgba(59,130,246,0.4);
-                background: rgba(30,41,59,0.8);
-            }
-
-            .radio-group {
-                display: flex;
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-
-            .radio-label {
-                display: flex;
-                align-items: center;
-                gap: 0.625rem;
-                font-size: 0.8125rem;
-                color: #94a3b8;
-                cursor: pointer;
-                padding: 0.375rem 0.5rem;
-                border-radius: 4px;
-                transition: background 0.2s;
-            }
-
-            .radio-label:hover {
-                background: rgba(59,130,246,0.1);
-            }
-
-            .radio-label input[type="radio"] {
-                accent-color: #3b82f6;
-            }
-
-            .reset-btn {
-                width: 100%;
-                padding: 0.625rem;
-                background: rgba(239,68,68,0.15);
-                border: 1px solid rgba(239,68,68,0.3);
-                border-radius: 6px;
-                color: #fca5a5;
-                font-family: inherit;
-                cursor: pointer;
-                margin-top: 0.5rem;
-                font-size: 0.8rem;
-                font-weight: 500;
-                transition: all 0.2s;
-            }
-
-            .reset-btn:hover {
-                background: rgba(239,68,68,0.25);
-                border-color: rgba(239,68,68,0.5);
-            }
-
-            .apply-filter-btn {
-                width: 100%;
-                padding: 0.5rem;
-                background: rgba(59,130,246,0.15);
-                border: 1px solid rgba(59,130,246,0.25);
-                border-radius: 4px;
-                color: var(--accent-blue-light);
-                font-family: inherit;
-                font-size: 0.7rem;
-                font-weight: 600;
-                cursor: pointer;
-                margin-top: 0.5rem;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
-                transition: all 0.2s;
-            }
-
-            .apply-filter-btn:hover {
-                background: rgba(59,130,246,0.2);
             }
 
             /* Resize handles */
