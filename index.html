@@ -10,6 +10,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👁</text></svg>">
     <title>STYX v4.3 — Mobile Fixed</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -3895,11 +3896,11 @@
                     if (!selectedSession || !filteredSessionIds.includes(selectedSession.session_id)) {
                         selectSession(filteredSessionIds[0]);
                     } else {
-                        renderTurns(turns);
+                        renderChatReplay(turns);
                     }
                 } else {
                     turns = [];
-                    renderTurns([]);
+                    renderChatReplay([]);
                 }
 
                 updateLastRefresh();
