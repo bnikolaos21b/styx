@@ -3010,9 +3010,9 @@
             }
         }
 
-        /* DESKTOP (min-width: 1025px) - ensure proper layout */
+        /* DESKTOP (min-width: 1025px) - Professional 4-panel layout */
         @media (min-width: 1025px) {
-            /* Hide all mobile-specific elements on desktop */
+            /* Hide ALL mobile elements on desktop */
             .mobile-only,
             .mobile-view,
             .mobile-view.active,
@@ -3033,12 +3033,12 @@
                 display: none !important;
             }
 
-            /* Show desktop-only elements */
-            .desktop-only,
+            /* Show desktop elements */
             .top-nav,
             .nav-tabs,
             .sessions-layout,
             .filters-sidebar,
+            .center-panel,
             .sessions-list-container,
             .turns-list-container,
             .turn-detail-panel,
@@ -3047,42 +3047,68 @@
                 display: block !important;
             }
 
-            /* Ensure 3-panel grid layout */
+            /* 4-panel grid: filters | sessions | conversation | detail */
             .sessions-layout {
                 display: grid !important;
-                grid-template-columns: 280px 1fr 500px;
-                gap: 1rem;
+                grid-template-columns: 220px 280px 1fr 500px !important;
+                gap: 0 !important;
             }
 
-            /* Proper scrollbars */
+            /* Panel styling */
             .filters-sidebar {
-                overflow-y: auto;
+                width: 220px !important;
+                background: var(--bg-secondary) !important;
+                border-right: 1px solid var(--border-color) !important;
+                overflow-y: auto !important;
             }
 
-            .filters-sidebar::-webkit-scrollbar {
-                width: 6px;
+            .sessions-list-container {
+                width: 280px !important;
+                background: var(--bg-primary) !important;
+                border-right: 1px solid var(--border-color) !important;
+                display: flex !important;
+                flex-direction: column !important;
             }
 
-            .sessions-list {
-                overflow-y: auto;
+            .center-panel {
+                display: flex !important;
+                flex-direction: column !important;
+                background: var(--bg-primary) !important;
+                border-right: 1px solid var(--border-color) !important;
             }
 
-            .sessions-list::-webkit-scrollbar {
-                width: 6px;
-            }
-
-            .turns-list {
-                overflow-y: auto;
-            }
-
-            .turns-list::-webkit-scrollbar {
-                width: 6px;
+            .turns-list-container {
+                flex: 1 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                background: var(--bg-primary) !important;
             }
 
             .turn-detail-panel {
-                overflow-y: auto;
+                width: 500px !important;
+                background: var(--bg-primary) !important;
+                display: flex !important;
+                flex-direction: column !important;
+                border-left: 1px solid var(--border-color) !important;
             }
 
+            /* Session cards clickable */
+            .session-card {
+                cursor: pointer !important;
+                pointer-events: auto !important;
+            }
+
+            /* Chat bubbles clickable */
+            .chat-bubble-user,
+            .chat-bubble-argus {
+                cursor: pointer !important;
+                pointer-events: auto !important;
+            }
+
+            /* Scrollbars */
+            .filters-sidebar::-webkit-scrollbar,
+            .sessions-list::-webkit-scrollbar,
+            .turns-list::-webkit-scrollbar,
             .turn-detail-panel::-webkit-scrollbar {
                 width: 6px;
             }
@@ -3117,7 +3143,7 @@
                 <aside class="filters-sidebar">
                     <div class="filter-group">
                         <div class="filter-label">Search</div>
-                        <input type="text" class="filter-input" id="filter-search" placeholder="Search messages...">
+                        <input type="search" class="filter-input" id="filter-search" placeholder="Search messages..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="search_sessions" data-lpignore="true">
                     </div>
 
                     <div class="filter-group">
