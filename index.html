@@ -4128,48 +4128,52 @@
 
                     // Build expandable content for enhanced traces
                     let expandableContent = '';
-                    
+                    let expandableId = 0;
+
                     // Full result for tool_result events
                     if (event.full_result) {
+                        const eid = `trace-expand-${idx}-${expandableId++}`;
                         expandableContent += `
                             <div class="collapsible-section" style="margin-top: 8px;">
-                                <div class="collapsible-header" onclick="this.classList.toggle('open')">
+                                <div class="collapsible-header" onclick="document.getElementById('${eid}').classList.toggle('open'); this.querySelector('.collapse-icon').classList.toggle('open');">
                                     <span class="collapse-icon">▶</span>
                                     <span>Show full tool result</span>
                                 </div>
-                                <div class="collapsible-content">
+                                <div id="${eid}" class="collapsible-content">
                                     <pre style="font-size: 0.65rem; white-space: pre-wrap; word-break: break-word;">${escapeHtml(JSON.stringify(JSON.parse(event.full_result), null, 2))}</pre>
                                 </div>
                             </div>
                         `;
                     }
-                    
+
                     // Raw LLM response
                     if (event.raw_response) {
+                        const eid = `trace-expand-${idx}-${expandableId++}`;
                         expandableContent += `
                             <div class="collapsible-section" style="margin-top: 8px;">
-                                <div class="collapsible-header" onclick="this.classList.toggle('open')">
+                                <div class="collapsible-header" onclick="document.getElementById('${eid}').classList.toggle('open'); this.querySelector('.collapse-icon').classList.toggle('open');">
                                     <span class="collapse-icon">▶</span>
                                     <span>Show raw LLM response</span>
                                 </div>
-                                <div class="collapsible-content">
+                                <div id="${eid}" class="collapsible-content">
                                     <pre style="font-size: 0.65rem; white-space: pre-wrap; word-break: break-word;">${escapeHtml(event.raw_response)}</pre>
                                 </div>
                             </div>
                         `;
                     }
-                    
+
                     // Context summary
                     if (event.context_summary) {
                         try {
                             const ctx = JSON.parse(event.context_summary);
+                            const eid = `trace-expand-${idx}-${expandableId++}`;
                             expandableContent += `
                                 <div class="collapsible-section" style="margin-top: 8px;">
-                                    <div class="collapsible-header" onclick="this.classList.toggle('open')">
+                                    <div class="collapsible-header" onclick="document.getElementById('${eid}').classList.toggle('open'); this.querySelector('.collapse-icon').classList.toggle('open');">
                                         <span class="collapse-icon">▶</span>
                                         <span>Show context summary</span>
                                     </div>
-                                    <div class="collapsible-content">
+                                    <div id="${eid}" class="collapsible-content">
                                         <div style="font-size: 0.7rem; padding: 8px; background: rgba(59,130,246,0.1); border-radius: 4px;">
                                             <div><strong>Size:</strong> ${ctx.total_chars} chars (~${ctx.total_tokens} tokens)</div>
                                             <div><strong>Memories:</strong> ${ctx.has_memories ? 'Yes' : 'No'}</div>
@@ -4181,16 +4185,17 @@
                             `;
                         } catch(e) {}
                     }
-                    
+
                     // Full context
                     if (event.full_context) {
+                        const eid = `trace-expand-${idx}-${expandableId++}`;
                         expandableContent += `
                             <div class="collapsible-section" style="margin-top: 8px;">
-                                <div class="collapsible-header" onclick="this.classList.toggle('open')">
+                                <div class="collapsible-header" onclick="document.getElementById('${eid}').classList.toggle('open'); this.querySelector('.collapse-icon').classList.toggle('open');">
                                     <span class="collapse-icon">▶</span>
                                     <span>Show full context (${event.detail.match(/\d+/)?.[0] || ''} chars)</span>
                                 </div>
-                                <div class="collapsible-content">
+                                <div id="${eid}" class="collapsible-content">
                                     <pre style="font-size: 0.6rem; white-space: pre-wrap; word-break: break-word; max-height: 400px; overflow-y: auto;">${escapeHtml(event.full_context)}</pre>
                                 </div>
                             </div>
