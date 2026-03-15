@@ -947,6 +947,9 @@
         .trace-expand-btn:hover {
             background: rgba(59,130,246,0.2);
         }
+        .trace-expand-btn:active {
+            background: rgba(59,130,246,0.3);
+        }
         .trace-card {
             background: rgba(30,41,59,0.5);
             border-radius: 6px;
@@ -2623,7 +2626,7 @@
         /* =============================================
            MOBILE TOOL LOGS VIEW
            ============================================= */
-        .mobile-tool-logs-view {
+        .mobile-actions-view {
             display: none;
             position: fixed;
             top: var(--nav-height);
@@ -2636,7 +2639,7 @@
             pointer-events: none;
         }
 
-        .mobile-tool-logs-view.active {
+        .mobile-actions-view.active {
             display: flex;
             flex-direction: column;
             pointer-events: auto;
@@ -2994,7 +2997,7 @@
             .mobile-sessions-view.mobile-view.active,
             .mobile-conversation-view.active,
             .mobile-analytics-view.active,
-            .mobile-tool-logs-view.active {
+            .mobile-actions-view.active {
                 display: flex;
             }
 
@@ -3083,7 +3086,6 @@
         <div class="nav-tabs">
             <button class="nav-tab active" data-tab="sessions">SESSIONS</button>
             <button class="nav-tab" data-tab="analytics">ANALYTICS</button>
-            <button class="nav-tab" data-tab="tool-logs">TOOL LOGS</button>
             <button class="nav-tab" data-tab="actions">ACTIONS</button>
         </div>
         <div class="nav-right">
@@ -3296,41 +3298,6 @@
             </div>
         </div>
 
-        <!-- TOOL LOGS TAB -->
-        <div class="tab-content" id="tool-logs-tab">
-            <div class="tool-logs-layout">
-                <!-- Tool List -->
-                <div class="tool-list-panel">
-                    <div class="panel-header">
-                        <div class="panel-title">Tool Logs</div>
-                    </div>
-                    <div id="tool-list-content">
-                        <div class="loading"><div class="spinner"></div></div>
-                    </div>
-                </div>
-
-                <!-- Log Viewer -->
-                <div class="log-viewer-panel">
-                    <div class="log-header">
-                        <div>
-                            <span class="panel-title" id="log-viewer-title">Select a tool log</span>
-                        </div>
-                        <div class="log-actions">
-                            <input type="text" class="log-search" id="log-search" placeholder="Search logs...">
-                            <button class="action-btn" onclick="refreshLog()">↻ Refresh</button>
-                            <button class="action-btn" onclick="downloadLog()">↓ Download</button>
-                        </div>
-                    </div>
-                    <div class="log-content" id="log-content">
-                        <div class="empty-state">
-                            <h3>No log selected</h3>
-                            <p>Select a tool from the list to view its log</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- ACTIONS TAB -->
         <div class="tab-content" id="actions-tab">
             <div class="actions-layout">
@@ -3454,10 +3421,6 @@
             <button class="mobile-nav-item" data-mobile-tab="analytics" onclick="switchMobileTab('analytics')">
                 <span class="mobile-nav-icon">📊</span>
                 <span class="mobile-nav-label">Analytics</span>
-            </button>
-            <button class="mobile-nav-item" data-mobile-tab="tool-logs" onclick="switchMobileTab('tool-logs')">
-                <span class="mobile-nav-icon">🔧</span>
-                <span class="mobile-nav-label">Tool Logs</span>
             </button>
             <button class="mobile-nav-item" data-mobile-tab="actions" onclick="switchMobileTab('actions')">
                 <span class="mobile-nav-icon">📋</span>
@@ -3612,18 +3575,6 @@
             <div class="mobile-error-list" id="mobile-top-errors">
                 <!-- Errors populated by JavaScript -->
             </div>
-        </div>
-    </div>
-
-    <!-- Mobile Tool Logs View -->
-    <div class="mobile-tool-logs-view" id="mobile-tool-logs-view">
-        <div class="mobile-log-header">
-            <button class="mobile-chat-back" id="mobile-tool-logs-back" onclick="backToToolList()" style="display: none;">←</button>
-            <input type="text" class="mobile-log-search" id="mobile-log-search" placeholder="Search logs...">
-            <button class="mobile-log-refresh" onclick="refreshMobileLog()">↻</button>
-        </div>
-        <div class="mobile-tool-list-panel" id="mobile-tool-list-content">
-            <!-- Tool list populated by JavaScript -->
         </div>
     </div>
 
@@ -4426,7 +4377,7 @@
                                         <div class="trace-row"><span>Device DNS:</span><span>${td.device_dns_count || 0} devices</span></div>
                                     </div>
                                     ${event.full_context ? `
-                                    <div class="trace-expand-btn" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show full context'">
+                                    <div class="trace-expand-btn" onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show full context'">
                                         <span>▶ Show full context</span>
                                     </div>
                                     <div class="trace-full-content">
@@ -4449,7 +4400,7 @@
                                         <div class="trace-row"><span>Tokens:</span><span>~${td.prompt_tokens || 0}</span></div>
                                     </div>
                                     ${event.full_prompt ? `
-                                    <div class="trace-expand-btn" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show full prompt'">
+                                    <div class="trace-expand-btn" onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show full prompt'">
                                         <span>▶ Show full prompt (${td.prompt_chars || 0} chars)</span>
                                     </div>
                                     <div class="trace-full-content">
@@ -4472,7 +4423,7 @@
                                         <div class="trace-row"><span>Duration:</span><span>${td.duration_ms || 0}ms</span></div>
                                     </div>
                                     ${event.full_raw_response ? `
-                                    <div class="trace-expand-btn" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show full response'">
+                                    <div class="trace-expand-btn" onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show full response'">
                                         <span>▶ Show full response</span>
                                     </div>
                                     <div class="trace-full-content">
@@ -4520,7 +4471,7 @@
                                             </div>` : ''}
                                         </div>
                                         ${event.full_result ? `
-                                        <div class="trace-expand-btn" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show full JSON'">
+                                        <div class="trace-expand-btn" onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show full JSON'">
                                             <span>▶ Show full JSON</span>
                                         </div>
                                         <div class="trace-full-content">
@@ -4542,7 +4493,7 @@
                                             <div class="trace-row"><span>Domains:</span><span>${td.domain_count || 0}</span></div>
                                             ${td.blocked_count > 0 ? `<div class="trace-row"><span>Blocked:</span><span>${td.blocked_count}</span></div>` : ''}
                                             ${td.top_domains && td.top_domains.length > 0 ? `
-                                            <div class="trace-expand-btn" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show domains'">
+                                            <div class="trace-expand-btn" onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show domains'">
                                                 <span>▶ Show top domains</span>
                                             </div>
                                             <div class="trace-full-content">
@@ -4563,7 +4514,7 @@
                                             <div class="trace-row"><span>Temp:</span><span>${td.temperature || 0}°C</span></div>
                                             <div class="trace-row"><span>Services:</span><span>${td.services_ok || 0}/${td.services_total || 0} OK</span></div>
                                             ${td.services && td.services.length > 0 ? `
-                                            <div class="trace-expand-btn" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show all services'">
+                                            <div class="trace-expand-btn" onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show all services'">
                                                 <span>▶ Show all services</span>
                                             </div>
                                             <div class="trace-full-content">
@@ -4611,7 +4562,7 @@
                                             <div class="trace-row"><span>Result:</span><span>${escapeHtml(td.summary || event.detail || '-')}</span></div>
                                         </div>
                                         ${event.full_result ? `
-                                        <div class="trace-expand-btn" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show full JSON'">
+                                        <div class="trace-expand-btn" onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show full JSON'">
                                             <span>▶ Show full JSON</span>
                                         </div>
                                         <div class="trace-full-content">
@@ -4755,73 +4706,6 @@
             }).join('');
         }
 
-        // Tool Logs
-        async function loadToolLogs() {
-            try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/tools/logs`, {
-                    credentials: 'include',
-                    headers: {'Content-Type': 'application/json'}
-                });
-                const data = await response.json();
-
-                const listContent = document.getElementById('tool-list-content');
-                if (data.logs && data.logs.length > 0) {
-                    listContent.innerHTML = data.logs.map(log => `
-                        <div class="tool-list-item" onclick="selectToolLog('${log.tool_name}')">
-                            <div class="tool-name">${log.tool_name}</div>
-                            <div class="tool-meta">${log.size_human} • ${new Date(log.modified).toLocaleString()}</div>
-                        </div>
-                    `).join('');
-                } else {
-                    listContent.innerHTML = '<div class="empty-state"><h3>No logs</h3><p>Tool logs will appear here after tools execute</p></div>';
-                }
-            } catch (error) {
-                console.error('Failed to load tool logs:', error);
-            }
-        }
-
-        async function selectToolLog(toolName) {
-            currentTool = toolName;
-            document.getElementById('log-viewer-title').textContent = toolName;
-
-            document.querySelectorAll('.tool-list-item').forEach(item => {
-                item.classList.toggle('selected', item.textContent.includes(toolName));
-            });
-
-            await refreshLog();
-        }
-
-        async function refreshLog() {
-            if (!currentTool) return;
-
-            try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/tools/logs/${currentTool}?lines=100`, {
-                    credentials: 'include',
-                    headers: {'Content-Type': 'application/json'}
-                });
-                const data = await response.json();
-
-                const content = document.getElementById('log-content');
-                if (data.lines && data.lines.length > 0) {
-                    content.innerHTML = data.lines.map(line => {
-                        const isFailed = line.includes('FAILED');
-                        const isSuccess = line.includes('SUCCESS');
-                        const lineClass = isFailed ? 'failed' : isSuccess ? 'success' : '';
-                        return `<div class="log-line ${lineClass}">${escapeHtml(line)}</div>`;
-                    }).join('');
-                } else {
-                    content.innerHTML = '<div class="empty-state"><h3>Empty log</h3></div>';
-                }
-            } catch (error) {
-                console.error('Failed to load log:', error);
-            }
-        }
-
-        function downloadLog() {
-            if (!currentTool) return;
-            alert('Download functionality - would download ' + currentTool + '.log');
-        }
-
         // Filter handlers
         function resetFilters() {
             document.getElementById('filter-search').value = '';
@@ -4866,7 +4750,7 @@
                 }
             }, 60000);
             refreshIntervals.logs = setInterval(() => {
-                if (isAuthenticated && document.getElementById('tool-logs-tab').classList.contains('active') && currentTool) {
+                if (isAuthenticated && document.getElementById('actions-tab').classList.contains('active') && currentTool) {
                     refreshLog();
                 }
             }, 10000);
@@ -4978,7 +4862,7 @@
             });
 
             // Hide all mobile views
-            document.querySelectorAll('.mobile-view, .mobile-conversation-view, .mobile-analytics-view, .mobile-tool-logs-view, .mobile-actions-view').forEach(view => {
+            document.querySelectorAll('.mobile-view, .mobile-conversation-view, .mobile-analytics-view, .mobile-actions-view, .mobile-actions-view').forEach(view => {
                 view.classList.remove('active');
             });
 
@@ -4998,7 +4882,7 @@
                 document.getElementById('mobile-analytics-view').classList.add('active');
                 loadMobileAnalytics();
             } else if (tabName === 'tool-logs') {
-                document.getElementById('mobile-tool-logs-view').classList.add('active');
+                document.getElementById('mobile-actions-view').classList.add('active');
                 loadMobileToolLogs();
             } else if (tabName === 'actions') {
                 document.getElementById('mobile-actions-view').classList.add('active');
@@ -5424,86 +5308,6 @@
         }
 
         // Store tool list HTML for back navigation
-        let mobileToolListHTML = '';
-
-        async function selectMobileToolLog(toolName) {
-            currentTool = toolName;
-            // Store current tool list
-            mobileToolListHTML = document.getElementById('mobile-tool-list-content').innerHTML;
-            // Show back button
-            document.getElementById('mobile-tool-logs-back').style.display = 'flex';
-            await refreshMobileLog();
-        }
-
-        function backToToolList() {
-            currentTool = null;
-            // Restore tool list
-            if (mobileToolListHTML) {
-                document.getElementById('mobile-tool-list-content').innerHTML = mobileToolListHTML;
-            }
-            // Hide back button
-            document.getElementById('mobile-tool-logs-back').style.display = 'none';
-            // Reload tool list
-            loadMobileToolLogs();
-        }
-
-        async function refreshMobileLog() {
-            if (!currentTool) return;
-            try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/tools/logs/${currentTool}?lines=100`, {
-                    credentials: 'include',
-                    headers: {'Content-Type': 'application/json'}
-                });
-                const data = await response.json();
-                const content = document.getElementById('mobile-tool-list-content');
-
-                if (data.lines && data.lines.length > 0) {
-                    content.innerHTML = data.lines.map(line => {
-                        const isFailed = line.includes('FAILED');
-                        const isSuccess = line.includes('SUCCESS');
-                        const lineClass = isFailed ? 'failed' : isSuccess ? 'success' : '';
-                        return `<div class="mobile-log-line ${lineClass}">${escapeHtml(line)}</div>`;
-                    }).join('');
-                } else {
-                    content.innerHTML = '<div class="empty-state" style="padding: 2rem;"><h3>Empty log</h3></div>';
-                }
-            } catch (error) {
-                console.error('Failed to load mobile log:', error);
-            }
-        }
-
-        // Load tool logs when view is shown
-        function loadMobileToolLogs() {
-            // Hide back button when loading fresh
-            document.getElementById('mobile-tool-logs-back').style.display = 'none';
-            // Call the async function
-            (async () => {
-                try {
-                    const response = await fetch(`${CONFIG.apiUrl}/api/tools/logs`, {
-                        credentials: 'include',
-                        headers: {'Content-Type': 'application/json'}
-                    });
-                    const data = await response.json();
-                    const listContent = document.getElementById('mobile-tool-list-content');
-
-                    if (data.logs && data.logs.length > 0) {
-                        listContent.innerHTML = data.logs.map(log => `
-                            <div class="mobile-tool-log-item" onclick="selectMobileToolLog('${log.tool_name}')">
-                                <div style="font-size: 0.8125rem; color: var(--text-primary); font-weight: 500;">${log.tool_name}</div>
-                                <div style="font-size: 0.625rem; color: var(--text-muted); margin-top: 0.25rem;">${log.size_human} • ${new Date(log.modified).toLocaleString()}</div>
-                            </div>
-                        `).join('');
-                        // Store for back navigation
-                        mobileToolListHTML = listContent.innerHTML;
-                    } else {
-                        listContent.innerHTML = '<div class="empty-state" style="padding: 2rem;"><h3>No logs</h3><p>Tool logs will appear here</p></div>';
-                    }
-                } catch (error) {
-                    console.error('Failed to load mobile tool logs:', error);
-                }
-            })();
-        }
-
         // Load mobile actions view
         async function loadMobileActions() {
             const content = document.getElementById('mobile-actions-content');
