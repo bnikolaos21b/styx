@@ -877,6 +877,158 @@
             border: 1px solid rgba(148,163,184,0.1);
         }
 
+        /* Enhanced Trace Events - Expandable Cards */
+        .trace-event {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .trace-event:hover {
+            background: rgba(59,130,246,0.05);
+        }
+        .trace-event.expanded {
+            background: rgba(59,130,246,0.08);
+        }
+        .trace-event.expanded .trace-expand-indicator {
+            transform: rotate(90deg);
+        }
+        .trace-title {
+            font-weight: 500;
+            font-size: 0.75rem;
+            color: var(--text-primary);
+        }
+        .trace-summary {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+        .trace-expand-indicator {
+            font-size: 0.6rem;
+            color: var(--accent-blue);
+            margin-left: auto;
+            transition: transform 0.2s;
+        }
+        .trace-expanded-content {
+            display: none;
+            margin-top: 0.75rem;
+            animation: fadeIn 0.25s ease;
+        }
+        .trace-event.expanded .trace-expanded-content {
+            display: block;
+        }
+        .trace-full-content {
+            display: none;
+            margin-top: 0.5rem;
+        }
+        .trace-full-content.open {
+            display: block;
+        }
+        .trace-full-content pre {
+            font-size: 0.55rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+            background: rgba(15,23,42,0.8);
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(148,163,184,0.1);
+        }
+        .trace-expand-btn {
+            font-size: 0.6rem;
+            color: var(--accent-blue);
+            cursor: pointer;
+            padding: 0.375rem 0.5rem;
+            margin-top: 0.5rem;
+            border-radius: 4px;
+            background: rgba(59,130,246,0.1);
+            display: inline-block;
+            user-select: none;
+        }
+        .trace-expand-btn:hover {
+            background: rgba(59,130,246,0.2);
+        }
+        .trace-card {
+            background: rgba(30,41,59,0.5);
+            border-radius: 6px;
+            padding: 0.625rem;
+            margin-top: 0.5rem;
+            border: 1px solid rgba(148,163,184,0.08);
+        }
+        .trace-card-header {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.375rem;
+            border-bottom: 1px solid rgba(148,163,184,0.1);
+        }
+        .trace-card-body {
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+        }
+        .trace-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.25rem 0;
+            border-bottom: 1px solid rgba(148,163,184,0.05);
+        }
+        .trace-row:last-child {
+            border-bottom: none;
+        }
+        .trace-row span:first-child {
+            color: var(--text-muted);
+        }
+        .trace-row span:last-child {
+            color: var(--text-primary);
+            text-align: right;
+            word-break: break-word;
+            max-width: 60%;
+        }
+        /* Card type colors */
+        .context-card { border-left: 3px solid #8b5cf6; }
+        .context-card .trace-card-header { color: #a78bfa; }
+        .llm-card { border-left: 3px solid #6366f1; }
+        .llm-card .trace-card-header { color: #818cf8; }
+        .tool-card { border-left: 3px solid #eab308; }
+        .tool-card .trace-card-header { color: #fcd34d; }
+        .presence-card { border-left: 3px solid #22c55e; }
+        .presence-card .trace-card-header { color: #4ade80; }
+        .dns-card { border-left: 3px solid #06b6d4; }
+        .dns-card .trace-card-header { color: #22d3ee; }
+        .health-card { border-left: 3px solid #10b981; }
+        .health-card .trace-card-header { color: #34d399; }
+        .speed-card { border-left: 3px solid #f59e0b; }
+        .speed-card .trace-card-header { color: #fbbf24; }
+        .network-card { border-left: 3px solid #3b82f6; }
+        .network-card .trace-card-header { color: #60a5fa; }
+        .generic-card { border-left: 3px solid #64748b; }
+        .generic-card .trace-card-header { color: #94a3b8; }
+        .response-card { border-left: 3px solid #22c55e; }
+        .response-card .trace-card-header { color: #4ade80; }
+        /* Presence-specific */
+        .presence-summary {
+            padding: 0.375rem;
+            border-radius: 4px;
+            margin-bottom: 0.375rem;
+        }
+        .presence-home {
+            background: rgba(34,197,94,0.1);
+            color: #4ade80;
+            font-size: 0.6rem;
+        }
+        .presence-away {
+            background: rgba(239,68,68,0.1);
+            color: #f87171;
+            font-size: 0.6rem;
+        }
+        .presence-list {
+            font-size: 0.55rem;
+            margin-top: 0.25rem;
+            padding-left: 0.5rem;
+        }
+        .presence-list.home { color: #86efac; }
+        .presence-list.away { color: #fca5a5; }
+
         /* Collapsible Section */
         .collapsible-header {
             display: flex;
@@ -4239,146 +4391,276 @@
                 trace.forEach((event, idx) => {
                     let eventClass = '';
                     let icon = '•';
+                    let title = '';
+                    let summary = '';
+                    let expandedContent = '';
 
-                    if (event.event.includes('error')) {
-                        eventClass = 'error';
-                        icon = '❌';
-                    } else if (event.event.includes('result')) {
-                        eventClass = 'success';
-                        icon = '✅';
-                    } else if (event.event.includes('llm_call')) {
-                        eventClass = 'llm-call';
-                        icon = '🤖';
-                    } else if (event.event.includes('tool_exec')) {
-                        eventClass = 'tool-call';
-                        icon = '⚡';
-                    } else if (event.event.includes('selected')) {
-                        eventClass = 'tool-call';
-                        icon = '📋';
-                    } else if (event.event.includes('db_result')) {
-                        eventClass = 'db-result';
-                        icon = '📊';
-                    } else if (event.event.includes('resolver')) {
-                        eventClass = 'resolver';
-                        icon = '🔍';
-                    } else if (event.event.includes('response_ready')) {
-                        eventClass = 'success';
-                        icon = '⏱️';
-                    } else if (event.event.includes('context')) {
-                        eventClass = 'context';
-                        icon = '📚';
-                    }
+                    // Determine event type and styling
+                    if (event.event.includes('error')) { eventClass = 'error'; icon = '❌'; }
+                    else if (event.event.includes('result')) { eventClass = 'success'; icon = '✅'; }
+                    else if (event.event.includes('llm_call')) { eventClass = 'llm-call'; icon = '🤖'; }
+                    else if (event.event.includes('tool_exec')) { eventClass = 'tool-call'; icon = '⚡'; }
+                    else if (event.event.includes('selected')) { eventClass = 'tool-call'; icon = '📋'; }
+                    else if (event.event.includes('db_result')) { eventClass = 'db-result'; icon = '📊'; }
+                    else if (event.event.includes('resolver')) { eventClass = 'resolver'; icon = '🔍'; }
+                    else if (event.event.includes('response_ready')) { eventClass = 'success'; icon = '⏱️'; }
+                    else if (event.event.includes('context')) { eventClass = 'context'; icon = '📚'; }
 
-                    // Build inline detail and expandable content for enhanced traces
-                    let inlineDetail = '';
-                    let expandableContent = '';
-                    let expandableId = 0;
+                    // Get trace_display data if available
+                    const td = event.trace_display || {};
 
-                    // TOOL RESULT - Show presence data inline
-                    if (event.event === 'tool_result' && event.full_result) {
-                        try {
-                            const result = JSON.parse(event.full_result);
-                            
-                            // Show presence_snapshot inline
-                            if (result.presence_snapshot) {
-                                const ps = result.presence_snapshot;
-                                const homeNames = ps.home.map(p => p.name).join(', ') || 'none';
-                                const awayNames = ps.away.map(p => p.name).join(', ') || 'none';
-                                const homeArrivals = ps.home.map(p => `${p.name} ${p.arrived_at ? p.arrived_at.slice(11,16) : '?'}`).join(', ');
-                                
-                                inlineDetail = `<div style="margin-top:6px;font-size:0.72rem;">
-                                    <div style="color:#22c55e;"><strong>Home:</strong> ${homeNames}</div>
-                                    <div style="color:#94a3b8;"><strong>Away:</strong> ${awayNames}</div>
-                                    <div style="color:#64748b;margin-top:4px;"><strong>Arrived:</strong> ${homeArrivals}</div>
-                                </div>`;
-                            }
-                            // Show device data inline
-                            else if (result.device_data) {
-                                const dd = result.device_data;
-                                inlineDetail = `<div style="margin-top:6px;font-size:0.72rem;color:#94a3b8;">
-                                    <strong>Device:</strong> ${dd.device_name || 'unknown'} 
-                                    ${dd.domains && dd.domains.length > 0 ? `• ${dd.domains.length} domains` : ''}
-                                </div>`;
-                            }
-                            
-                            // Add expand button for full JSON
-                            expandableContent += `
-                                <div style="margin-top:8px;">
-                                    <div class="collapsible-header" onclick="document.getElementById('trace-expand-${idx}-${expandableId}').classList.toggle('open');this.querySelector('.collapse-icon').classList.toggle('open');">
-                                        <span class="collapse-icon">▶</span>
-                                        <span>Show full result JSON</span>
+                    // Build expanded content based on event type
+                    if (event.event === 'context_injected') {
+                        title = `Context: ${td.total_chars || 0} chars`;
+                        summary = `${td.total_tokens || 0} tokens • Memories: ${td.has_memories ? 'Yes' : 'No'}`;
+                        expandedContent = `
+                            <div class="trace-expanded-content">
+                                <div class="trace-card context-card">
+                                    <div class="trace-card-header">📚 Context Breakdown</div>
+                                    <div class="trace-card-body">
+                                        <div class="trace-row"><span>OLYMPUS Core:</span><span>${td.total_chars || 0} chars</span></div>
+                                        <div class="trace-row"><span>Tokens:</span><span>~${td.total_tokens || 0}</span></div>
+                                        <div class="trace-row"><span>Memories:</span><span>${td.has_memories ? (td.memory_categories || []).join(', ') : 'None'}</span></div>
+                                        <div class="trace-row"><span>Time Context:</span><span>${td.has_time_context ? 'Yes' : 'No'}</span></div>
+                                        <div class="trace-row"><span>Conv Context:</span><span>${td.has_conv_context ? 'Yes' : 'No'}</span></div>
+                                        <div class="trace-row"><span>Device DNS:</span><span>${td.device_dns_count || 0} devices</span></div>
                                     </div>
-                                    <div id="trace-expand-${idx}-${expandableId++}" class="collapsible-content">
-                                        <pre style="font-size:0.6rem;white-space:pre-wrap;word-break:break-word;background:rgba(15,23,42,0.5);padding:6px;border-radius:4px;">${escapeHtml(JSON.stringify(result, null, 2))}</pre>
+                                    ${event.full_context ? `
+                                    <div class="trace-expand-btn" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show full context'">
+                                        <span>▶ Show full context</span>
                                     </div>
-                                </div>
-                            `;
-                        } catch(e) {
-                            // Fallback: show raw
-                            inlineDetail = `<div style="margin-top:6px;font-size:0.7rem;color:#64748b;">${escapeHtml(event.full_result.slice(0,150))}...</div>`;
-                        }
-                    }
-
-                    // Raw LLM response - expandable only
-                    if (event.raw_response) {
-                        expandableContent += `
-                            <div style="margin-top:8px;">
-                                <div class="collapsible-header" onclick="document.getElementById('trace-expand-${idx}-${expandableId}').classList.toggle('open');this.querySelector('.collapse-icon').classList.toggle('open');">
-                                    <span class="collapse-icon">▶</span>
-                                    <span>Show raw LLM response</span>
-                                </div>
-                                <div id="trace-expand-${idx}-${expandableId++}" class="collapsible-content">
-                                    <pre style="font-size:0.6rem;white-space:pre-wrap;word-break:break-word;background:rgba(15,23,42,0.5);padding:6px;border-radius:4px;">${escapeHtml(event.raw_response)}</pre>
+                                    <div class="trace-full-content">
+                                        <pre>${escapeHtml(event.full_context)}</pre>
+                                    </div>` : ''}
                                 </div>
                             </div>
                         `;
                     }
-
-                    // Context summary - show inline + expandable
-                    if (event.context_summary) {
-                        try {
-                            const ctx = JSON.parse(event.context_summary);
-                            inlineDetail = `<div style="margin-top:6px;font-size:0.7rem;color:#94a3b8;">
-                                <strong>${ctx.total_chars} chars</strong> (~${ctx.total_tokens} tokens) • 
-                                Memories: ${ctx.has_memories ? 'Yes' : 'No'} • 
-                                Time: ${ctx.has_time_context ? 'Yes' : 'No'} • 
-                                Conv: ${ctx.has_conv_context ? 'Yes' : 'No'}
-                            </div>`;
-                            
-                            if (event.full_context) {
-                                expandableContent += `
-                                    <div style="margin-top:8px;">
-                                        <div class="collapsible-header" onclick="document.getElementById('trace-expand-${idx}-${expandableId}').classList.toggle('open');this.querySelector('.collapse-icon').classList.toggle('open');">
-                                            <span class="collapse-icon">▶</span>
-                                            <span>Show full context</span>
+                    else if (event.event === 'llm_call_1_start' || event.event === 'llm_call_2_start') {
+                        const callNum = td.call_number || (event.event.includes('llm_call_1') ? 1 : 2);
+                        title = `LLM Call ${callNum} →`;
+                        summary = `${td.prompt_chars || 0} chars (~${td.prompt_tokens || 0} tokens)`;
+                        expandedContent = `
+                            <div class="trace-expanded-content">
+                                <div class="trace-card llm-card">
+                                    <div class="trace-card-header">🤖 LLM Prompt ${callNum}</div>
+                                    <div class="trace-card-body">
+                                        <div class="trace-row"><span>Characters:</span><span>${td.prompt_chars || 0}</span></div>
+                                        <div class="trace-row"><span>Tokens:</span><span>~${td.prompt_tokens || 0}</span></div>
+                                    </div>
+                                    ${event.full_prompt ? `
+                                    <div class="trace-expand-btn" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show full prompt'">
+                                        <span>▶ Show full prompt (${td.prompt_chars || 0} chars)</span>
+                                    </div>
+                                    <div class="trace-full-content">
+                                        <pre>${escapeHtml(event.full_prompt)}</pre>
+                                    </div>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }
+                    else if (event.event === 'llm_call_1_done' || event.event === 'llm_call_2_done') {
+                        const callNum = td.call_number || (event.event.includes('llm_call_1') ? 1 : 2);
+                        title = `LLM Call ${callNum} ←`;
+                        summary = `${td.response_chars || 0} chars • ${td.duration_ms || 0}ms`;
+                        expandedContent = `
+                            <div class="trace-expanded-content">
+                                <div class="trace-card llm-card">
+                                    <div class="trace-card-header">📝 LLM Response ${callNum}</div>
+                                    <div class="trace-card-body">
+                                        <div class="trace-row"><span>Characters:</span><span>${td.response_chars || 0}</span></div>
+                                        <div class="trace-row"><span>Duration:</span><span>${td.duration_ms || 0}ms</span></div>
+                                    </div>
+                                    ${event.full_raw_response ? `
+                                    <div class="trace-expand-btn" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show full response'">
+                                        <span>▶ Show full response</span>
+                                    </div>
+                                    <div class="trace-full-content">
+                                        <pre>${escapeHtml(event.full_raw_response)}</pre>
+                                    </div>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }
+                    else if (event.event === 'tool_executing') {
+                        title = `Calling ${td.tool_name || 'tool'}...`;
+                        summary = td.params_preview || event.detail || '';
+                        expandedContent = `
+                            <div class="trace-expanded-content">
+                                <div class="trace-card tool-card">
+                                    <div class="trace-card-header">⚡ Tool Call</div>
+                                    <div class="trace-card-body">
+                                        <div class="trace-row"><span>Tool:</span><span>${td.tool_name || 'Unknown'}</span></div>
+                                        <div class="trace-row"><span>Parameters:</span><span>${escapeHtml(JSON.stringify(td.params || {}))}</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    else if (event.event === 'tool_result') {
+                        const success = td.success || event.detail?.includes('success=True');
+                        title = success ? `✓ ${td.tool || 'Tool'} result` : `✗ ${td.tool || 'Tool'} failed`;
+                        summary = td.type ? `${td.type} • ${event.duration_ms || 0}ms` : `${event.duration_ms || 0}ms`;
+                        
+                        // Type-specific expanded content
+                        if (td.type === 'presence') {
+                            expandedContent = `
+                                <div class="trace-expanded-content">
+                                    <div class="trace-card presence-card">
+                                        <div class="trace-card-header">🏠 Presence Result</div>
+                                        <div class="trace-card-body">
+                                            <div class="presence-summary">
+                                                <div class="presence-home"><strong>🟢 Home:</strong> ${td.home_count || 0}/${td.resident_count || 0}</div>
+                                                ${td.home && td.home.length > 0 ? `<div class="presence-list home">${td.home.map(p => p.name).join(', ')}</div>` : '<div class="presence-list home">Nobody</div>'}
+                                            </div>
+                                            ${td.away && td.away.length > 0 ? `
+                                            <div class="presence-summary" style="margin-top:0.5rem;">
+                                                <div class="presence-away"><strong>🔴 Away:</strong> ${td.away.length}</div>
+                                                <div class="presence-list away">${td.away.map(p => p.name).join(', ')}</div>
+                                            </div>` : ''}
                                         </div>
-                                        <div id="trace-expand-${idx}-${expandableId++}" class="collapsible-content">
-                                            <pre style="font-size:0.55rem;white-space:pre-wrap;word-break:break-word;max-height:400px;overflow-y:auto;background:rgba(15,23,42,0.5);padding:6px;border-radius:4px;">${escapeHtml(event.full_context)}</pre>
+                                        ${event.full_result ? `
+                                        <div class="trace-expand-btn" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show full JSON'">
+                                            <span>▶ Show full JSON</span>
+                                        </div>
+                                        <div class="trace-full-content">
+                                            <pre>${escapeHtml(event.full_result)}</pre>
+                                        </div>` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        else if (td.type === 'dns') {
+                            expandedContent = `
+                                <div class="trace-expanded-content">
+                                    <div class="trace-card dns-card">
+                                        <div class="trace-card-header">🌐 DNS Result</div>
+                                        <div class="trace-card-body">
+                                            <div class="trace-row"><span>Device:</span><span>${td.device_name || 'Unknown'}</span></div>
+                                            <div class="trace-row"><span>IP:</span><span>${td.device_ip || '-'}</span></div>
+                                            <div class="trace-row"><span>MAC:</span><span>${td.device_mac || '-'}</span></div>
+                                            <div class="trace-row"><span>Domains:</span><span>${td.domain_count || 0}</span></div>
+                                            ${td.blocked_count > 0 ? `<div class="trace-row"><span>Blocked:</span><span>${td.blocked_count}</span></div>` : ''}
+                                            ${td.top_domains && td.top_domains.length > 0 ? `
+                                            <div class="trace-expand-btn" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show domains'">
+                                                <span>▶ Show top domains</span>
+                                            </div>
+                                            <div class="trace-full-content">
+                                                <pre>${escapeHtml(JSON.stringify(td.top_domains, null, 2))}</pre>
+                                            </div>` : ''}
                                         </div>
                                     </div>
-                                `;
-                            }
-                        } catch(e) {}
+                                </div>
+                            `;
+                        }
+                        else if (td.type === 'health') {
+                            expandedContent = `
+                                <div class="trace-expanded-content">
+                                    <div class="trace-card health-card">
+                                        <div class="trace-card-header">💚 Health Check</div>
+                                        <div class="trace-card-body">
+                                            <div class="trace-row"><span>CPU:</span><span>${td.cpu_percent || 0}%</span></div>
+                                            <div class="trace-row"><span>Temp:</span><span>${td.temperature || 0}°C</span></div>
+                                            <div class="trace-row"><span>Services:</span><span>${td.services_ok || 0}/${td.services_total || 0} OK</span></div>
+                                            ${td.services && td.services.length > 0 ? `
+                                            <div class="trace-expand-btn" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show all services'">
+                                                <span>▶ Show all services</span>
+                                            </div>
+                                            <div class="trace-full-content">
+                                                <pre>${escapeHtml(JSON.stringify(td.services, null, 2))}</pre>
+                                            </div>` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        else if (td.type === 'speed') {
+                            expandedContent = `
+                                <div class="trace-expanded-content">
+                                    <div class="trace-card speed-card">
+                                        <div class="trace-card-header">⚡ Internet Speed</div>
+                                        <div class="trace-card-body">
+                                            <div class="trace-row"><span>↓ Download:</span><span>${td.download_mbps || 0} Mbps</span></div>
+                                            <div class="trace-row"><span>↑ Upload:</span><span>${td.upload_mbps || 0} Mbps</span></div>
+                                            <div class="trace-row"><span>Ping:</span><span>${td.ping_ms || 0} ms</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        else if (td.type === 'network') {
+                            expandedContent = `
+                                <div class="trace-expanded-content">
+                                    <div class="trace-card network-card">
+                                        <div class="trace-card-header">📶 Network Devices</div>
+                                        <div class="trace-card-body">
+                                            <div class="trace-row"><span>Total:</span><span>${td.total_devices || 0}</span></div>
+                                            <div class="trace-row"><span>Approved:</span><span>${td.approved_count || 0}</span></div>
+                                            <div class="trace-row"><span>Unapproved:</span><span>${td.unapproved_count || 0}</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        else {
+                            // Generic tool result
+                            expandedContent = `
+                                <div class="trace-expanded-content">
+                                    <div class="trace-card generic-card">
+                                        <div class="trace-card-body">
+                                            <div class="trace-row"><span>Result:</span><span>${escapeHtml(td.summary || event.detail || '-')}</span></div>
+                                        </div>
+                                        ${event.full_result ? `
+                                        <div class="trace-expand-btn" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show full JSON'">
+                                            <span>▶ Show full JSON</span>
+                                        </div>
+                                        <div class="trace-full-content">
+                                            <pre>${escapeHtml(event.full_result)}</pre>
+                                        </div>` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    }
+                    else if (event.event === 'response_ready') {
+                        title = 'Response ready';
+                        summary = event.detail || '';
+                        expandedContent = `
+                            <div class="trace-expanded-content">
+                                <div class="trace-card response-card">
+                                    <div class="trace-card-header">📤 Final Response</div>
+                                    <div class="trace-card-body">
+                                        <div class="trace-row"><span>Duration:</span><span>${event.duration_ms || 0}ms</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    else {
+                        // Default event rendering
+                        title = event.event.replace(/_/g, ' ');
+                        summary = event.detail || '';
                     }
 
+                    // Render the event
                     html += `
-                        <div class="trace-event ${eventClass}">
+                        <div class="trace-event ${eventClass}" onclick="this.classList.toggle('expanded')">
                             <div class="trace-event-header">
                                 <span class="trace-icon">${icon}</span>
                                 <span class="trace-time">${event.timestamp}</span>
-                                <span style="color: #64748b; font-size: 0.7rem;">${event.event.replace(/_/g, ' ')}</span>
+                                <span class="trace-title">${escapeHtml(title)}</span>
                                 ${event.duration_ms > 0 ? `<span class="trace-duration">${event.duration_ms}ms</span>` : ''}
+                                <span class="trace-expand-indicator">▶</span>
                             </div>
-                            <div class="trace-detail">${escapeHtml(event.detail)}</div>
-                            ${inlineDetail}
-                            ${expandableContent}
+                            <div class="trace-summary">${escapeHtml(summary)}</div>
+                            ${expandedContent}
                         </div>
                     `;
                 });
                 html += '</div>';
                 return html;
             } catch (e) {
-                return `<div class="trace-placeholder">Failed to parse trace: ${e.message}</div>`;
+                return `<p style="color: #ef4444;">Failed to parse trace: ${e.message}</p>`;
             }
         }
 
@@ -4858,38 +5140,9 @@
         }
 
         function renderMobileExecutionTrace(traceJson) {
-            if (!traceJson) {
-                return '<p style="color: var(--text-muted); font-style: italic;">No trace data</p>';
-            }
-            try {
-                const trace = typeof traceJson === 'string' ? JSON.parse(traceJson) : traceJson;
-                if (!Array.isArray(trace) || trace.length === 0) {
-                    return '<p style="color: var(--text-muted);">No trace events</p>';
-                }
-                let html = '<div style="position: relative; padding-left: 1rem; max-width: 100%; overflow-wrap: break-word;">';
-                html += '<div style="position: absolute; left: 3px; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, rgba(59,130,246,0.3), rgba(148,163,184,0.1));"></div>';
-                trace.slice(0, 10).forEach(event => {
-                    let color = '#3b82f6';
-                    let icon = '•';
-                    if (event.event.includes('error')) { color = '#ef4444'; icon = '❌'; }
-                    else if (event.event.includes('result')) { color = '#22c55e'; icon = '✅'; }
-                    else if (event.event.includes('llm')) { color = '#8b5cf6'; icon = '🤖'; }
-                    else if (event.event.includes('tool')) { color = '#eab308'; icon = '⚡'; }
-
-                    html += `
-                        <div style="position: relative; padding-left: 0.75rem; margin-bottom: 0.75rem; max-width: 100%; overflow-wrap: break-word; word-break: break-word;">
-                            <div style="position: absolute; left: -0.875rem; top: 3px; width: 8px; height: 8px; border-radius: 50%; background: ${color};"></div>
-                            <div style="font-size: 0.6rem; color: var(--text-muted); word-break: break-all;">${event.timestamp} • ${event.event.replace(/_/g, ' ')}</div>
-                            <div style="font-size: 0.65rem; color: var(--text-secondary); word-break: break-word; overflow-wrap: break-word;">${escapeHtml(event.detail)}</div>
-                            ${event.duration_ms > 0 ? `<div style="font-size: 0.55rem; color: var(--accent-blue); margin-top: 2px;">${event.duration_ms}ms</div>` : ''}
-                        </div>
-                    `;
-                });
-                html += '</div>';
-                return html;
-            } catch (e) {
-                return `<p style="color: #ef4444;">Failed to parse trace: ${e.message}</p>`;
-            }
+            // Reuse the main renderExecutionTrace function for consistency
+            // This ensures mobile and desktop show the same expandable trace data
+            return renderExecutionTrace(traceJson);
         }
 
         // Mobile bottom sheet additional sections
