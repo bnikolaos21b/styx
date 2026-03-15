@@ -4122,84 +4122,6 @@
                     </div>
                 </div>
 
-                <!-- 4b. CONTEXT BREAKDOWN (from context_breakdown JSON) -->
-                ${turn.context_breakdown ? `
-                <div class="detail-section collapsible">
-                    <div class="collapsible-header" onclick="toggleCollapse(this)">
-                        <div class="detail-label" style="margin: 0;">
-                            <span class="detail-label-icon">📚</span>
-                            Context Breakdown (${JSON.parse(turn.context_breakdown).total_chars || 0} chars)
-                        </div>
-                        <span class="collapse-icon">▶</span>
-                    </div>
-                    <div class="collapsible-content">
-                        ${(() => {
-                            const cb = JSON.parse(turn.context_breakdown);
-                            return `
-                                <div style="font-size:0.75rem;line-height:1.8;">
-                                    <div><strong>Total:</strong> ${cb.total_chars || 0} chars (~${cb.total_tokens || 0} tokens)</div>
-                                    <div><strong>Memories:</strong> ${cb.has_memories ? 'Yes (' + (cb.memory_categories || []).join(', ') + ')' : 'No'}</div>
-                                    <div><strong>Time Context:</strong> ${cb.has_time_context ? 'Yes' : 'No'}</div>
-                                    <div><strong>Conversation Context:</strong> ${cb.has_conv_context ? 'Yes' : 'No'}</div>
-                                    <div><strong>Device DNS:</strong> ${cb.device_dns_count || 0} devices</div>
-                                </div>
-                            `;
-                        })()}
-                    </div>
-                </div>
-                ` : ''}
-
-                <!-- 4c. TIMING BREAKDOWN (from timing_breakdown JSON) -->
-                ${turn.timing_breakdown ? `
-                <div class="detail-section">
-                    <div class="detail-label">
-                        <span class="detail-label-icon">⏱️</span>
-                        Timing Breakdown
-                    </div>
-                    <div style="margin-top:0.75rem;">
-                        ${(() => {
-                            const tb = JSON.parse(turn.timing_breakdown);
-                            const total = tb.total || 1;
-                            const llm1 = tb.llm_call_1 || 0;
-                            const tool = tb.tool_execution || 0;
-                            const llm2 = tb.llm_call_2 || 0;
-                            const barWidth = (val) => Math.round((val / total) * 100);
-                            return `
-                                <div style="font-size:0.7rem;line-height:2;">
-                                    <div style="display:flex;align-items:center;margin-bottom:4px;">
-                                        <span style="width:120px;">LLM Call 1:</span>
-                                        <span style="width:60px;text-align:right;">${llm1}ms</span>
-                                        <div style="flex:1;margin-left:8px;background:rgba(255,255,255,0.05);border-radius:2px;height:12px;">
-                                            <div style="width:${barWidth(llm1)}%;background:#3b82f6;border-radius:2px;height:100%;"></div>
-                                        </div>
-                                    </div>
-                                    <div style="display:flex;align-items:center;margin-bottom:4px;">
-                                        <span style="width:120px;">Tool Exec:</span>
-                                        <span style="width:60px;text-align:right;">${tool}ms</span>
-                                        <div style="flex:1;margin-left:8px;background:rgba(255,255,255,0.05);border-radius:2px;height:12px;">
-                                            <div style="width:${barWidth(tool)}%;background:#22c55e;border-radius:2px;height:100%;"></div>
-                                        </div>
-                                    </div>
-                                    ${llm2 > 0 ? `
-                                    <div style="display:flex;align-items:center;margin-bottom:4px;">
-                                        <span style="width:120px;">LLM Call 2:</span>
-                                        <span style="width:60px;text-align:right;">${llm2}ms</span>
-                                        <div style="flex:1;margin-left:8px;background:rgba(255,255,255,0.05);border-radius:2px;height:12px;">
-                                            <div style="width:${barWidth(llm2)}%;background:#8b5cf6;border-radius:2px;height:100%;"></div>
-                                        </div>
-                                    </div>
-                                    ` : ''}
-                                    <div style="display:flex;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.1);">
-                                        <span style="width:120px;font-weight:600;">Total:</span>
-                                        <span style="width:60px;text-align:right;font-weight:600;">${total}ms</span>
-                                    </div>
-                                </div>
-                            `;
-                        })()}
-                    </div>
-                </div>
-                ` : ''}
-
                 <!-- 5. RESULT SUMMARY -->
                 <div class="detail-section collapsible">
                     <div class="collapsible-header" onclick="toggleCollapse(this)">
@@ -4971,20 +4893,6 @@
                         ${renderMobileExecutionTrace(turn.execution_trace)}
                     </div>
                 </div>
-                ${turn.context_breakdown ? `
-                <div class="bottom-sheet-section">
-                    <div style="font-size: 0.7rem; color: var(--text-secondary); line-height: 1.6;">
-                        ${renderMobileContextBreakdown(turn.context_breakdown)}
-                    </div>
-                </div>
-                ` : ''}
-                ${turn.timing_breakdown ? `
-                <div class="bottom-sheet-section">
-                    <div style="font-size: 0.7rem; color: var(--text-secondary); line-height: 1.6;">
-                        ${renderMobileTimingBreakdown(turn.timing_breakdown)}
-                    </div>
-                </div>
-                ` : ''}
                 <div class="bottom-sheet-section bottom-sheet-collapsible">
                     <div class="bottom-sheet-header-internal" onclick="toggleBottomSheetCollapse(this)">
                         <div class="bottom-sheet-label" style="margin: 0;">📝 Final Response</div>
@@ -5027,51 +4935,6 @@
             // Reuse the main renderExecutionTrace function for consistency
             // This ensures mobile and desktop show the same expandable trace data
             return renderExecutionTrace(traceJson);
-        }
-
-        // Mobile bottom sheet additional sections
-        function renderMobileContextBreakdown(ctxJson) {
-            if (!ctxJson) return '';
-            try {
-                const cb = typeof ctxJson === 'string' ? JSON.parse(ctxJson) : ctxJson;
-                return `
-                    <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(59,130,246,0.1); border-radius: 8px;">
-                        <div style="font-size: 0.7rem; font-weight: 600; color: var(--accent-blue); margin-bottom: 0.5rem;">📚 Context Breakdown</div>
-                        <div style="font-size: 0.6rem; color: var(--text-secondary); line-height: 1.6;">
-                            <div><strong>Total:</strong> ${cb.total_chars || 0} chars (~${cb.total_tokens || 0} tokens)</div>
-                            <div><strong>Memories:</strong> ${cb.has_memories ? 'Yes (' + (cb.memory_categories || []).join(', ') + ')' : 'No'}</div>
-                            <div><strong>Time:</strong> ${cb.has_time_context ? 'Yes' : 'No'}</div>
-                            <div><strong>Conv:</strong> ${cb.has_conv_context ? 'Yes' : 'No'}</div>
-                        </div>
-                    </div>
-                `;
-            } catch (e) { return ''; }
-        }
-
-        function renderMobileTimingBreakdown(tbJson) {
-            if (!tbJson) return '';
-            try {
-                const tb = typeof tbJson === 'string' ? JSON.parse(tbJson) : tbJson;
-                const total = tb.total || 1;
-                const llm1 = tb.llm_call_1 || 0;
-                const tool = tb.tool_execution || 0;
-                const llm2 = tb.llm_call_2 || 0;
-                const pct = (val) => Math.round((val / total) * 100);
-                return `
-                    <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(34,197,94,0.1); border-radius: 8px;">
-                        <div style="font-size: 0.7rem; font-weight: 600; color: var(--accent-green); margin-bottom: 0.5rem;">⏱️ Timing</div>
-                        <div style="font-size: 0.55rem; color: var(--text-secondary); line-height: 1.8;">
-                            <div style="display:flex;justify-content:space-between;"><span>LLM 1:</span><span>${llm1}ms</span></div>
-                            <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;margin:2px 0 6px;"><div style="width:${pct(llm1)}%;background:#3b82f6;height:100%;border-radius:2px;"></div></div>
-                            <div style="display:flex;justify-content:space-between;"><span>Tool:</span><span>${tool}ms</span></div>
-                            <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;margin:2px 0 6px;"><div style="width:${pct(tool)}%;background:#22c55e;height:100%;border-radius:2px;"></div></div>
-                            ${llm2 > 0 ? `<div style="display:flex;justify-content:space-between;"><span>LLM 2:</span><span>${llm2}ms</span></div>
-                            <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;margin:2px 0 6px;"><div style="width:${pct(llm2)}%;background:#8b5cf6;height:100%;border-radius:2px;"></div></div>` : ''}
-                            <div style="display:flex;justify-content:space-between;font-weight:600;margin-top:4px;padding-top:4px;border-top:1px solid rgba(255,255,255,0.1);"><span>Total:</span><span>${total}ms</span></div>
-                        </div>
-                    </div>
-                `;
-            } catch (e) { return ''; }
         }
 
         // Mobile conversation
