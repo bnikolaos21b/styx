@@ -4019,6 +4019,84 @@
                     </div>
                 </div>
 
+                <!-- 4b. CONTEXT BREAKDOWN (from context_breakdown JSON) -->
+                ${turn.context_breakdown ? `
+                <div class="detail-section collapsible">
+                    <div class="collapsible-header" onclick="toggleCollapse(this)">
+                        <div class="detail-label" style="margin: 0;">
+                            <span class="detail-label-icon">📚</span>
+                            Context Breakdown (${JSON.parse(turn.context_breakdown).total_chars || 0} chars)
+                        </div>
+                        <span class="collapse-icon">▶</span>
+                    </div>
+                    <div class="collapsible-content">
+                        ${(() => {
+                            const cb = JSON.parse(turn.context_breakdown);
+                            return `
+                                <div style="font-size:0.75rem;line-height:1.8;">
+                                    <div><strong>Total:</strong> ${cb.total_chars || 0} chars (~${cb.total_tokens || 0} tokens)</div>
+                                    <div><strong>Memories:</strong> ${cb.has_memories ? 'Yes (' + (cb.memory_categories || []).join(', ') + ')' : 'No'}</div>
+                                    <div><strong>Time Context:</strong> ${cb.has_time_context ? 'Yes' : 'No'}</div>
+                                    <div><strong>Conversation Context:</strong> ${cb.has_conv_context ? 'Yes' : 'No'}</div>
+                                    <div><strong>Device DNS:</strong> ${cb.device_dns_count || 0} devices</div>
+                                </div>
+                            `;
+                        })()}
+                    </div>
+                </div>
+                ` : ''}
+
+                <!-- 4c. TIMING BREAKDOWN (from timing_breakdown JSON) -->
+                ${turn.timing_breakdown ? `
+                <div class="detail-section">
+                    <div class="detail-label">
+                        <span class="detail-label-icon">⏱️</span>
+                        Timing Breakdown
+                    </div>
+                    <div style="margin-top:0.75rem;">
+                        ${(() => {
+                            const tb = JSON.parse(turn.timing_breakdown);
+                            const total = tb.total || 1;
+                            const llm1 = tb.llm_call_1 || 0;
+                            const tool = tb.tool_execution || 0;
+                            const llm2 = tb.llm_call_2 || 0;
+                            const barWidth = (val) => Math.round((val / total) * 100);
+                            return `
+                                <div style="font-size:0.7rem;line-height:2;">
+                                    <div style="display:flex;align-items:center;margin-bottom:4px;">
+                                        <span style="width:120px;">LLM Call 1:</span>
+                                        <span style="width:60px;text-align:right;">${llm1}ms</span>
+                                        <div style="flex:1;margin-left:8px;background:rgba(255,255,255,0.05);border-radius:2px;height:12px;">
+                                            <div style="width:${barWidth(llm1)}%;background:#3b82f6;border-radius:2px;height:100%;"></div>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex;align-items:center;margin-bottom:4px;">
+                                        <span style="width:120px;">Tool Exec:</span>
+                                        <span style="width:60px;text-align:right;">${tool}ms</span>
+                                        <div style="flex:1;margin-left:8px;background:rgba(255,255,255,0.05);border-radius:2px;height:12px;">
+                                            <div style="width:${barWidth(tool)}%;background:#22c55e;border-radius:2px;height:100%;"></div>
+                                        </div>
+                                    </div>
+                                    ${llm2 > 0 ? `
+                                    <div style="display:flex;align-items:center;margin-bottom:4px;">
+                                        <span style="width:120px;">LLM Call 2:</span>
+                                        <span style="width:60px;text-align:right;">${llm2}ms</span>
+                                        <div style="flex:1;margin-left:8px;background:rgba(255,255,255,0.05);border-radius:2px;height:12px;">
+                                            <div style="width:${barWidth(llm2)}%;background:#8b5cf6;border-radius:2px;height:100%;"></div>
+                                        </div>
+                                    </div>
+                                    ` : ''}
+                                    <div style="display:flex;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.1);">
+                                        <span style="width:120px;font-weight:600;">Total:</span>
+                                        <span style="width:60px;text-align:right;font-weight:600;">${total}ms</span>
+                                    </div>
+                                </div>
+                            `;
+                        })()}
+                    </div>
+                </div>
+                ` : ''}
+
                 <!-- 5. RESULT SUMMARY -->
                 <div class="detail-section collapsible">
                     <div class="collapsible-header" onclick="toggleCollapse(this)">
@@ -4060,6 +4138,54 @@
                         <div class="detail-value llm-raw-response"><pre>${escapeHtml(turn.llm_raw_response || 'N/A')}</pre></div>
                     </div>
                 </div>
+
+                <!-- 7b. FULL LLM PROMPT (untruncated) -->
+                ${turn.full_prompt ? `
+                <div class="detail-section collapsible">
+                    <div class="collapsible-header" onclick="toggleCollapse(this)">
+                        <div class="detail-label" style="margin: 0;">
+                            <span class="detail-label-icon">📄</span>
+                            Full LLM Prompt (${(turn.full_prompt || '').length} chars)
+                        </div>
+                        <span class="collapse-icon">▶</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="detail-value llm-raw-response"><pre style="font-size:0.55rem;">${escapeHtml(turn.full_prompt || 'N/A')}</pre></div>
+                    </div>
+                </div>
+                ` : ''}
+
+                <!-- 7c. FULL LLM RESPONSE 1 (untruncated) -->
+                ${turn.full_llm_response_1 ? `
+                <div class="detail-section collapsible">
+                    <div class="collapsible-header" onclick="toggleCollapse(this)">
+                        <div class="detail-label" style="margin: 0;">
+                            <span class="detail-label-icon">📝</span>
+                            Full LLM Response 1 (${(turn.full_llm_response_1 || '').length} chars)
+                        </div>
+                        <span class="collapse-icon">▶</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="detail-value llm-raw-response"><pre style="font-size:0.55rem;">${escapeHtml(turn.full_llm_response_1 || 'N/A')}</pre></div>
+                    </div>
+                </div>
+                ` : ''}
+
+                <!-- 7d. FULL LLM RESPONSE 2 (if used) -->
+                ${turn.full_llm_response_2 ? `
+                <div class="detail-section collapsible">
+                    <div class="collapsible-header" onclick="toggleCollapse(this)">
+                        <div class="detail-label" style="margin: 0;">
+                            <span class="detail-label-icon">📝</span>
+                            Full LLM Response 2 - Synthesis (${(turn.full_llm_response_2 || '').length} chars)
+                        </div>
+                        <span class="collapse-icon">▶</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="detail-value llm-raw-response"><pre style="font-size:0.55rem;">${escapeHtml(turn.full_llm_response_2 || 'N/A')}</pre></div>
+                    </div>
+                </div>
+                ` : ''}
 
                 <!-- 8. FAILURE DIAGNOSTICS -->
                 ${turn.quality !== 'good' && (turn.failure_stage || turn.llm_error_code) ? `
