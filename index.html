@@ -2695,13 +2695,20 @@
 
         /* MOBILE (max-width: 768px) */
         @media (max-width: 768px) {
-            /* Fix header visibility - ensure background and text are visible */
+            /* Fix header visibility and spacing */
             .top-nav {
-                height: 60px !important;
-                min-height: 60px !important;
-                padding: 8px 12px !important;
+                height: 56px !important;
+                min-height: 56px !important;
+                padding: 0 12px !important;
                 background: linear-gradient(180deg, #0d1426 0%, #0a0f1e 100%) !important;
                 border-bottom: 1px solid rgba(148,163,184,0.1) !important;
+                position: sticky !important;
+                top: 0 !important;
+                z-index: 100 !important;
+            }
+            .nav-brand {
+                margin: 0 !important;
+                padding: 0 !important;
             }
             .nav-brand-subtitle {
                 display: none !important;
@@ -2710,9 +2717,23 @@
                 font-size: 18px !important;
                 letter-spacing: 6px !important;
                 color: #f1f5f9 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                line-height: 56px !important;
+            }
+            .nav-tabs {
+                display: none !important;
+            }
+            .last-refresh {
+                display: none !important;
+            }
+            .settings-btn {
+                min-height: 44px !important;
+                min-width: 44px !important;
             }
             .main-content {
-                height: calc(100vh - 60px - var(--mobile-nav-height)) !important;
+                height: calc(100vh - 56px - var(--mobile-nav-height)) !important;
+                padding-top: 0 !important;
             }
 
             /* Hide desktop top nav tabs on mobile */
