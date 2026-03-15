@@ -88,18 +88,17 @@
             transform: scale(0.98);
         }
 
-        /* Top Navigation - Professional */
+        /* Top Navigation - Enhanced */
         .top-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 1.5rem;
+            padding: 0.75rem 1.5rem;
             background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
             border-bottom: 1px solid var(--border-color);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            box-shadow: 0 0 0 1px rgba(148,163,184,0.06), 0 4px 24px rgba(0,0,0,0.4);
             position: relative;
             height: var(--nav-height);
-            flex-shrink: 0;
         }
 
         .top-nav::after {
@@ -110,22 +109,20 @@
             right: 0;
             height: 1px;
             background: linear-gradient(90deg, transparent 0%, var(--accent-blue) 50%, transparent 100%);
-            opacity: 0.3;
+            opacity: 0.5;
         }
 
         .nav-brand {
             display: flex;
             flex-direction: column;
-            min-width: 120px;
         }
 
         .nav-brand-title {
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: 6px;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 8px;
             color: var(--text-primary);
             text-transform: uppercase;
-            line-height: var(--nav-height);
         }
 
         .nav-brand-subtitle {
@@ -133,42 +130,38 @@
             letter-spacing: 2px;
             color: var(--text-muted);
             text-transform: uppercase;
-            margin-top: -2px;
+            margin-top: 2px;
         }
 
         .nav-tabs {
             display: flex;
             gap: 0.5rem;
-            flex: 1;
-            justify-content: center;
         }
 
         .nav-tab {
-            padding: 0.625rem 1.5rem;
-            background: rgba(30,41,59,0.4);
+            padding: 0.5rem 1.25rem;
+            background: rgba(30,41,59,0.5);
             border: 1px solid var(--border-color);
             border-radius: 6px;
             color: var(--text-secondary);
             font-family: inherit;
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.05em;
+            font-size: 0.8rem;
+            font-weight: 500;
             cursor: pointer;
             transition: all var(--transition-fast);
-            min-height: 40px;
+            min-height: 44px;
             display: flex;
             align-items: center;
-            text-transform: uppercase;
         }
 
         .nav-tab:hover {
-            background: rgba(51,65,85,0.4);
+            background: rgba(51,65,85,0.5);
             color: var(--text-primary);
-            border-color: rgba(148,163,184,0.15);
+            border-color: rgba(148,163,184,0.2);
         }
 
         .nav-tab.active {
-            background: rgba(59,130,246,0.15);
+            background: rgba(59,130,246,0.2);
             color: var(--accent-blue-light);
             border-color: rgba(59,130,246,0.3);
         }
@@ -177,14 +170,11 @@
             display: flex;
             align-items: center;
             gap: 1rem;
-            min-width: 120px;
-            justify-content: flex-end;
         }
 
         .last-refresh {
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
-            white-space: nowrap;
         }
 
         .settings-btn {
@@ -194,8 +184,8 @@
             font-size: 1.25rem;
             cursor: pointer;
             transition: color var(--transition-fast);
-            min-width: 40px;
-            min-height: 40px;
+            min-width: 44px;
+            min-height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -243,20 +233,22 @@
             height: 100%;
         }
 
-        /* LEFT PANEL (220px) - Filters - Compact */
+        /* LEFT PANEL (280px) - Filters - ENHANCED */
         .filters-sidebar {
-            width: 220px;
-            background: var(--bg-secondary);
+            width: 280px;
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
             border-right: 1px solid var(--border-color);
-            padding: 1rem;
+            padding: 1.25rem;
             overflow-y: auto;
+            overflow-x: hidden;
             flex-shrink: 0;
+            -webkit-overflow-scrolling: touch;
         }
 
         .filter-group {
-            margin-bottom: 0.875rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid rgba(148,163,184,0.05);
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(148,163,184,0.06);
         }
 
         .filter-group:last-of-type {
@@ -264,100 +256,76 @@
         }
 
         .filter-label {
-            font-size: 0.625rem;
-            color: var(--text-muted);
+            font-size: 0.6875rem;
+            color: #64748b;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.625rem;
             font-weight: 600;
         }
 
         .filter-input {
             width: 100%;
-            padding: 0.5rem 0.625rem;
-            background: rgba(30,41,59,0.4);
-            border: 1px solid rgba(148,163,184,0.08);
-            border-radius: 4px;
-            color: var(--text-primary);
+            padding: 0.625rem 0.75rem;
+            background: rgba(30,41,59,0.5);
+            border: 1px solid rgba(148,163,184,0.1);
+            border-radius: 6px;
+            color: #f1f5f9;
             font-family: inherit;
-            font-size: 0.75rem;
+            font-size: 0.8125rem;
             transition: all 0.2s;
         }
 
-        .filter-input:focus {
-            outline: none;
-            border-color: rgba(59,130,246,0.3);
-            background: rgba(30,41,59,0.6);
-        }
-
-        .apply-filter-btn {
-            width: 100%;
-            padding: 0.5rem;
-            background: rgba(59,130,246,0.15);
-            border: 1px solid rgba(59,130,246,0.25);
-            border-radius: 4px;
-            color: var(--accent-blue-light);
-            font-family: inherit;
-            font-size: 0.7rem;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            transition: all 0.2s;
-        }
-
-        .apply-filter-btn:hover {
-            background: rgba(59,130,246,0.2);
+        .filter-input:focus { 
+            outline: none; 
+            border-color: rgba(59,130,246,0.4);
+            background: rgba(30,41,59,0.8);
         }
 
         .radio-group {
             display: flex;
             flex-direction: column;
-            gap: 0.375rem;
+            gap: 0.5rem;
         }
 
         .radio-label {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
+            gap: 0.625rem;
+            font-size: 0.8125rem;
+            color: #94a3b8;
             cursor: pointer;
-            padding: 0.25rem 0.375rem;
-            border-radius: 3px;
+            padding: 0.375rem 0.5rem;
+            border-radius: 4px;
             transition: background 0.2s;
         }
 
         .radio-label:hover {
-            background: rgba(59,130,246,0.08);
+            background: rgba(59,130,246,0.1);
         }
 
         .radio-label input[type="radio"] {
-            accent-color: var(--accent-blue);
-            width: 14px;
-            height: 14px;
+            accent-color: #3b82f6;
         }
 
         .reset-btn {
             width: 100%;
-            padding: 0.5rem;
-            background: rgba(239,68,68,0.1);
-            border: 1px solid rgba(239,68,68,0.2);
-            border-radius: 4px;
-            color: #f87171;
+            padding: 0.625rem;
+            background: rgba(239,68,68,0.15);
+            border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 6px;
+            color: #fca5a5;
             font-family: inherit;
             cursor: pointer;
-            margin-top: 0.75rem;
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 500;
             transition: all 0.2s;
         }
 
-        .reset-btn:hover {
-            background: rgba(239,68,68,0.15);
+        .reset-btn:hover { 
+            background: rgba(239,68,68,0.25);
+            border-color: rgba(239,68,68,0.5);
         }
 
         /* CENTER PANEL (flex) - Sessions TOP, Turns BOTTOM */
@@ -404,68 +372,82 @@
         }
 
         .session-card {
-            padding: 0.625rem 0.75rem;
-            background: rgba(30,41,59,0.3);
-            border-radius: 4px;
-            margin-bottom: 0.375rem;
+            padding: 0.875rem;
+            background: rgba(13,20,38,0.6);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
             cursor: pointer;
-            border: 1px solid rgba(148,163,184,0.06);
-            transition: all 0.15s;
-            max-height: 52px;
+            border: 1px solid rgba(148,163,184,0.08);
+            transition: all 0.2s ease;
+            position: relative;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
+        }
+
+        .session-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: transparent;
+            transition: all 0.2s;
         }
 
         .session-card:hover {
-            background: rgba(30,41,59,0.5);
-            border-color: rgba(148,163,184,0.12);
+            border-color: rgba(148,163,184,0.2);
+            background: rgba(17,24,39,0.8);
+        }
+
+        .session-card:hover::before {
+            background: rgba(148,163,184,0.3);
         }
 
         .session-card.selected {
-            border-left: 2px solid var(--accent-blue);
-            background: rgba(59,130,246,0.08);
+            border-color: rgba(59,130,246,0.4);
+            background: rgba(30,41,59,0.6);
         }
 
-        .session-card-header {
+        .session-card.selected::before {
+            background: #3b82f6;
+            box-shadow: 0 0 12px rgba(59,130,246,0.4);
+        }
+
+        .session-card.has-filter-match {
+            border-color: rgba(59,130,246,0.3);
+            background: rgba(30,58,95,0.4);
+        }
+
+        .session-card.has-filter-match::before {
+            background: #3b82f6;
+        }
+
+        .session-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 0.5rem;
+            margin-bottom: 0.5rem;
         }
 
-        .session-card-message {
-            font-size: 0.75rem;
-            color: var(--text-primary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            flex: 1;
+        .session-time {
+            font-size: 0.7rem;
+            color: #64748b;
         }
 
-        .session-card-meta {
+        .session-quality {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 0.65rem;
-            color: var(--text-muted);
-        }
-
-        .session-card-time {
-            font-size: 0.65rem;
-            color: var(--text-muted);
+            gap: 0.375rem;
         }
 
         .quality-dot {
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            display: inline-block;
         }
-        .quality-good { background: var(--accent-green); }
-        .quality-warn { background: var(--accent-yellow); }
-        .quality-bad { background: var(--accent-red); }
+        .quality-good { background: #22c55e; box-shadow: 0 0 8px rgba(34,197,94,0.4); }
+        .quality-warn { background: #eab308; box-shadow: 0 0 8px rgba(234,179,8,0.4); }
+        .quality-bad { background: #ef4444; box-shadow: 0 0 8px rgba(239,68,68,0.4); }
 
         .session-turns {
             font-size: 0.7rem;
@@ -3135,7 +3117,7 @@
                 <aside class="filters-sidebar">
                     <div class="filter-group">
                         <div class="filter-label">Search</div>
-                        <input type="search" class="filter-input" id="filter-search" placeholder="Search messages..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="search_sessions" data-lpignore="true">
+                        <input type="text" class="filter-input" id="filter-search" placeholder="Search messages...">
                     </div>
 
                     <div class="filter-group">
@@ -3925,14 +3907,14 @@
 
                 return `
                     <div class="session-card ${isSelected ? 'selected' : ''} ${hasMatch ? 'has-filter-match' : ''}" onclick="selectSession('${session.session_id}')">
-                        <div class="session-card-header">
-                            <span class="session-card-message">${escapeHtml(sessionTitle)}</span>
-                            <div class="quality-dot ${qualityClass}"></div>
+                        <div class="session-header">
+                            <span class="session-time">${time}</span>
+                            <div class="session-quality">
+                                <div class="quality-dot ${qualityClass}"></div>
+                            </div>
                         </div>
-                        <div class="session-card-meta">
-                            <span class="session-card-time">${time}</span>
-                            <span>${session.turn_count || 0} turns</span>
-                        </div>
+                        <div class="session-turns" style="font-weight: 500; color: #e2e8f0; margin-bottom: 0.375rem;">${escapeHtml(sessionTitle)}</div>
+                        <div class="session-turns">${session.turn_count || 0} turns • ${session.chat_id}</div>
                     </div>
                 `;
             }).join('');
