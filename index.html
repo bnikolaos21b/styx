@@ -3707,7 +3707,6 @@
         function loadAllData() {
             loadSessions();
             loadAnalytics();
-            loadToolLogs();
             loadActions();
             updateLastRefresh();
         }
@@ -3767,7 +3766,6 @@
                 document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
 
                 if (tab.dataset.tab === 'analytics') loadAnalytics();
-                if (tab.dataset.tab === 'tool-logs') loadToolLogs();
                 if (tab.dataset.tab === 'actions') loadActions();
             });
         });
