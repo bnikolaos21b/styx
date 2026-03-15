@@ -2464,6 +2464,95 @@
             pointer-events: auto;
         }
 
+        /* Mobile Actions View */
+        .mobile-actions-view {
+            display: none;
+            position: fixed;
+            top: var(--nav-height);
+            bottom: var(--mobile-nav-height);
+            left: 0;
+            right: 0;
+            background: var(--bg-primary);
+            z-index: 50;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .mobile-actions-view.active {
+            display: flex;
+            flex-direction: column;
+            pointer-events: auto;
+        }
+
+        .mobile-actions-header {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            gap: 0.75rem;
+        }
+
+        .mobile-actions-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .mobile-action-item {
+            padding: 1rem;
+            background: rgba(30,41,59,0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+
+        .mobile-action-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .mobile-action-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .mobile-action-type {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+
+        .mobile-action-result {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .mobile-action-result.success {
+            background: rgba(34,197,94,0.2);
+            color: #4ade80;
+        }
+
+        .mobile-action-result.failed {
+            background: rgba(239,68,68,0.2);
+            color: #f87171;
+        }
+
+        .mobile-action-target {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .mobile-action-detail {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
         .mobile-log-header {
             flex-shrink: 0;
             display: flex;
@@ -2606,21 +2695,24 @@
 
         /* MOBILE (max-width: 768px) */
         @media (max-width: 768px) {
-            /* Fix header overflow - reduce height and hide subtitle */
+            /* Fix header visibility - ensure background and text are visible */
             .top-nav {
-                height: 50px !important;
-                min-height: 50px !important;
-                padding: 0 12px !important;
+                height: 60px !important;
+                min-height: 60px !important;
+                padding: 8px 12px !important;
+                background: linear-gradient(180deg, #0d1426 0%, #0a0f1e 100%) !important;
+                border-bottom: 1px solid rgba(148,163,184,0.1) !important;
             }
             .nav-brand-subtitle {
                 display: none !important;
             }
             .nav-brand-title {
-                font-size: 16px !important;
-                letter-spacing: 4px !important;
+                font-size: 18px !important;
+                letter-spacing: 6px !important;
+                color: #f1f5f9 !important;
             }
             .main-content {
-                height: calc(100vh - 50px - var(--mobile-nav-height)) !important;
+                height: calc(100vh - 60px - var(--mobile-nav-height)) !important;
             }
 
             /* Hide desktop top nav tabs on mobile */
@@ -3333,6 +3425,18 @@
         </div>
         <div class="mobile-tool-list-panel" id="mobile-tool-list-content">
             <!-- Tool list populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Mobile Actions View -->
+    <div class="mobile-actions-view" id="mobile-actions-view">
+        <div class="mobile-actions-header">
+            <button class="mobile-chat-back" onclick="switchMobileTab('sessions')">←</button>
+            <div style="flex: 1; font-weight: 600; color: var(--text-primary);">Actions</div>
+            <button class="mobile-log-refresh" onclick="refreshActions()">↻</button>
+        </div>
+        <div class="mobile-actions-content" id="mobile-actions-content">
+            <!-- Actions populated by JavaScript -->
         </div>
     </div>
 
@@ -4328,7 +4432,8 @@
                 document.getElementById('mobile-tool-logs-view').classList.add('active');
                 loadMobileToolLogs();
             } else if (tabName === 'actions') {
-                loadActions();
+                document.getElementById('mobile-actions-view').classList.add('active');
+                loadMobileActions();
             }
         }
 
@@ -4798,6 +4903,54 @@
                     console.error('Failed to load mobile tool logs:', error);
                 }
             })();
+        }
+
+        // Load mobile actions view
+        async function loadMobileActions() {
+            const content = document.getElementById('mobile-actions-content');
+            content.innerHTML = '<div class="loading" style="padding: 2rem;"><div class="spinner"></div></div>';
+
+            try {
+                const response = await fetch(`${CONFIG.apiUrl}/api/audit_log?limit=50`, {
+                    credentials: 'include',
+                    headers: {'Content-Type': 'application/json'}
+                });
+                const data = await response.json();
+
+                if (data.error) {
+                    content.innerHTML = `<div class="empty-state" style="padding: 2rem;"><h3>Error</h3><p>${data.error}</p></div>`;
+                    return;
+                }
+
+                if (!data.actions || data.actions.length === 0) {
+                    content.innerHTML = '<div class="empty-state" style="padding: 2rem;"><h3>No actions</h3><p>Actions will appear here when you block/unblock domains, restart services, etc.</p></div>';
+                    return;
+                }
+
+                content.innerHTML = data.actions.map(action => {
+                    const actionType = action.action.replace('_', ' ').toUpperCase();
+                    const resultClass = action.result === 'success' ? 'success' : 'failed';
+                    const resultIcon = action.result === 'success' ? '✔' : '✘';
+
+                    return `
+                        <div class="mobile-action-item">
+                            <div class="mobile-action-header">
+                                <span class="mobile-action-type">${actionType}</span>
+                                <span class="mobile-action-result ${resultClass}">${resultIcon} ${action.result}</span>
+                            </div>
+                            <div class="mobile-action-target">${escapeHtml(action.target)}</div>
+                            <div class="mobile-action-detail">${action.detail || ''}</div>
+                            <div class="mobile-action-detail" style="margin-top: 0.5rem; opacity: 0.6;">
+                                ${action.timestamp ? action.timestamp.substring(0, 16).replace('T', ' ') : ''} • by ${action.by || 'user'}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('Failed to load mobile actions:', error);
+                content.innerHTML = `<div class="empty-state" style="padding: 2rem;"><h3>Error</h3><p>Failed to load actions: ${error.message}</p></div>`;
+            }
         }
     </script>
 </body>
