@@ -3931,11 +3931,28 @@
             const session = selectedSession;
             if (!session) return;
 
+            // Find turn in current session's turns array
             const turn = turns.find(t => t.id === turnId);
             if (turn) {
                 selectedTurn = { ...turn, side };
                 renderChatReplay(turns);
                 showTurnDetail(turn);
+            } else {
+                console.warn(`Turn ${turnId} not found in current turns array (${turns.length} turns)`);
+                // Fallback: search in allTurns
+                const fallbackTurn = allTurns.find(t => t.id === turnId);
+                if (fallbackTurn) {
+                    console.log(`Found turn ${turnId} in allTurns, loading session ${fallbackTurn.session_id}`);
+                    selectSession(fallbackTurn.session_id);
+                    setTimeout(() => {
+                        const retryTurn = turns.find(t => t.id === turnId);
+                        if (retryTurn) {
+                            selectedTurn = { ...retryTurn, side };
+                            renderChatReplay(turns);
+                            showTurnDetail(retryTurn);
+                        }
+                    }, 100);
+                }
             }
         }
 
