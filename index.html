@@ -59,6 +59,9 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
             color: var(--text-primary);
             height: 100vh;
+            width: 100vw;
+            margin: 0;
+            padding: 0;
             overflow: hidden;
             -webkit-tap-highlight-color: transparent;
         }
@@ -216,6 +219,7 @@
         /* Main Content */
         .main-content {
             height: calc(100vh - 72px);
+            width: 100%;
             overflow: hidden;
             z-index: 10;
         }
@@ -223,6 +227,7 @@
         .tab-content {
             display: none;
             height: 100%;
+            width: 100%;
             position: relative;
             z-index: 1;
         }
@@ -231,9 +236,26 @@
 
         /* SESSIONS TAB LAYOUT */
         .sessions-layout {
-            display: flex;
+            display: grid;
             width: 100%;
             height: 100%;
+        }
+
+        /* RESIZE HANDLES */
+        .resize-handle {
+            width: 4px;
+            background: rgba(148,163,184,0.1);
+            cursor: col-resize;
+            transition: background 0.2s;
+            z-index: 10;
+        }
+
+        .resize-handle:hover {
+            background: rgba(59,130,246,0.3);
+        }
+
+        .resize-handle.active {
+            background: rgba(59,130,246,0.6);
         }
 
         /* LEFT PANEL (280px) - Filters - ENHANCED */
@@ -3059,39 +3081,53 @@
                 margin: 0 !important;
             }
 
-            /* 4-panel grid: filters | sessions | conversation | detail */
+            /* 4-panel flex layout: filters | sessions | conversation | detail */
             .sessions-layout {
-                display: grid !important;
-                grid-template-columns: 220px 280px 1fr 1fr !important;
-                gap: 0 !important;
+                display: flex !important;
                 width: 100% !important;
                 height: 100% !important;
                 margin: 0 !important;
                 padding: 0 !important;
             }
 
-            /* Panel 1: Filters */
+            /* Panel 1: Filters (220px default) */
             .filters-sidebar {
                 width: 220px !important;
+                min-width: 180px !important;
                 background: var(--bg-secondary) !important;
                 border-right: 1px solid var(--border-color) !important;
                 overflow-y: auto !important;
+                flex-shrink: 0 !important;
             }
 
-            /* Panel 2: Sessions list */
+            /* Resize handles */
+            .resize-handle {
+                width: 4px !important;
+                background: rgba(148,163,184,0.1) !important;
+                cursor: col-resize !important;
+                flex-shrink: 0 !important;
+            }
+
+            .resize-handle:hover {
+                background: rgba(59,130,246,0.3) !important;
+            }
+
+            /* Panel 2: Sessions list (280px default) */
             .sessions-list-container {
                 width: 280px !important;
+                min-width: 200px !important;
                 background: var(--bg-primary) !important;
                 border-right: 1px solid var(--border-color) !important;
                 display: flex !important;
                 flex-direction: column !important;
                 overflow: hidden !important;
+                flex-shrink: 0 !important;
             }
 
-            /* Panel 3: Conversation (chat replay) */
+            /* Panel 3: Conversation (chat replay) - flex */
             .turns-list-container {
                 flex: 1 !important;
-                min-width: 0 !important;
+                min-width: 200px !important;
                 background: var(--bg-primary) !important;
                 border-right: 1px solid var(--border-color) !important;
                 display: flex !important;
@@ -3105,14 +3141,13 @@
                 overflow-x: hidden !important;
             }
 
-            /* Panel 4: Turn detail (wider for execution trace) */
+            /* Panel 4: Turn detail (flex, min 300px) */
             .turn-detail-panel {
                 flex: 1 !important;
-                min-width: 0 !important;
+                min-width: 300px !important;
                 background: var(--bg-primary) !important;
                 display: flex !important;
                 flex-direction: column !important;
-                border-left: 1px solid var(--border-color) !important;
                 overflow: hidden !important;
             }
 
@@ -3253,6 +3288,9 @@
                     <button class="reset-btn" onclick="resetFilters()">Reset Filters</button>
                 </aside>
 
+                <!-- RESIZE HANDLE 1 -->
+                <div class="resize-handle" id="resize-handle-1"></div>
+
                 <!-- PANEL 2: SESSIONS LIST -->
                 <div class="sessions-list-container">
                     <div class="panel-header">
@@ -3263,6 +3301,9 @@
                         <div class="loading"><div class="spinner"></div></div>
                     </div>
                 </div>
+
+                <!-- RESIZE HANDLE 2 -->
+                <div class="resize-handle" id="resize-handle-2"></div>
 
                 <!-- PANEL 3: CONVERSATION (CHAT REPLAY) -->
                 <div class="turns-list-container">
@@ -3277,6 +3318,9 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- RESIZE HANDLE 3 -->
+                <div class="resize-handle" id="resize-handle-3"></div>
 
                 <!-- PANEL 4: TURN DETAIL -->
                 <div class="turn-detail-panel" id="turn-detail-panel">
@@ -4674,10 +4718,76 @@
             }
         }
 
+        /* =============================================
+           PANEL RESIZE FUNCTIONALITY
+           ============================================= */
+        let activeHandle = null;
+        let startX = 0;
+        let startWidths = [];
+
+        function initResizeHandles() {
+            const handles = document.querySelectorAll('.resize-handle');
+            handles.forEach((handle, index) => {
+                handle.addEventListener('mousedown', (e) => {
+                    activeHandle = { index: index + 1, element: handle };
+                    startX = e.clientX;
+                    
+                    // Get current panel widths
+                    const panels = document.querySelectorAll('.sessions-layout > .filters-sidebar, .sessions-layout > .sessions-list-container, .sessions-layout > .turns-list-container, .sessions-layout > .turn-detail-panel');
+                    startWidths = Array.from(panels).map(p => p.offsetWidth);
+                    
+                    handle.classList.add('active');
+                    document.body.style.cursor = 'col-resize';
+                    document.body.style.userSelect = 'none';
+                });
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!activeHandle) return;
+                
+                e.preventDefault();
+                const deltaX = e.clientX - startX;
+                const handleIndex = activeHandle.index;
+                
+                // Adjust panel widths based on which handle is dragged
+                const panels = document.querySelectorAll('.sessions-layout > .filters-sidebar, .sessions-layout > .sessions-list-container, .sessions-layout > .turns-list-container, .sessions-layout > .turn-detail-panel');
+                
+                if (handleIndex === 1) {
+                    // Resize filters panel
+                    const newWidth1 = Math.max(180, startWidths[0] + deltaX);
+                    const newWidth2 = Math.max(200, startWidths[1] - deltaX);
+                    panels[0].style.width = newWidth1 + 'px';
+                    panels[1].style.width = newWidth2 + 'px';
+                } else if (handleIndex === 2) {
+                    // Resize sessions panel
+                    const newWidth2 = Math.max(200, startWidths[1] + deltaX);
+                    const newWidth3 = Math.max(200, startWidths[2] - deltaX);
+                    panels[1].style.width = newWidth2 + 'px';
+                    panels[2].style.width = newWidth3 + 'px';
+                } else if (handleIndex === 3) {
+                    // Resize conversation panel
+                    const newWidth3 = Math.max(200, startWidths[2] + deltaX);
+                    const newWidth4 = Math.max(300, startWidths[3] - deltaX);
+                    panels[2].style.width = newWidth3 + 'px';
+                    panels[3].style.width = newWidth4 + 'px';
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (activeHandle) {
+                    activeHandle.element.classList.remove('active');
+                    activeHandle = null;
+                    document.body.style.cursor = '';
+                    document.body.style.userSelect = '';
+                }
+            });
+        }
+
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             loadConfig();
             checkAuth();  // Check authentication first
+            initResizeHandles();  // Initialize panel resize
 
             refreshIntervals.sessions = setInterval(() => {
                 if (isAuthenticated) loadSessions();
