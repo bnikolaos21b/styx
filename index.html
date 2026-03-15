@@ -2606,6 +2606,23 @@
 
         /* MOBILE (max-width: 768px) */
         @media (max-width: 768px) {
+            /* Fix header overflow - reduce height and hide subtitle */
+            .top-nav {
+                height: 50px !important;
+                min-height: 50px !important;
+                padding: 0 12px !important;
+            }
+            .nav-brand-subtitle {
+                display: none !important;
+            }
+            .nav-brand-title {
+                font-size: 16px !important;
+                letter-spacing: 4px !important;
+            }
+            .main-content {
+                height: calc(100vh - 50px - var(--mobile-nav-height)) !important;
+            }
+
             /* Hide desktop top nav tabs on mobile */
             .nav-tabs {
                 display: none;
