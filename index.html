@@ -2876,6 +2876,19 @@
 
         /* MOBILE (max-width: 768px) */
         @media (max-width: 768px) {
+            /* Hide ALL desktop elements on mobile */
+            .desktop-only,
+            .sessions-layout,
+            .filters-sidebar,
+            .sessions-list-container,
+            .turns-list-container,
+            .turn-detail-panel,
+            .analytics-layout,
+            .stats-row,
+            .nav-tabs {
+                display: none !important;
+            }
+
             /* Fix header visibility and spacing */
             .top-nav {
                 height: 56px !important;
@@ -2902,9 +2915,6 @@
                 padding: 0 !important;
                 line-height: 56px !important;
             }
-            .nav-tabs {
-                display: none !important;
-            }
             .last-refresh {
                 display: none !important;
             }
@@ -2917,88 +2927,48 @@
                 padding-top: 0 !important;
             }
 
-            /* Hide desktop top nav tabs on mobile */
-            .nav-tabs {
-                display: none;
-            }
-
             /* Show mobile filter button */
             .mobile-filter-btn {
-                display: flex;
-            }
-
-            /* Hide last-refresh on mobile */
-            .last-refresh {
-                display: none;
+                display: flex !important;
             }
 
             /* Show mobile bottom nav */
             .mobile-bottom-nav {
-                display: block;
+                display: flex !important;
             }
 
             /* Show mobile filter drawer */
             .mobile-filter-drawer {
-                display: block;
+                display: block !important;
             }
 
             /* Show filter drawer overlay */
             .filter-drawer-overlay {
-                display: block;
+                display: block !important;
             }
 
             /* Show mobile bottom sheet */
             .mobile-bottom-sheet {
-                display: block;
+                display: block !important;
             }
 
             /* Show bottom sheet overlay */
             .bottom-sheet-overlay {
-                display: block;
+                display: block !important;
+            }
+
+            /* Show mobile views when active */
+            .mobile-sessions-view.mobile-view.active,
+            .mobile-conversation-view.mobile-view.active,
+            .mobile-analytics-view.mobile-view.active,
+            .mobile-actions-view.mobile-view.active {
+                display: flex !important;
             }
 
             /* Adjust main content for mobile nav */
             .main-content {
                 height: calc(100vh - var(--nav-height) - var(--mobile-nav-height));
                 padding-bottom: var(--mobile-nav-height);
-            }
-
-            /* Hide filters sidebar on mobile */
-            .filters-sidebar {
-                display: none;
-            }
-
-            /* Hide turn detail panel on mobile */
-            .turn-detail-panel {
-                display: none;
-            }
-
-            /* Hide desktop sessions list container on mobile */
-            .sessions-list-container {
-                display: none;
-            }
-
-            /* Hide desktop turns list container on mobile */
-            .turns-list-container {
-                display: none;
-            }
-
-            /* Hide desktop analytics layout */
-            .analytics-layout {
-                display: none;
-            }
-
-            /* Hide desktop tool logs layout */
-            .tool-logs-layout {
-                display: none;
-            }
-
-            /* Show mobile views */
-            .mobile-sessions-view.mobile-view.active,
-            .mobile-conversation-view.active,
-            .mobile-analytics-view.active,
-            .mobile-actions-view.active {
-                display: flex;
             }
 
             /* Session cards full width on mobile */
@@ -3040,8 +3010,51 @@
             }
         }
 
-        /* DESKTOP (min-width: 1025px) - ensure proper scrollbars */
+        /* DESKTOP (min-width: 1025px) - ensure proper layout */
         @media (min-width: 1025px) {
+            /* Hide all mobile-specific elements on desktop */
+            .mobile-only,
+            .mobile-view,
+            .mobile-view.active,
+            .mobile-bottom-nav,
+            .mobile-filter-btn,
+            .mobile-filter-drawer,
+            .filter-drawer-overlay,
+            .mobile-bottom-sheet,
+            .bottom-sheet-overlay,
+            .mobile-sessions-view,
+            .mobile-conversation-view,
+            .mobile-analytics-view,
+            .mobile-actions-view,
+            .mobile-sessions-view.active,
+            .mobile-conversation-view.active,
+            .mobile-analytics-view.active,
+            .mobile-actions-view.active {
+                display: none !important;
+            }
+
+            /* Show desktop-only elements */
+            .desktop-only,
+            .top-nav,
+            .nav-tabs,
+            .sessions-layout,
+            .filters-sidebar,
+            .sessions-list-container,
+            .turns-list-container,
+            .turn-detail-panel,
+            .analytics-layout,
+            .stats-row {
+                display: block !important;
+            }
+
+            /* Ensure 3-panel grid layout */
+            .sessions-layout {
+                display: grid !important;
+                grid-template-columns: 280px 1fr 500px;
+                gap: 1rem;
+            }
+
+            /* Proper scrollbars */
             .filters-sidebar {
                 overflow-y: auto;
             }
