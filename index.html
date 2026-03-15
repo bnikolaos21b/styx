@@ -2219,10 +2219,12 @@
         .mobile-conversation-view {
             display: none;
             position: fixed;
-            top: var(--nav-height);
+            top: 56px;
             bottom: var(--mobile-nav-height);
             left: 0;
             right: 0;
+            width: 100%;
+            height: calc(100vh - 56px - var(--mobile-nav-height));
             background: var(--bg-primary);
             z-index: 60;
             flex-direction: column;
@@ -3040,7 +3042,6 @@
 
             /* Show desktop elements */
             .top-nav,
-            .nav-tabs,
             .sessions-layout,
             .filters-sidebar,
             .sessions-list-container,
@@ -3051,12 +3052,28 @@
                 display: block !important;
             }
 
+            .nav-tabs {
+                display: flex !important;
+            }
+
+            .nav-right {
+                display: flex !important;
+            }
+
+            .main-content {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
             /* 4-panel grid: filters | sessions | conversation | detail */
             .sessions-layout {
                 display: grid !important;
                 grid-template-columns: 220px 280px 1fr 1fr !important;
                 gap: 0 !important;
+                width: 100% !important;
                 height: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
 
             /* Panel 1: Filters */
