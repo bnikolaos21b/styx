@@ -474,6 +474,7 @@
         .quality-good { background: #22c55e; box-shadow: 0 0 8px rgba(34,197,94,0.4); }
         .quality-warn { background: #eab308; box-shadow: 0 0 8px rgba(234,179,8,0.4); }
         .quality-bad { background: #ef4444; box-shadow: 0 0 8px rgba(239,68,68,0.4); }
+        .quality-null { background: #6b7280; box-shadow: 0 0 8px rgba(107,114,128,0.4); }
 
         .session-turns {
             font-size: 0.7rem;
@@ -4080,7 +4081,9 @@
 
             list.innerHTML = filtered.map(session => {
                 const qualityClass = session.quality_score === 'good' ? 'quality-good' :
-                                    session.quality_score === 'warn' ? 'quality-warn' : 'quality-bad';
+                                    session.quality_score === 'warn' ? 'quality-warn' :
+                                    session.quality_score === 'bad' ? 'quality-bad' :
+                                    session.quality_score === null || session.quality_score === '' ? 'quality-null' : 'quality-bad';
                 const time = new Date(session.started_at).toLocaleString();
                 const isSelected = selectedSession?.session_id === session.session_id;
                 const hasMatch = allTurns.length > 0 && allTurns.some(t => t.session_id === session.session_id);
@@ -4112,7 +4115,9 @@
 
             mobileList.innerHTML = filtered.map(session => {
                 const qualityClass = session.quality_score === 'good' ? 'quality-good' :
-                                    session.quality_score === 'warn' ? 'quality-warn' : 'quality-bad';
+                                    session.quality_score === 'warn' ? 'quality-warn' :
+                                    session.quality_score === 'bad' ? 'quality-bad' :
+                                    session.quality_score === null || session.quality_score === '' ? 'quality-null' : 'quality-bad';
                 const time = new Date(session.started_at).toLocaleString();
                 const sessionTitle = session.first_message || session.session_id;
 
@@ -4172,7 +4177,9 @@
 
             turns.forEach((turn, index) => {
                 const qualityClass = turn.quality === 'good' ? 'quality-good' :
-                                    turn.quality === 'warn' ? 'quality-warn' : 'quality-bad';
+                                    turn.quality === 'warn' ? 'quality-warn' :
+                                    turn.quality === 'bad' ? 'quality-bad' :
+                                    turn.quality === null || turn.quality === '' ? 'quality-null' : 'quality-bad';
                 const toolName = turn.tool_selected || 'No tool';
                 const toolCategory = getToolCategory(toolName);
                 const isSelected = selectedTurn?.id === turn.id;
@@ -5230,7 +5237,9 @@
 
             list.innerHTML = filtered.map(session => {
                 const qualityClass = session.quality_score === 'good' ? 'quality-good' :
-                                    session.quality_score === 'warn' ? 'quality-warn' : 'quality-bad';
+                                    session.quality_score === 'warn' ? 'quality-warn' :
+                                    session.quality_score === 'bad' ? 'quality-bad' :
+                                    session.quality_score === null || session.quality_score === '' ? 'quality-null' : 'quality-bad';
                 const time = new Date(session.started_at).toLocaleString();
                 const sessionTitle = session.first_message
                     ? session.first_message
@@ -5262,7 +5271,9 @@
             // Update header
             headerTitle.textContent = selectedSession.first_message?.substring(0, 40) || 'Conversation';
             const qualityClass = selectedSession.quality_score === 'good' ? 'quality-good' :
-                                selectedSession.quality_score === 'warn' ? 'quality-warn' : 'quality-bad';
+                                selectedSession.quality_score === 'warn' ? 'quality-warn' :
+                                selectedSession.quality_score === 'bad' ? 'quality-bad' :
+                                selectedSession.quality_score === null || selectedSession.quality_score === '' ? 'quality-null' : 'quality-bad';
             headerQuality.innerHTML = `<div class="quality-dot ${qualityClass}"></div>`;
 
             if (turns.length === 0) {
@@ -5273,7 +5284,9 @@
             let html = '';
             turns.forEach((turn, index) => {
                 const qualityClass = turn.quality === 'good' ? 'quality-good' :
-                                    turn.quality === 'warn' ? 'quality-warn' : 'quality-bad';
+                                    turn.quality === 'warn' ? 'quality-warn' :
+                                    turn.quality === 'bad' ? 'quality-bad' :
+                                    turn.quality === null || turn.quality === '' ? 'quality-null' : 'quality-bad';
                 const toolName = turn.tool_selected || 'No tool';
                 const toolCategory = getToolCategory(toolName);
                 const timestamp = new Date(turn.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
