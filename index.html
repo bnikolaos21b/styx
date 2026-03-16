@@ -3961,7 +3961,7 @@
             if (secondPassFilter === 'false') params.set('second_pass', 'false');
 
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/conversations/turns?${params.toString()}`, {
+                const response = await fetch(`${CONFIG.apiUrl}/api/conversations/turns?${params.toString()}&_t=${Date.now()}`, {
                     credentials: 'include',
                     headers: {'Content-Type': 'application/json'}
                 });
@@ -4139,7 +4139,7 @@
             turnsList.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/conversations/${sessionId}`, {
+                const response = await fetch(`${CONFIG.apiUrl}/api/conversations/${sessionId}?_t=${Date.now()}`, {
                     credentials: 'include',
                     headers: {'Content-Type': 'application/json'}
                 });
