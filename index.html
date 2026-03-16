@@ -4261,6 +4261,7 @@
             
             // Debug logging (visible in iPhone Safari via Web Inspector)
             console.log('[STYX] showTurnDetail called with turn:', turn);
+            console.log('[STYX] turn.id:', turn.id, 'turn.user_message:', turn.user_message);
             console.log('[STYX] content element:', content);
             console.log('[STYX] panel element:', panel);
             
@@ -4277,7 +4278,13 @@
             const toolCategory = getToolCategory(turn.tool_selected);
 
             // Scroll to top of detail panel
-            if (panel) panel.scrollTop = 0;
+            if (panel) {
+                panel.scrollTop = 0;
+                console.log('[STYX] Panel scrolled to top, current scrollTop:', panel.scrollTop);
+            }
+
+            // Show alert with turn info for debugging (remove after testing)
+            alert(`Showing turn:\nID: ${turn.id}\nMessage: ${turn.user_message}\nTool: ${turn.tool_selected || 'None'}`);
 
             content.innerHTML = `
                 <!-- 1. USER MESSAGE -->
