@@ -4257,18 +4257,26 @@
 
         function showTurnDetail(turn) {
             const content = document.getElementById('turn-detail-content');
+            const panel = document.getElementById('turn-detail-panel');
+            
+            // Debug logging (visible in iPhone Safari via Web Inspector)
+            console.log('[STYX] showTurnDetail called with turn:', turn);
+            console.log('[STYX] content element:', content);
+            console.log('[STYX] panel element:', panel);
+            
             if (!content) {
-                console.error('turn-detail-content element not found');
+                console.error('[STYX] turn-detail-content element not found');
+                alert('Error: turn-detail-content not found');
                 return;
             }
             if (!turn) {
-                console.error('showTurnDetail called with null turn');
+                console.error('[STYX] showTurnDetail called with null turn');
+                alert('Error: no turn data');
                 return;
             }
             const toolCategory = getToolCategory(turn.tool_selected);
 
             // Scroll to top of detail panel
-            const panel = document.getElementById('turn-detail-panel');
             if (panel) panel.scrollTop = 0;
 
             content.innerHTML = `
