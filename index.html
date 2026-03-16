@@ -832,10 +832,14 @@
             background: #8b5cf6; 
             box-shadow: 0 0 8px rgba(139,92,246,0.4);
         }
-        .trace-event.tool-call::before { 
-            background: #eab308; 
+        .trace-event.tool-call::before {
+            background: #eab308;
             box-shadow: 0 0 8px rgba(234,179,8,0.4);
         }
+        .trace-event.tool-cached::before  { background: #f59e0b; }
+        .trace-event.tool-blocked::before { background: #ef4444; }
+        .trace-event.tool-pending::before { background: #a855f7; }
+        .trace-event.tool-not-found::before { background: #ef4444; }
         .trace-event.db-result::before {
             background: #06b6d4;
             box-shadow: 0 0 8px rgba(6,182,212,0.4);
@@ -918,6 +922,14 @@
 
         .timing-total-label { color: #64748b; }
         .timing-total-value { color: #f1f5f9; font-weight: 500; }
+
+        .trace-params {
+            margin-top: 4px;
+            font-size: 0.68rem;
+            color: #64748b;
+        }
+        .trace-param-key { color: #94a3b8; }
+        .trace-param-val { color: #22c55e; font-family: monospace; }
 
         .trace-event-header {
             display: flex;
@@ -4441,11 +4453,27 @@
                     else if (event.event.includes('result')) { eventClass = 'success'; icon = '✅'; }
                     else if (event.event.includes('llm_call')) { eventClass = 'llm-call'; icon = '🤖'; }
                     else if (event.event.includes('tool_exec')) { eventClass = 'tool-call'; icon = '⚡'; }
-                    else if (event.event.includes('selected')) { eventClass = 'tool-call'; icon = '📋'; }
+                    else if (event.event.includes('selected')) { 
+                        eventClass = 'tool-call'; 
+                        icon = '📋'; 
+                        title = `Calling ${event.params && event.params.device_name ? event.params.device_name : event.params && event.params.ip ? event.params.ip : event.params && event.params.domain ? event.params.domain : 'tool'}...`;
+                        const params = event.params && Object.keys(event.params).length > 0
+                            ? '<div class="trace-params">' + 
+                              Object.entries(event.params)
+                                .map(([k,v]) => `<span class="trace-param-key">${k}:</span> <span class="trace-param-val">${escapeHtml(String(v))}</span>`)
+                                .join(' · ') + 
+                              '</div>'
+                            : '';
+                        summary = (event.detail || '') + params;
+                    }
                     else if (event.event.includes('db_result')) { eventClass = 'db-result'; icon = '📊'; }
                     else if (event.event.includes('resolver')) { eventClass = 'resolver'; icon = '🔍'; }
                     else if (event.event.includes('response_ready')) { eventClass = 'success'; icon = '⏱️'; }
                     else if (event.event.includes('context')) { eventClass = 'context'; icon = '📚'; }
+                    else if (event.event === 'tool_cached') { eventClass = 'tool-cached'; icon = '⚡'; title = 'Cache Hit'; summary = event.detail || 'Result reused from cache'; }
+                    else if (event.event === 'tool_blocked') { eventClass = 'tool-blocked'; icon = '🛡️'; title = 'Guardrail Blocked'; summary = event.detail || 'Tool blocked by safety check'; }
+                    else if (event.event === 'tool_pending') { eventClass = 'tool-pending'; icon = '⏳'; title = 'Awaiting Confirmation'; summary = event.detail || 'Destructive action pending user confirmation'; }
+                    else if (event.event === 'tool_not_found') { eventClass = 'tool-not-found'; icon = '❓'; title = 'Tool Not Found'; summary = event.detail || 'Tool not in registry'; }
 
                     // Get trace_display data if available
                     const td = event.trace_display || {};
