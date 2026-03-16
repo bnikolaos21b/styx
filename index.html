@@ -4230,7 +4230,7 @@
             const session = selectedSession;
             if (!session) return;
 
-            // Find turn in current session's turns array
+            // Find turn in current session's turns array (always use fresh data)
             const turn = turns.find(t => t.id === turnId);
             if (turn) {
                 selectedTurn = { ...turn, side };
@@ -4257,7 +4257,19 @@
 
         function showTurnDetail(turn) {
             const content = document.getElementById('turn-detail-content');
+            if (!content) {
+                console.error('turn-detail-content element not found');
+                return;
+            }
+            if (!turn) {
+                console.error('showTurnDetail called with null turn');
+                return;
+            }
             const toolCategory = getToolCategory(turn.tool_selected);
+
+            // Scroll to top of detail panel
+            const panel = document.getElementById('turn-detail-panel');
+            if (panel) panel.scrollTop = 0;
 
             content.innerHTML = `
                 <!-- 1. USER MESSAGE -->
