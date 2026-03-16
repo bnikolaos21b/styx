@@ -845,6 +845,80 @@
             box-shadow: 0 0 8px rgba(168,85,247,0.4);
         }
 
+        .timing-breakdown {
+            margin: 12px 0 4px 0;
+            padding: 12px 14px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            border-radius: 8px;
+        }
+
+        .timing-breakdown-title {
+            font-size: 0.7rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 10px;
+        }
+
+        .timing-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .timing-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .timing-label {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            width: 110px;
+            flex-shrink: 0;
+        }
+
+        .timing-bar-track {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .timing-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .timing-bar-fill.llm1  { background: #3b82f6; }
+        .timing-bar-fill.tool  { background: #22c55e; }
+        .timing-bar-fill.llm2  { background: #a855f7; }
+        .timing-bar-fill.other { background: #64748b; }
+
+        .timing-value {
+            font-size: 0.7rem;
+            color: #64748b;
+            width: 52px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .timing-total {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+        }
+
+        .timing-total-label { color: #64748b; }
+        .timing-total-value { color: #f1f5f9; font-weight: 500; }
+
         .trace-event-header {
             display: flex;
             align-items: center;
@@ -4227,6 +4301,7 @@
                         <span class="detail-label-icon">🔍</span>
                         Execution Trace
                     </div>
+                    ${renderTimingBreakdown(turn.timing_breakdown)}
                     <div class="trace-container">
                         ${renderExecutionTrace(turn.execution_trace)}
                     </div>
@@ -4260,20 +4335,6 @@
                     </div>
                 </div>
 
-                <!-- 7. LLM RAW RESPONSE -->
-                <div class="detail-section collapsible">
-                    <div class="collapsible-header" onclick="toggleCollapse(this)">
-                        <div class="detail-label" style="margin: 0;">
-                            <span class="detail-label-icon">🔬</span>
-                            Raw LLM Output
-                        </div>
-                        <span class="collapse-icon">▶</span>
-                    </div>
-                    <div class="collapsible-content">
-                        <div class="detail-value llm-raw-response"><pre>${escapeHtml(turn.llm_raw_response || 'N/A')}</pre></div>
-                    </div>
-                </div>
-
                 <!-- 8. FAILURE DIAGNOSTICS -->
                 ${turn.quality !== 'good' && (turn.failure_stage || turn.llm_error_code) ? `
                 <div class="detail-section">
@@ -4304,6 +4365,51 @@
                     <div class="detail-value">Yes</div>
                 </div>
                 ` : ''}
+            `;
+        }
+
+        function renderTimingBreakdown(timingJson) {
+            if (!timingJson) return '';
+            const t = typeof timingJson === 'string' ? JSON.parse(timingJson) : timingJson;
+
+            const llm1  = Math.max(0, t.llm_call_1 || 0);
+            const tool  = Math.max(0, t.tool_execution || 0);
+            const llm2  = Math.max(0, t.llm_call_2 || 0);
+            const total = Math.max(1, t.total || (llm1 + tool + llm2));
+
+            const pct = v => Math.round((v / total) * 100);
+            const fmt = ms => ms >= 1000 ? (ms/1000).toFixed(1)+'s' : ms+'ms';
+
+            const rows = [
+                { label: 'LLM Call 1',      value: llm1,  cls: 'llm1',  show: llm1 > 0 },
+                { label: 'Tool Execution',  value: tool,  cls: 'tool',  show: tool > 0 },
+                { label: 'LLM Call 2',      value: llm2,  cls: 'llm2',  show: llm2 > 0 },
+            ].filter(r => r.show);
+
+            if (rows.length === 0) return '';
+
+            const rowsHtml = rows.map(r => `
+                <div class="timing-row">
+                    <span class="timing-label">${r.label}</span>
+                    <div class="timing-bar-track">
+                        <div class="timing-bar-fill ${r.cls}" 
+                             style="width:${pct(r.value)}%"></div>
+                    </div>
+                    <span class="timing-value">${fmt(r.value)}</span>
+                </div>
+            `).join('');
+
+            return `
+                <div class="timing-breakdown">
+                    <div class="timing-breakdown-title">⏱ Latency Breakdown</div>
+                    <div class="timing-bars">
+                        ${rowsHtml}
+                    </div>
+                    <div class="timing-total">
+                        <span class="timing-total-label">Total response time</span>
+                        <span class="timing-total-value">${fmt(total)}</span>
+                    </div>
+                </div>
             `;
         }
 
@@ -5028,15 +5134,6 @@
                     </div>
                     <div class="bottom-sheet-collapsible-content">
                         <div class="bottom-sheet-value"><pre>${escapeHtml(turn.final_response || 'N/A')}</pre></div>
-                    </div>
-                </div>
-                <div class="bottom-sheet-section bottom-sheet-collapsible">
-                    <div class="bottom-sheet-header-internal" onclick="toggleBottomSheetCollapse(this)">
-                        <div class="bottom-sheet-label" style="margin: 0;">🔬 Raw LLM Output</div>
-                        <span class="collapse-icon">▶</span>
-                    </div>
-                    <div class="bottom-sheet-collapsible-content">
-                        <div class="bottom-sheet-value"><pre>${escapeHtml(turn.llm_raw_response || 'N/A')}</pre></div>
                     </div>
                 </div>
             `;
