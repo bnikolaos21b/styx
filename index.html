@@ -4716,6 +4716,95 @@
                             </div>
                         `;
                     }
+                    else if (event.event === 'prompt_built') {
+                        eventClass = 'context'; icon = '📋';
+                        const c = td.components || {};
+                        title = `Prompt built: ${td.total_chars || 0} chars`;
+                        summary = `~${td.total_tokens || 0} tokens • Memories: ${td.memories_injected ? td.memory_count + ' items' : 'none'}`;
+                        expandedContent = `
+                            <div class="trace-expanded-content">
+                                <div class="trace-card context-card">
+                                    <div class="trace-card-header">📋 Prompt Composition</div>
+                                    <div class="trace-card-body">
+                                        <div class="trace-row"><span>Total chars:</span><span>${td.total_chars || 0}</span></div>
+                                        <div class="trace-row"><span>Est. tokens:</span><span>~${td.total_tokens || 0}</span></div>
+                                        <div class="trace-row"><span>Core knowledge:</span><span>${c.core_knowledge || 0} chars</span></div>
+                                        <div class="trace-row"><span>Tool descriptions:</span><span>${c.tool_descriptions || 0} chars</span></div>
+                                        <div class="trace-row"><span>Context:</span><span>${c.context || 0} chars</span></div>
+                                        <div class="trace-row"><span>Session history:</span><span>${c.conversation_history || 0} chars</span></div>
+                                        <div class="trace-row"><span>Memories injected:</span><span>${td.memories_injected ? '✅ ' + td.memory_count + ' items' : '—'}</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    else if (event.event === 'context_snapshot') {
+                        eventClass = 'context'; icon = '📡';
+                        const homeList = (td.who_is_home || []).join(', ') || 'Nobody';
+                        title = `Network: ${td.total_devices || 0} devices, ${(td.who_is_home || []).length} home`;
+                        summary = `${td.active_threats || 0} threats • ${td.unknown_devices || 0} unknown devices${td.pending_action ? ' • pending: ' + td.pending_action : ''}`;
+                        expandedContent = `
+                            <div class="trace-expanded-content">
+                                <div class="trace-card context-card">
+                                    <div class="trace-card-header">📡 Live Network State</div>
+                                    <div class="trace-card-body">
+                                        <div class="trace-row"><span>🏠 Home now:</span><span>${homeList}</span></div>
+                                        <div class="trace-row"><span>Total devices:</span><span>${td.total_devices || 0}</span></div>
+                                        <div class="trace-row"><span>Unknown devices:</span><span>${td.unknown_devices || 0}</span></div>
+                                        <div class="trace-row"><span>Active threats:</span><span>${td.active_threats || 0 ? '⚠️ ' + td.active_threats : '✅ None'}</span></div>
+                                        <div class="trace-row"><span>Pending action:</span><span>${td.pending_action || '—'}</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    else if (event.event === 'response_validation') {
+                        eventClass = td.passed ? 'success' : 'error'; icon = td.passed ? '✅' : '❌';
+                        title = td.passed ? 'Response valid' : 'Response failed validation';
+                        summary = `${td.raw_chars || 0} → ${td.final_chars || 0} chars${td.reasoning_stripped ? ' (reasoning stripped)' : ''}`;
+                        expandedContent = `
+                            <div class="trace-expanded-content">
+                                <div class="trace-card">
+                                    <div class="trace-card-body">
+                                        <div class="trace-row"><span>Raw chars:</span><span>${td.raw_chars || 0}</span></div>
+                                        <div class="trace-row"><span>Final chars:</span><span>${td.final_chars || 0}</span></div>
+                                        <div class="trace-row"><span>Reasoning stripped:</span><span>${td.reasoning_stripped ? 'Yes' : 'No'}</span></div>
+                                        <div class="trace-row"><span>Passed:</span><span>${td.passed ? '✅ Yes' : '❌ No'}</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    else if (event.event === 'llm_failure') {
+                        eventClass = 'error'; icon = '💥';
+                        title = `LLM failure: ${(td.stage || 'unknown')} pass`;
+                        summary = td.error || event.detail || 'Unknown error';
+                        expandedContent = `
+                            <div class="trace-expanded-content">
+                                <div class="trace-card" style="border-color: #ef4444">
+                                    <div class="trace-card-header" style="color: #ef4444">💥 LLM Failure</div>
+                                    <div class="trace-card-body">
+                                        <div class="trace-row"><span>Stage:</span><span>${td.stage || '—'}</span></div>
+                                        <div class="trace-row"><span>Error:</span><span>${escapeHtml(td.error || event.detail || '—')}</span></div>
+                                        <div class="trace-row"><span>Duration:</span><span>${td.duration_ms || event.duration_ms || 0}ms</span></div>
+                                        <div class="trace-row"><span>Fallback used:</span><span>${td.fallback_attempted ? '✅ Yes' : '—'}</span></div>
+                                    </div>
+                                    ${td.raw_response ? `
+                                    <div class="trace-expand-btn" onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Hide':'▶ Show raw response'">
+                                        <span>▶ Show raw response</span>
+                                    </div>
+                                    <div class="trace-full-content">
+                                        <pre>${escapeHtml(td.raw_response)}</pre>
+                                    </div>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }
+                    else if (event.event === 'llm_retry') {
+                        eventClass = 'warn'; icon = '🔄';
+                        title = 'LLM retry';
+                        summary = event.detail || 'Retrying with minimal prompt';
+                    }
                     else {
                         // Default event rendering
                         title = event.event.replace(/_/g, ' ');
