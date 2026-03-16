@@ -4231,12 +4231,7 @@
             const session = selectedSession;
             if (!session) return;
 
-            // ALWAYS use fresh data from global turns array (not closure)
             const turn = window.turns.find(t => t.id === turnId);
-            
-            console.log('[STYX] selectTurn: turnId=', turnId, 'side=', side, 'found turn=', turn);
-            console.log('[STYX] window.turns length:', window.turns.length);
-            console.log('[STYX] window.turns[0]:', window.turns[0]);
             
             if (turn) {
                 selectedTurn = { ...turn, side };
@@ -4244,10 +4239,8 @@
                 showTurnDetail(turn);
             } else {
                 console.warn(`Turn ${turnId} not found in current turns array (${window.turns.length} turns)`);
-                // Fallback: search in allTurns
                 const fallbackTurn = allTurns.find(t => t.id === turnId);
                 if (fallbackTurn) {
-                    console.log(`Found turn ${turnId} in allTurns, loading session ${fallbackTurn.session_id}`);
                     selectSession(fallbackTurn.session_id);
                     setTimeout(() => {
                         const retryTurn = window.turns.find(t => t.id === turnId);
@@ -4265,29 +4258,10 @@
             const content = document.getElementById('turn-detail-content');
             const panel = document.getElementById('turn-detail-panel');
             
-            // Debug logging (visible in iPhone Safari via Web Inspector)
-            console.log('[STYX] showTurnDetail called with turn:', turn);
-            console.log('[STYX] turn.id:', turn.id, 'turn.user_message:', turn.user_message);
-            console.log('[STYX] content element:', content);
-            console.log('[STYX] panel element:', panel);
+            if (!content || !turn) return;
+            if (panel) panel.scrollTop = 0;
             
-            if (!content) {
-                console.error('[STYX] turn-detail-content element not found');
-                alert('Error: turn-detail-content not found');
-                return;
-            }
-            if (!turn) {
-                console.error('[STYX] showTurnDetail called with null turn');
-                alert('Error: no turn data');
-                return;
-            }
             const toolCategory = getToolCategory(turn.tool_selected);
-
-            // Scroll to top of detail panel
-            if (panel) {
-                panel.scrollTop = 0;
-                console.log('[STYX] Panel scrolled to top, current scrollTop:', panel.scrollTop);
-            }
 
             content.innerHTML = `
                 <!-- 1. USER MESSAGE -->
