@@ -4302,7 +4302,7 @@
                         </div>
                         <div>
                             <div class="detail-label">Duration</div>
-                            <div class="detail-value">${(turn.duration || 0).toFixed(2)}s</div>
+                            <div class="detail-value">${(turn.duration_seconds || 0).toFixed(2)}s</div>
                         </div>
                     </div>
                 </div>
@@ -5146,7 +5146,7 @@
                 <div class="bottom-sheet-section">
                     <div class="bottom-sheet-label">📊 Result</div>
                     <div class="bottom-sheet-value ${turn.tool_result_success === 1 ? 'success' : (turn.tool_result_success === 0 ? 'error' : '')}" style="color: ${turn.tool_result_success === 1 ? '#86efac' : (turn.tool_result_success === 0 ? '#fca5a5' : '#94a3b8')}">
-                        ${turn.tool_result_success === 1 ? '✓ Success' : (turn.tool_result_success === 0 ? '✗ Failed' : '—')} • ${(turn.duration || 0).toFixed(2)}s
+                        ${turn.tool_result_success === 1 ? '✓ Success' : (turn.tool_result_success === 0 ? '✗ Failed' : '—')} • ${(turn.duration_seconds || 0).toFixed(2)}s
                     </div>
                 </div>
                 <div class="bottom-sheet-section">
