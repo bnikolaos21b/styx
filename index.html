@@ -1205,27 +1205,31 @@
         }
 
         /* ANALYTICS TAB */
+        /* ── Analytics layout ──────────────────────────────────── */
         .analytics-layout {
             flex: 1;
-            padding: 1.5rem;
-            overflow-y: auto;
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
+            padding: 1.25rem 1.5rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-height: 0;
         }
 
-        .stats-row {
+        /* KPI strip — compact 5-column row */
+        .an-kpi-row {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.75rem;
+            flex-shrink: 0;
         }
 
         .stat-card {
-            background: linear-gradient(180deg, rgba(13,20,38,0.8) 0%, rgba(10,15,30,0.6) 100%);
-            border-radius: 10px;
-            padding: 1.25rem;
+            background: linear-gradient(180deg, rgba(13,20,38,0.9) 0%, rgba(10,15,30,0.7) 100%);
+            border-radius: 8px;
+            padding: 0.875rem 1rem;
             border: 1px solid rgba(148,163,184,0.08);
-            box-shadow: 0 0 0 1px rgba(148,163,184,0.06), 0 4px 24px rgba(0,0,0,0.3);
+            box-shadow: 0 0 0 1px rgba(148,163,184,0.04), 0 2px 12px rgba(0,0,0,0.25);
             position: relative;
             overflow: hidden;
         }
@@ -1233,27 +1237,283 @@
         .stat-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
+            top: 0; left: 0; right: 0;
             height: 2px;
             background: linear-gradient(90deg, #3b82f6, #8b5cf6);
             opacity: 0.5;
         }
 
         .stat-card-value {
-            font-size: 28px;
+            font-size: 22px;
             font-weight: 300;
             color: #f1f5f9;
-            margin-bottom: 0.375rem;
+            margin-bottom: 0.25rem;
             letter-spacing: -0.5px;
+            line-height: 1.1;
         }
 
         .stat-card-label {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: #64748b;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+        }
+
+        /* Main 2-column content area */
+        .an-main {
+            display: grid;
+            grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr);
+            gap: 1rem;
+            min-width: 0;
+            flex-shrink: 0;
+        }
+
+        .an-left, .an-right {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-width: 0;
+        }
+
+        .an-right {
+            max-height: 360px;
+            overflow-y: auto;
+        }
+
+        /* Full-width bottom tool section */
+        .an-tools {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .an-tools > .analytics-card {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Shared card */
+        .analytics-card {
+            background: linear-gradient(180deg, rgba(13,20,38,0.8) 0%, rgba(10,15,30,0.6) 100%);
+            border-radius: 10px;
+            padding: 1rem;
+            border: 1px solid rgba(148,163,184,0.08);
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .card-title {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.875rem;
+        }
+
+        /* Volume period selector */
+        .vol-period-btns {
+            display: flex;
+            gap: 4px;
+        }
+        .vol-period-btn {
+            padding: 2px 8px;
+            font-size: 0.65rem;
+            border-radius: 4px;
+            border: 1px solid rgba(148,163,184,0.15);
+            background: transparent;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .vol-period-btn:hover { color: #94a3b8; border-color: rgba(148,163,184,0.3); }
+        .vol-period-btn.active {
+            background: rgba(59,130,246,0.15);
+            color: #93c5fd;
+            border-color: rgba(59,130,246,0.3);
+        }
+
+        /* Scrollable table wrapper */
+        .table-scroll-wrap {
+            overflow-x: auto;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* Vertical bar charts */
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            height: 180px;
+            gap: 5px;
+            padding-top: 0.5rem;
+            padding-bottom: 1.5rem;
+        }
+
+        .bar {
+            flex: 1;
+            background: linear-gradient(180deg, #3b82f6, #2563eb);
+            border-radius: 3px 3px 0 0;
+            min-width: 8px;
+            position: relative;
+            transition: all 0.15s;
+            cursor: default;
+        }
+
+        .bar:hover {
+            background: linear-gradient(180deg, #60a5fa, #3b82f6);
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.58rem;
+            color: #64748b;
+            white-space: nowrap;
+        }
+
+        /* Horizontal tool bar chart */
+        .hbar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 0.75rem;
+            overflow-y: auto;
+            max-height: 195px;
+            flex-shrink: 0;
+        }
+
+        .hbar-row {
+            display: grid;
+            grid-template-columns: 130px 1fr 48px 52px;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            border-radius: 4px;
+            padding: 2px 4px;
+            transition: background 0.1s;
+        }
+
+        .hbar-row:hover, .hbar-row.hbar-active {
+            background: rgba(59,130,246,0.08);
+        }
+
+        .hbar-name {
+            font-size: 0.72rem;
+            color: #94a3b8;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .hbar-track {
+            height: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .hbar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .hbar-count {
+            font-size: 0.68rem;
+            color: #64748b;
+            text-align: right;
+        }
+
+        .hbar-rate {
+            font-size: 0.68rem;
+            text-align: right;
+            font-weight: 600;
+        }
+
+        /* Tool filter controls */
+        .tool-filters {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.875rem;
+            flex-wrap: wrap;
+        }
+
+        .tool-filter-input {
+            flex: 1;
+            min-width: 140px;
+            background: rgba(13,20,38,0.8);
+            border: 1px solid rgba(148,163,184,0.12);
+            border-radius: 5px;
+            color: #f1f5f9;
+            font-family: inherit;
+            font-size: 0.75rem;
+            padding: 0.35rem 0.6rem;
+            outline: none;
+        }
+
+        .tool-filter-input:focus { border-color: rgba(59,130,246,0.4); }
+        .tool-filter-input::placeholder { color: #475569; }
+
+        .tool-filter-select {
+            background: rgba(13,20,38,0.8);
+            border: 1px solid rgba(148,163,184,0.12);
+            border-radius: 5px;
+            color: #94a3b8;
+            font-family: inherit;
+            font-size: 0.75rem;
+            padding: 0.35rem 0.6rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .tool-filter-select:focus { border-color: rgba(59,130,246,0.4); }
+
+        /* Data table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th, .data-table td {
+            padding: 0.6rem 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(148,163,184,0.06);
+        }
+
+        .data-table th {
+            font-size: 0.68rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: color 0.2s;
+            white-space: nowrap;
+        }
+
+        .data-table td {
+            font-size: 0.78rem;
+            color: #94a3b8;
+        }
+
+        .data-table th:hover { color: #94a3b8; }
+        .data-table tr:hover { background: rgba(17,24,39,0.4); }
+        .data-table tr.row-highlighted { background: rgba(59,130,246,0.08); }
+
+        /* Legacy — kept for other tabs that still use these */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .analytics-row {
@@ -1261,47 +1521,10 @@
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
             margin-bottom: 1.5rem;
+            min-width: 0;
         }
 
-        .analytics-card {
-            background: linear-gradient(180deg, rgba(13,20,38,0.8) 0%, rgba(10,15,30,0.6) 100%);
-            border-radius: 10px;
-            padding: 1rem;
-            border: 1px solid rgba(148,163,184,0.08);
-        }
-
-        .card-title {
-            font-size: 0.8rem;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 1rem;
-        }
-
-        /* Tool Usage Table */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .data-table th, .data-table td {
-            padding: 0.875rem;
-            text-align: left;
-            border-bottom: 1px solid rgba(148,163,184,0.08);
-        }
-
-        .data-table th {
-            font-size: 0.7rem;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .data-table th:hover { color: #94a3b8; }
-
-        .data-table tr:hover { background: rgba(17,24,39,0.4); }
+        .analytics-row > * { min-width: 0; overflow: hidden; }
 
         .success-rate-bar {
             display: flex;
@@ -1315,42 +1538,7 @@
             background: linear-gradient(90deg, #22c55e, #86efac);
         }
 
-        .success-rate-text {
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        /* Bar Chart */
-        .bar-chart {
-            display: flex;
-            align-items: flex-end;
-            height: 150px;
-            gap: 6px;
-            padding-top: 1rem;
-        }
-
-        .bar {
-            flex: 1;
-            background: linear-gradient(180deg, #3b82f6, #2563eb);
-            border-radius: 4px 4px 0 0;
-            min-width: 12px;
-            position: relative;
-            transition: all 0.2s;
-        }
-
-        .bar:hover { 
-            background: linear-gradient(180deg, #60a5fa, #3b82f6);
-            transform: scaleY(1.02);
-        }
-
-        .bar-label {
-            position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.625rem;
-            color: #64748b;
-        }
+        .success-rate-text { font-size: 0.75rem; font-weight: 600; }
 
         /* TOOL LOGS TAB */
         .tool-logs-layout {
@@ -1675,12 +1863,64 @@
             text-transform: uppercase;
         }
 
+        /* Actions search + filter row */
+        .actions-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+        .actions-search {
+            width: 100%;
+            background: rgba(13,20,38,0.8);
+            border: 1px solid rgba(148,163,184,0.12);
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.8rem;
+            box-sizing: border-box;
+        }
+        .actions-search:focus { outline: none; border-color: rgba(59,130,246,0.4); }
+        .actions-search::placeholder { color: #475569; }
+
         .actions-filters {
             display: flex;
             gap: 0.5rem;
             flex-wrap: wrap;
             flex-shrink: 0;
         }
+
+        /* Expandable detail row */
+        .action-detail-row td {
+            padding: 0 1rem 0.75rem 1rem !important;
+            border-bottom: 1px solid rgba(148,163,184,0.06);
+        }
+        .action-detail-box {
+            background: rgba(0,0,0,0.25);
+            border-radius: 6px;
+            padding: 0.6rem 0.75rem;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            border-left: 2px solid rgba(59,130,246,0.3);
+        }
+        .action-detail-box .detail-label {
+            font-size: 0.62rem;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.2rem;
+        }
+        .action-detail-box .detail-value {
+            white-space: pre-wrap;
+            word-break: break-word;
+            color: #cbd5e1;
+            font-family: 'Courier New', monospace;
+            font-size: 0.73rem;
+        }
+        .action-detail-box .detail-value.error { color: #fca5a5; }
+        .actions-table tr.clickable { cursor: pointer; }
+        .actions-table tr.clickable:hover { background: rgba(59,130,246,0.05); }
 
         .filter-chip {
             padding: 0.5rem 1rem;
@@ -2988,6 +3228,14 @@
             .analytics-row {
                 grid-template-columns: 1fr;
             }
+
+            .an-kpi-row {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .an-main {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* MOBILE (max-width: 768px) */
@@ -3052,6 +3300,64 @@
             .mobile-bottom-nav {
                 display: flex !important;
             }
+
+            /* Registry (Tools) tab on mobile — fixed overlay like other mobile views */
+            #registry-tab.active {
+                position: fixed !important;
+                top: 56px !important;
+                bottom: var(--mobile-nav-height) !important;
+                left: 0 !important;
+                right: 0 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                height: auto !important;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                background: var(--bg-primary);
+                z-index: 50;
+            }
+            .registry-layout {
+                flex-direction: column !important;
+                overflow: visible !important;
+                height: auto !important;
+                min-height: min-content;
+                padding: 1rem;
+                box-sizing: border-box;
+                gap: 1.25rem !important;
+            }
+            .registry-col-right {
+                border-left: none !important;
+                padding-left: 0 !important;
+                border-top: 1px solid rgba(148,163,184,0.08);
+                padding-top: 1rem;
+            }
+            .registry-col-left, .registry-col-right { overflow: visible !important; min-height: 0 !important; }
+            .registry-col-left .table-scroll-wrap { max-height: 520px; overflow-y: auto; }
+            .registry-col-right .forge-event-list  { max-height: 320px; overflow-y: auto; }
+
+            /* Stats: all cards on one row, compact sizing */
+            .registry-stats-row { grid-template-columns: repeat(5, 1fr) !important; }
+            .forge-stats-row    { grid-template-columns: repeat(4, 1fr) !important; }
+            .registry-stats-row .stat-card,
+            .forge-stats-row .stat-card {
+                padding: 0.4rem 0.3rem !important;
+            }
+            .registry-stats-row .stat-card-value,
+            .forge-stats-row .stat-card-value {
+                font-size: 15px !important;
+            }
+            .registry-stats-row .stat-card-label,
+            .forge-stats-row .stat-card-label {
+                font-size: 0.52rem !important;
+            }
+
+            /* Forge filter chips: fill full width symmetrically like KPIs */
+            .forge-filters { flex-wrap: nowrap !important; gap: 0.3rem !important; }
+            .forge-filter-chip { flex: 1 !important; text-align: center !important; padding: 0.3rem 0 !important; font-size: 0.62rem !important; }
+
+            /* 5-item nav: tighten slightly */
+            .mobile-nav-label { font-size: 0.58rem !important; }
+            .mobile-nav-icon  { font-size: 1.1rem !important; }
 
             /* Show mobile filter drawer */
             .mobile-filter-drawer {
@@ -3267,6 +3573,352 @@
                 width: 6px;
             }
         }
+
+        /* ── Failure Taxonomy ───────────────────────────────────── */
+        .failure-taxonomy {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .failure-row {
+            display: grid;
+            grid-template-columns: 140px 1fr 50px;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .failure-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            white-space: nowrap;
+        }
+
+        .failure-bar-track {
+            height: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .failure-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        .failure-count {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-align: right;
+        }
+
+        /* ── Forge Tab ──────────────────────────────────────────── */
+        .forge-layout {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .forge-stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .forge-event-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .forge-event-card {
+            background: linear-gradient(180deg, rgba(13,20,38,0.8) 0%, rgba(10,15,30,0.6) 100%);
+            border-radius: 10px;
+            border: 1px solid rgba(148,163,184,0.08);
+            padding: 1rem 1.25rem;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .forge-event-card:hover {
+            border-color: rgba(148,163,184,0.2);
+        }
+
+        .forge-event-card.status-built {
+            border-left: 3px solid #22c55e;
+        }
+
+        .forge-event-card.status-pending {
+            border-left: 3px solid #eab308;
+        }
+
+        .forge-event-card.status-failed {
+            border-left: 3px solid #ef4444;
+        }
+
+        .forge-event-card.status-rejected {
+            border-left: 3px solid #64748b;
+        }
+
+        .forge-event-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .forge-event-status {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .forge-event-status.built  { background: rgba(34,197,94,0.15);  color: #22c55e; }
+        .forge-event-status.pending{ background: rgba(234,179,8,0.15);   color: #eab308; }
+        .forge-event-status.failed { background: rgba(239,68,68,0.15);   color: #ef4444; }
+        .forge-event-status.rejected{ background: rgba(100,116,139,0.15); color: #64748b; }
+
+        .forge-event-time {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+
+        .forge-event-description {
+            font-size: 0.85rem;
+            color: #f1f5f9;
+            margin-bottom: 0.25rem;
+        }
+
+        .forge-event-trigger {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .forge-event-tool {
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: #3b82f6;
+        }
+
+        .forge-code-viewer {
+            margin-top: 0.75rem;
+            background: rgba(0,0,0,0.3);
+            border-radius: 6px;
+            padding: 0.75rem;
+            font-size: 0.7rem;
+            color: #94a3b8;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 250px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .forge-code-viewer.open {
+            display: block;
+        }
+
+        .forge-code-toggle {
+            background: none;
+            border: 1px solid rgba(148,163,184,0.15);
+            color: #64748b;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            font-family: inherit;
+        }
+
+        .forge-code-toggle:hover { color: #94a3b8; border-color: rgba(148,163,184,0.3); }
+
+        .forge-filters {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .forge-filter-chip {
+            background: rgba(13,20,38,0.6);
+            border: 1px solid rgba(148,163,184,0.12);
+            color: #64748b;
+            font-size: 0.7rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.15s;
+        }
+
+        .forge-filter-chip.active, .forge-filter-chip:hover {
+            background: rgba(59,130,246,0.15);
+            border-color: rgba(59,130,246,0.3);
+            color: #60a5fa;
+        }
+
+        .forge-empty {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        /* ── Registry Tab (merged Tools + Forge) ───────────────── */
+        .registry-layout {
+            flex: 1;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: row;
+            gap: 1.25rem;
+            overflow: hidden;
+            min-height: 0;
+        }
+        .registry-col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            min-height: 0;
+            overflow: hidden;
+        }
+        .registry-col-left  { flex: 1.6; min-width: 0; }
+        .registry-col-right { flex: 1; min-width: 0; border-left: 1px solid rgba(148,163,184,0.08); padding-left: 1.25rem; }
+        .registry-col-left .table-scroll-wrap { flex: 1; min-height: 0; }
+        .registry-col-right .forge-event-list { flex: 1; min-height: 0; overflow-y: auto; }
+        .registry-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+            gap: 1rem;
+        }
+
+        .registry-health-pill {
+            font-size: 0.75rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .registry-health-pill.ok  { background: rgba(34,197,94,0.15); color: #22c55e; }
+        .registry-health-pill.warn{ background: rgba(234,179,8,0.15);  color: #eab308; }
+        .registry-health-pill.bad { background: rgba(239,68,68,0.15);  color: #ef4444; }
+
+        .registry-stats-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .registry-search {
+            width: 100%;
+            background: rgba(13,20,38,0.8);
+            border: 1px solid rgba(148,163,184,0.12);
+            border-radius: 6px;
+            color: #f1f5f9;
+            font-family: inherit;
+            font-size: 0.8rem;
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 1rem;
+            outline: none;
+        }
+
+        .registry-search:focus { border-color: rgba(59,130,246,0.4); }
+
+        .registry-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        .registry-table th {
+            font-size: 0.68rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.5rem 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(148,163,184,0.08);
+            white-space: nowrap;
+        }
+
+        .registry-table td {
+            padding: 0.6rem 0.75rem;
+            border-bottom: 1px solid rgba(148,163,184,0.05);
+            vertical-align: middle;
+        }
+
+        .registry-table tr:hover { background: rgba(17,24,39,0.4); }
+
+        .tool-status-badge {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.45rem;
+            border-radius: 3px;
+            font-weight: 600;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .tool-status-badge.OK     { background: rgba(34,197,94,0.15);  color: #22c55e; }
+        .tool-status-badge.FAIL   { background: rgba(239,68,68,0.15);  color: #ef4444; }
+        .tool-status-badge.ERR    { background: rgba(239,68,68,0.15);  color: #ef4444; }
+        .tool-status-badge.SKIP   { background: rgba(100,116,139,0.15);color: #64748b; }
+        .tool-status-badge.NO_TEST{ background: rgba(234,179,8,0.15);  color: #eab308; }
+
+        .tool-score-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .tool-score-track {
+            width: 60px;
+            height: 5px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 3px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .tool-score-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .tool-issue-icon {
+            font-size: 0.75rem;
+            cursor: default;
+        }
+
+        .registry-audit-time {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+
+        .registry-run-btn {
+            background: rgba(59,130,246,0.1);
+            border: 1px solid rgba(59,130,246,0.25);
+            color: #60a5fa;
+            font-size: 0.7rem;
+            padding: 0.3rem 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .registry-run-btn:hover { background: rgba(59,130,246,0.2); }
+        .registry-run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -3280,6 +3932,7 @@
             <button class="nav-tab active" data-tab="sessions">SESSIONS</button>
             <button class="nav-tab" data-tab="analytics">ANALYTICS</button>
             <button class="nav-tab" data-tab="actions">ACTIONS</button>
+            <button class="nav-tab" data-tab="registry">TOOLS</button>
         </div>
         <div class="nav-right">
             <button class="mobile-filter-btn" onclick="openMobileFilterDrawer()">🔧</button>
@@ -3430,70 +4083,111 @@
         <!-- ANALYTICS TAB -->
         <div class="tab-content" id="analytics-tab">
             <div class="analytics-layout">
-                <!-- Stats Row -->
-                <div class="stats-row">
+
+                <!-- KPI Strip -->
+                <div class="an-kpi-row">
                     <div class="stat-card">
                         <div class="stat-card-value" id="stat-total-sessions">-</div>
-                        <div class="stat-card-label">Total Sessions (30d)</div>
+                        <div class="stat-card-label">Sessions (30d)</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-card-value" id="stat-total-turns">-</div>
-                        <div class="stat-card-label">Total Turns (30d)</div>
+                        <div class="stat-card-label">Turns (30d)</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-card-value" id="stat-failure-rate">-</div>
-                        <div class="stat-card-label">Failure Rate</div>
+                        <div class="stat-card-label">Fail Rate</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-card-value" id="stat-avg-response">-</div>
-                        <div class="stat-card-label">Avg Response Time</div>
+                        <div class="stat-card-label">Avg Response</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="stat-error-count">-</div>
+                        <div class="stat-card-label">Errors (30d)</div>
                     </div>
                 </div>
 
-                <!-- Tool Usage Table -->
-                <div class="analytics-card" style="margin-bottom: 1rem;">
-                    <div class="card-title">Tool Usage</div>
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Tool Name</th>
-                                <th>Uses</th>
-                                <th>Avg Duration</th>
-                                <th>Success Rate</th>
-                                <th>Last Used</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tool-usage-body"></tbody>
-                    </table>
+                <!-- Main 2-column: Volume+Performance left, Reliability right -->
+                <div class="an-main">
+                    <div class="an-left">
+                        <div class="analytics-card">
+                            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.875rem;">
+                                <div class="card-title" style="margin:0;" id="vol-chart-title">Hourly Volume</div>
+                                <div class="vol-period-btns">
+                                    <button class="vol-period-btn active" onclick="switchVolumePeriod('24h',this)">24h</button>
+                                    <button class="vol-period-btn" onclick="switchVolumePeriod('7d',this)">7d</button>
+                                    <button class="vol-period-btn" onclick="switchVolumePeriod('30d',this)">30d</button>
+                                </div>
+                            </div>
+                            <div class="bar-chart" id="volume-chart"></div>
+                        </div>
+                    </div>
+                    <div class="an-right">
+                        <div class="analytics-card">
+                            <div class="card-title">Top Errors</div>
+                            <div id="top-errors-container">
+                                <div style="color:#64748b;font-size:0.78rem;">Loading…</div>
+                            </div>
+                        </div>
+                        <div class="analytics-card">
+                            <div class="card-title">Failure Taxonomy <span id="failure-tax-period" style="color:#3b82f6;font-size:0.65rem;margin-left:0.35rem;">(30d)</span></div>
+                            <div class="failure-taxonomy" id="failure-taxonomy-body">
+                                <div style="color:#64748b;font-size:0.78rem;">Loading…</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Charts Row -->
-                <div class="analytics-row">
+                <!-- Bottom full-width: Tool Usage -->
+                <div class="an-tools">
                     <div class="analytics-card">
-                        <div class="card-title">Hourly Volume (24h)</div>
-                        <div class="bar-chart" id="hourly-chart"></div>
-                    </div>
-                    <div class="analytics-card">
-                        <div class="card-title">Daily Volume (7d)</div>
-                        <div class="bar-chart" id="daily-chart"></div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+                            <div class="card-title" style="margin:0;">Tool Usage <span style="color:#475569;font-size:0.65rem;">(30d)</span></div>
+                            <span id="tool-usage-count" style="font-size:0.68rem;color:#475569;"></span>
+                        </div>
+
+                        <!-- Filters -->
+                        <div class="tool-filters">
+                            <input type="text" class="tool-filter-input" id="tool-search"
+                                   placeholder="Search tool…"
+                                   oninput="applyToolFilter()">
+                            <select class="tool-filter-select" id="tool-status-filter" onchange="applyToolFilter()">
+                                <option value="">All status</option>
+                                <option value="ok">Success ≥90%</option>
+                                <option value="warn">Success 70–90%</option>
+                                <option value="bad">Success &lt;70%</option>
+                            </select>
+                            <select class="tool-filter-select" id="tool-sort-order" onchange="applyToolFilter()">
+                                <option value="count">Sort: Most used</option>
+                                <option value="fails">Sort: Most failures</option>
+                                <option value="latency">Sort: Slowest</option>
+                                <option value="alpha">Sort: A–Z</option>
+                            </select>
+                        </div>
+
+                        <!-- Horizontal bar chart -->
+                        <div class="hbar-chart" id="tool-hbar-chart"></div>
+
+                        <!-- Table -->
+                        <div class="table-scroll-wrap">
+                            <table class="data-table" id="tool-usage-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tool</th>
+                                        <th>Calls</th>
+                                        <th>Fail Rate</th>
+                                        <th>Avg Latency</th>
+                                        <th>Errors</th>
+                                        <th>Last Used</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tool-usage-body"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Top Errors -->
-                <div class="analytics-card">
-                    <div class="card-title">Top Errors</div>
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Error Type</th>
-                                <th>Count</th>
-                                <th>Last Seen</th>
-                                <th>Example</th>
-                            </tr>
-                        </thead>
-                        <tbody id="top-errors-body"></tbody>
-                    </table>
-                </div>
             </div>
         </div>
 
@@ -3504,7 +4198,7 @@
                 <div class="actions-stats-bar">
                     <div class="stat-card">
                         <div class="stat-value" id="actions-total">0</div>
-                        <div class="stat-label">Total Actions</div>
+                        <div class="stat-label">Total (7d)</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-value" id="actions-today">0</div>
@@ -3520,37 +4214,136 @@
                     </div>
                 </div>
 
-                <!-- Filter Buttons -->
-                <div class="actions-filters">
-                    <button class="filter-chip active" data-filter="all" onclick="filterActions('all')">All</button>
-                    <button class="filter-chip" data-filter="block" onclick="filterActions('block')">Blocks</button>
-                    <button class="filter-chip" data-filter="approve" onclick="filterActions('approve')">Approvals</button>
-                    <button class="filter-chip" data-filter="restart" onclick="filterActions('restart')">Restarts</button>
-                    <button class="filter-chip" data-filter="failed" onclick="filterActions('failed')">Failed</button>
-                    <button class="filter-chip" onclick="refreshActions()">↻ Refresh</button>
+                <!-- Controls: search + filter chips -->
+                <div class="actions-controls">
+                    <input type="text" class="actions-search" id="actions-search"
+                           placeholder="Search target or detail…"
+                           oninput="applyActionsFilter()">
+                    <div class="actions-filters">
+                        <button class="filter-chip active" data-filter="all" onclick="filterActions('all')">All</button>
+                        <button class="filter-chip" data-filter="block" onclick="filterActions('block')">Blocks</button>
+                        <button class="filter-chip" data-filter="approve" onclick="filterActions('approve')">Approvals</button>
+                        <button class="filter-chip" data-filter="restart" onclick="filterActions('restart')">Restarts</button>
+                        <button class="filter-chip" data-filter="failed" onclick="filterActions('failed')">Failed</button>
+                        <button class="filter-chip" onclick="refreshActions()">↻</button>
+                    </div>
                 </div>
 
-                <!-- Actions Table -->
+                <!-- Actions Feed -->
                 <div class="actions-table-panel">
-                    <table class="actions-table">
+                    <table class="actions-table" id="actions-table">
                         <thead>
                             <tr>
-                                <th>Time</th>
-                                <th>Action</th>
+                                <th style="width:130px;">Time</th>
+                                <th style="width:140px;">Action</th>
                                 <th>Target</th>
-                                <th>Result</th>
-                                <th>By</th>
+                                <th style="width:90px;">Result</th>
+                                <th>Detail</th>
+                                <th style="width:70px;">By</th>
                             </tr>
                         </thead>
                         <tbody id="actions-table-body">
                             <tr>
-                                <td colspan="5" class="empty-cell">
+                                <td colspan="6" class="empty-cell">
                                     <div class="loading"><div class="spinner"></div> Loading actions...</div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+
+        <!-- TOOLS TAB (Registry + Forge merged) -->
+        <div class="tab-content" id="registry-tab">
+            <div class="registry-layout">
+
+                <!-- LEFT: Tool Health -->
+                <div class="registry-col registry-col-left">
+                    <div class="registry-header-row">
+                        <div style="display:flex;align-items:center;gap:0.75rem;">
+                            <span class="card-title" style="margin:0;">Tool Health</span>
+                            <span class="registry-health-pill ok" id="registry-health-pill">—</span>
+                            <span class="registry-audit-time" id="registry-audit-time"></span>
+                        </div>
+                    </div>
+                    <div class="registry-stats-row">
+                        <div class="stat-card">
+                            <div class="stat-card-value" id="reg-stat-total">-</div>
+                            <div class="stat-card-label">Total</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-value" id="reg-stat-passing" style="color:#22c55e;">-</div>
+                            <div class="stat-card-label">Passing</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-value" id="reg-stat-failing" style="color:#ef4444;">-</div>
+                            <div class="stat-card-label">Failing</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-value" id="reg-stat-notest" style="color:#eab308;">-</div>
+                            <div class="stat-card-label">No Test</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-value" id="reg-stat-skipped" style="color:#64748b;">-</div>
+                            <div class="stat-card-label">Skipped</div>
+                        </div>
+                    </div>
+                    <input type="text" class="registry-search" id="registry-search"
+                           placeholder="Filter tools…"
+                           oninput="filterRegistry(this.value)">
+                    <div class="table-scroll-wrap">
+                        <table class="registry-table">
+                            <thead>
+                                <tr>
+                                    <th>Tool</th>
+                                    <th>Category</th>
+                                    <th>Status</th>
+                                    <th>Score</th>
+                                    <th>Duration</th>
+                                    <th>Message / Error</th>
+                                </tr>
+                            </thead>
+                            <tbody id="registry-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Forge Requests -->
+                <div class="registry-col registry-col-right">
+                    <div class="registry-header-row">
+                        <span class="card-title" style="margin:0;">Forge Requests</span>
+                    </div>
+                    <div class="forge-stats-row">
+                        <div class="stat-card">
+                            <div class="stat-card-value" id="forge-stat-total">-</div>
+                            <div class="stat-card-label">Total</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-value" id="forge-stat-built" style="color:#22c55e;">-</div>
+                            <div class="stat-card-label">Built</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-value" id="forge-stat-pending" style="color:#eab308;">-</div>
+                            <div class="stat-card-label">Pending</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-value" id="forge-stat-failed" style="color:#ef4444;">-</div>
+                            <div class="stat-card-label">Failed</div>
+                        </div>
+                    </div>
+                    <div class="forge-filters">
+                        <button class="forge-filter-chip active" onclick="loadForge('all', this)">All</button>
+                        <button class="forge-filter-chip" onclick="loadForge('built', this)">Built</button>
+                        <button class="forge-filter-chip" onclick="loadForge('pending', this)">Pending</button>
+                        <button class="forge-filter-chip" onclick="loadForge('failed', this)">Failed</button>
+                        <button class="forge-filter-chip" onclick="loadForge('rejected', this)">Rejected</button>
+                    </div>
+                    <div class="forge-event-list" id="forge-event-list">
+                        <div class="forge-empty">Loading…</div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -3624,6 +4417,10 @@
             <button class="mobile-nav-item" data-mobile-tab="actions" onclick="switchMobileTab('actions')">
                 <span class="mobile-nav-icon">📋</span>
                 <span class="mobile-nav-label">Actions</span>
+            </button>
+            <button class="mobile-nav-item" data-mobile-tab="registry" onclick="switchMobileTab('registry')">
+                <span class="mobile-nav-icon">🔧</span>
+                <span class="mobile-nav-label">Tools</span>
             </button>
         </div>
     </nav>
@@ -3756,12 +4553,6 @@
             </div>
         </div>
         <div class="mobile-analytics-card">
-            <div class="mobile-card-title">Tool Usage</div>
-            <div class="mobile-tool-list" id="mobile-tool-usage">
-                <!-- Tool usage populated by JavaScript -->
-            </div>
-        </div>
-        <div class="mobile-analytics-card">
             <div class="mobile-card-title">Hourly Volume (24h)</div>
             <div class="mobile-bar-chart" id="mobile-hourly-chart"></div>
         </div>
@@ -3773,6 +4564,12 @@
             <div class="mobile-card-title">Top Errors</div>
             <div class="mobile-error-list" id="mobile-top-errors">
                 <!-- Errors populated by JavaScript -->
+            </div>
+        </div>
+        <div class="mobile-analytics-card">
+            <div class="mobile-card-title">Tool Usage</div>
+            <div class="mobile-tool-list" id="mobile-tool-usage">
+                <!-- Tool usage populated by JavaScript -->
             </div>
         </div>
     </div>
@@ -3793,6 +4590,7 @@
         // Configuration
         let CONFIG = {
             apiUrl: 'http://192.168.2.23:8080',
+            styxApiKey: 'styx-local-readonly-key',
             autoRefresh: true,
             timeFormat: '24h'
         };
@@ -3808,6 +4606,16 @@
             document.getElementById('setting-time-format').value = CONFIG.timeFormat;
         }
 
+        // Wrapper: auto-inject X-Styx-Key on all API calls so STYX never needs
+        // session-based auth — the dashboard_server read endpoints accept this key.
+        function apiFetch(url, opts = {}) {
+            const headers = { 'Content-Type': 'application/json', ...(opts.headers || {}) };
+            if (CONFIG.styxApiKey) {
+                headers['X-Styx-Key'] = CONFIG.styxApiKey;
+            }
+            return fetch(url, { credentials: 'include', ...opts, headers });
+        }
+
         /* =============================================
            LOGIN / AUTHENTICATION
            ============================================= */
@@ -3815,42 +4623,55 @@
 
         // Check authentication on load
         async function checkAuth() {
+            // If previously authenticated, load data immediately and verify in background
+            const wasAuthenticated = sessionStorage.getItem('styx-authenticated') === '1';
+            if (wasAuthenticated) {
+                isAuthenticated = true;
+                document.getElementById('login-modal').classList.remove('open');
+                loadAllData();
+            }
+
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/conversations?limit=1`, {
+                const response = await apiFetch(`${CONFIG.apiUrl}/api/conversations?limit=1`, {
                     credentials: 'include',
                     headers: {'Content-Type': 'application/json'}
                 });
-                
+
                 if (response.ok) {
                     isAuthenticated = true;
+                    sessionStorage.setItem('styx-authenticated', '1');
                     document.getElementById('login-modal').classList.remove('open');
-                    loadAllData();
+                    if (!wasAuthenticated) loadAllData();
                 } else {
                     isAuthenticated = false;
+                    sessionStorage.removeItem('styx-authenticated');
                     document.getElementById('login-modal').classList.add('open');
                 }
             } catch (error) {
                 console.error('Auth check failed:', error);
-                document.getElementById('login-modal').classList.add('open');
+                if (!wasAuthenticated) {
+                    document.getElementById('login-modal').classList.add('open');
+                }
             }
         }
 
         async function attemptLogin() {
             const password = document.getElementById('login-password').value;
             const errorDiv = document.getElementById('login-error');
-            
+
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/auth/login`, {
+                const response = await apiFetch(`${CONFIG.apiUrl}/api/auth/login`, {
                     method: 'POST',
                     credentials: 'include',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({password})
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (response.ok && data.success) {
                     isAuthenticated = true;
+                    sessionStorage.setItem('styx-authenticated', '1');
                     document.getElementById('login-modal').classList.remove('open');
                     errorDiv.style.display = 'none';
                     loadAllData();
@@ -3869,6 +4690,23 @@
             loadAnalytics();
             loadActions();
             updateLastRefresh();
+            restoreActiveTab();
+        }
+
+        function restoreActiveTab() {
+            const isMobile = window.innerWidth <= 1024;
+            if (isMobile) {
+                const savedMobileTab = localStorage.getItem('styx-active-mobile-tab');
+                if (savedMobileTab && savedMobileTab !== 'detail') {
+                    switchMobileTab(savedMobileTab);
+                }
+            } else {
+                const savedTab = localStorage.getItem('styx-active-tab');
+                if (savedTab) {
+                    const tabEl = document.querySelector(`.nav-tab[data-tab="${savedTab}"]`);
+                    if (tabEl) tabEl.click();
+                }
+            }
         }
 
         function saveSettings() {
@@ -3925,8 +4763,11 @@
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
 
+                localStorage.setItem('styx-active-tab', tab.dataset.tab);
+
                 if (tab.dataset.tab === 'analytics') loadAnalytics();
                 if (tab.dataset.tab === 'actions') loadActions();
+                if (tab.dataset.tab === 'registry') { loadRegistry(); loadForge(); }
             });
         });
 
@@ -3962,7 +4803,7 @@
             if (secondPassFilter === 'false') params.set('second_pass', 'false');
 
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/conversations/turns?${params.toString()}&_t=${Date.now()}`, {
+                const response = await apiFetch(`${CONFIG.apiUrl}/api/conversations/turns?${params.toString()}&_t=${Date.now()}`, {
                     credentials: 'include',
                     headers: {'Content-Type': 'application/json'}
                 });
@@ -4000,7 +4841,7 @@
         // Load Sessions
         async function loadSessions() {
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/conversations?limit=100`, {
+                const response = await apiFetch(`${CONFIG.apiUrl}/api/conversations?limit=100`, {
                     credentials: 'include',
                     headers: {'Content-Type': 'application/json'}
                 });
@@ -4144,7 +4985,7 @@
             turnsList.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/conversations/${sessionId}?_t=${Date.now()}`, {
+                const response = await apiFetch(`${CONFIG.apiUrl}/api/conversations/${sessionId}?_t=${Date.now()}`, {
                     credentials: 'include',
                     headers: {'Content-Type': 'application/json'}
                 });
@@ -4460,7 +5301,9 @@
                     let expandedContent = '';
 
                     // Determine event type and styling
+                    // NOTE: tool_result must NOT use generic 'result' check — success depends on actual tool result
                     if (event.event.includes('error')) { eventClass = 'error'; icon = '❌'; }
+                    else if (event.event === 'tool_result') { /* handled below with real success value */ }
                     else if (event.event.includes('result')) { eventClass = 'success'; icon = '✅'; }
                     else if (event.event.includes('llm_call')) { eventClass = 'llm-call'; icon = '🤖'; }
                     else if (event.event.includes('tool_exec')) { eventClass = 'tool-call'; icon = '⚡'; }
@@ -4578,9 +5421,16 @@
                         `;
                     }
                     else if (event.event === 'tool_result') {
-                        const success = td.success || event.detail?.includes('success=True');
+                        // Use td.success (from trace_display) as authoritative; fall back to detail string
+                        const success = (td.success === true) || (td.success !== false && event.detail?.includes('success=True'));
+                        eventClass = success ? 'success' : 'error';
+                        icon = success ? '✅' : '❌';
                         title = success ? `✓ ${td.tool || 'Tool'} result` : `✗ ${td.tool || 'Tool'} failed`;
-                        summary = td.type ? `${td.type} • ${event.duration_ms || 0}ms` : `${event.duration_ms || 0}ms`;
+                        // For failures: show error message in summary
+                        const errorMsg = !success ? (td.summary || event.detail || '') : '';
+                        summary = !success && errorMsg
+                            ? `<span style="color:#fca5a5;">${escapeHtml(errorMsg)}</span> • ${event.duration_ms || 0}ms`
+                            : (td.type ? `${td.type} • ${event.duration_ms || 0}ms` : `${event.duration_ms || 0}ms`);
                         
                         // Type-specific expanded content
                         if (td.type === 'presence') {
@@ -4683,16 +5533,42 @@
                             `;
                         }
                         else {
-                            // Generic tool result
+                            // Generic tool result — highlight errors prominently with full traceback
+                            const errText = !success ? (td.summary || event.detail || '') : '';
+                            // Parse traceback from full_result if available
+                            let tbText = td.traceback || null;
+                            if (!tbText && event.full_result) {
+                                try {
+                                    const fr = JSON.parse(event.full_result);
+                                    tbText = fr.traceback || null;
+                                } catch(e) {}
+                            }
                             expandedContent = `
                                 <div class="trace-expanded-content">
-                                    <div class="trace-card generic-card">
+                                    <div class="trace-card ${success ? 'generic-card' : 'error-card'}" style="${!success ? 'border-color:rgba(239,68,68,0.4);' : ''}">
+                                        ${!success ? `
+                                        <div class="trace-card-header" style="color:#ef4444;">❌ Tool Error — ${escapeHtml(td.tool || 'unknown')}</div>
+                                        <div class="trace-card-body">
+                                            <div class="trace-row" style="margin-bottom:0.4rem;">
+                                                <span style="color:#94a3b8;min-width:60px;">Error:</span>
+                                                <span style="color:#fca5a5;word-break:break-all;font-weight:600;">${escapeHtml(errText)}</span>
+                                            </div>
+                                            ${tbText ? `
+                                            <div class="trace-expand-btn" onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Hide traceback':'▶ Show traceback'">
+                                                <span>▶ Show traceback</span>
+                                            </div>
+                                            <div class="trace-full-content">
+                                                <pre style="color:#fca5a5;font-size:0.72rem;">${escapeHtml(tbText)}</pre>
+                                            </div>` : ''}
+                                        </div>
+                                        ` : `
                                         <div class="trace-card-body">
                                             <div class="trace-row"><span>Result:</span><span>${escapeHtml(td.summary || event.detail || '-')}</span></div>
                                         </div>
+                                        `}
                                         ${event.full_result ? `
-                                        <div class="trace-expand-btn" onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show full JSON'">
-                                            <span>▶ Show full JSON</span>
+                                        <div class="trace-expand-btn" onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('open');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('open')?'▼ Show less':'▶ Show raw JSON'">
+                                            <span>▶ Show raw JSON</span>
                                         </div>
                                         <div class="trace-full-content">
                                             <pre>${escapeHtml(event.full_result)}</pre>
@@ -4846,61 +5722,404 @@
         }
 
         // Analytics
+        // ── Analytics ─────────────────────────────────────────────
+        let _allToolData = [];   // full unfiltered tool list from API
+        let _activeToolName = null; // bar-click filter
+        let _volumeData = { '24h': [], '7d': [], '30d': [] };
+        let _volumePeriod = '24h';
+
+        function switchVolumePeriod(period, btnEl) {
+            _volumePeriod = period;
+            document.querySelectorAll('.vol-period-btn').forEach(b => b.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
+            const titles = { '24h': 'Hourly Volume', '7d': 'Daily Volume', '30d': 'Monthly View' };
+            const titleEl = document.getElementById('vol-chart-title');
+            if (titleEl) titleEl.textContent = titles[period] || 'Volume';
+            const d = _volumeData[period] || [];
+            const maxBars = period === '24h' ? 24 : period === '7d' ? 7 : 30;
+            renderBarChart('volume-chart', d, maxBars);
+        }
+
         async function loadAnalytics() {
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/conversations/stats`, {
+                const response = await apiFetch(`${CONFIG.apiUrl}/api/conversations/stats`, {
                     credentials: 'include',
                     headers: {'Content-Type': 'application/json'}
                 });
                 const data = await response.json();
 
+                // KPI strip
                 document.getElementById('stat-total-sessions').textContent = data.total_sessions || 0;
-                document.getElementById('stat-total-turns').textContent = data.total_turns || 0;
-                document.getElementById('stat-failure-rate').textContent = `${data.failure_rate || 0}%`;
-                document.getElementById('stat-avg-response').textContent = `${data.avg_response_time || 0}s`;
+                document.getElementById('stat-total-turns').textContent    = data.total_turns || 0;
+                document.getElementById('stat-failure-rate').textContent   = `${data.failure_rate || 0}%`;
+                document.getElementById('stat-avg-response').textContent   = `${data.avg_response_time || 0}s`;
+                document.getElementById('stat-error-count').textContent    = data.total_errors ?? '—';
 
-                const toolBody = document.getElementById('tool-usage-body');
-                if (data.tool_usage) {
-                    toolBody.innerHTML = data.tool_usage.map(t => {
-                        const barWidth = Math.round(t.success_rate * 100);
-                        const successClass = t.success_rate >= 0.9 ? 'success-high' :
-                                            t.success_rate >= 0.7 ? 'success-medium' : 'success-low';
-                        return `
-                            <tr>
-                                <td>${t.tool || 'Unknown'}</td>
-                                <td>${t.count}</td>
-                                <td>${(t.avg_duration || 0).toFixed(1)}s</td>
-                                <td>
-                                    <div class="success-rate-bar">
-                                        <div class="success-rate-bar-fill" style="width: ${barWidth}%; background: linear-gradient(90deg, ${t.success_rate >= 0.9 ? '#22c55e' : t.success_rate >= 0.7 ? '#eab308' : '#ef4444'}, transparent);"></div>
-                                        <span class="success-rate-text" style="color: ${t.success_rate >= 0.9 ? '#22c55e' : t.success_rate >= 0.7 ? '#eab308' : '#ef4444'}">${(t.success_rate * 100).toFixed(0)}%</span>
-                                    </div>
-                                </td>
-                                <td>${new Date(t.last_used).toLocaleDateString()}</td>
-                            </tr>
-                        `;
-                    }).join('');
+                // Volume chart (merged, period-switchable)
+                _volumeData['24h'] = data.hourly_volume || [];
+                _volumeData['7d']  = data.daily_volume  || [];
+                _volumeData['30d'] = data.daily_volume  || []; // fallback until API provides 30d
+                switchVolumePeriod(_volumePeriod,
+                    document.querySelector(`.vol-period-btn.active`) || null);
+
+                // Top errors — inline bars, no table needed
+                const errContainer = document.getElementById('top-errors-container');
+                if (errContainer) {
+                    if (!data.top_errors || data.top_errors.length === 0) {
+                        errContainer.innerHTML = '<div style="color:#64748b;font-size:0.78rem;padding:0.5rem 0;">No errors recorded</div>';
+                    } else {
+                        const maxErr = Math.max(...data.top_errors.map(e => e.count), 1);
+                        errContainer.innerHTML = data.top_errors.map(e => {
+                            const pct = Math.round((e.count / maxErr) * 100);
+                            return `
+                            <div class="hbar-row" style="cursor:default;grid-template-columns:140px 1fr 36px;"
+                                 title="${escapeHtml(e.error)} — last seen ${e.last_seen ? new Date(e.last_seen).toLocaleString() : '—'}">
+                                <div class="hbar-name">${escapeHtml(e.error)}</div>
+                                <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:#ef4444;"></div></div>
+                                <div class="hbar-count">${e.count}</div>
+                            </div>`;
+                        }).join('');
+                    }
                 }
 
-                renderBarChart('hourly-chart', data.hourly_volume || [], 24);
-                renderBarChart('daily-chart', data.daily_volume || [], 7);
+                // Tool data — store for filtering
+                _allToolData = data.tool_usage || [];
+                _activeToolName = null;
+                applyToolFilter();
 
-                const errorsBody = document.getElementById('top-errors-body');
-                if (data.top_errors) {
-                    errorsBody.innerHTML = data.top_errors.map(e => `
-                        <tr>
-                            <td>${e.error}</td>
-                            <td>${e.count}</td>
-                            <td>${new Date(e.last_seen).toLocaleDateString()}</td>
-                            <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(e.example || '-')}</td>
-                        </tr>
-                    `).join('');
-                }
+                // Failure taxonomy (separate request)
+                loadFailureTypes();
 
                 updateLastRefresh();
             } catch (error) {
                 console.error('Failed to load analytics:', error);
             }
+        }
+
+        const FAILURE_TYPE_COLORS = {
+            unsolicited_offer: '#f59e0b',
+            clarification_asked: '#8b5cf6',
+            tool_error: '#ef4444',
+            llm_error: '#f97316',
+            no_response: '#dc2626',
+            slow: '#64748b',
+            degraded: '#475569',
+        };
+
+        const FAILURE_TYPE_LABELS = {
+            unsolicited_offer: 'Unsolicited Offer',
+            clarification_asked: 'Asked Clarification',
+            tool_error: 'Tool Error',
+            llm_error: 'LLM Error',
+            no_response: 'No Response',
+            slow: 'Slow (>25s)',
+            degraded: 'Degraded',
+        };
+
+        async function loadFailureTypes() {
+            try {
+                const resp = await apiFetch(`${CONFIG.apiUrl}/api/conversations/failure_types`, {credentials: 'include'});
+                const data = await resp.json();
+                const container = document.getElementById('failure-taxonomy-body');
+                if (!container) return;
+
+                if (!data.breakdown || data.breakdown.length === 0) {
+                    container.innerHTML = '<div style="color:#64748b;font-size:0.78rem;">No failure data yet</div>';
+                    return;
+                }
+
+                const maxCount = Math.max(...data.breakdown.map(r => r.count), 1);
+                container.innerHTML = data.breakdown.map(row => {
+                    const pct = Math.round((row.count / maxCount) * 100);
+                    const color = FAILURE_TYPE_COLORS[row.failure_type] || '#64748b';
+                    const label = FAILURE_TYPE_LABELS[row.failure_type] || row.failure_type;
+                    return `
+                        <div class="failure-row" title="${row.failure_type} — last seen ${new Date(row.last_seen).toLocaleString()}">
+                            <div class="failure-label">${label}</div>
+                            <div class="failure-bar-track"><div class="failure-bar-fill" style="width:${pct}%;background:${color};"></div></div>
+                            <div class="failure-count">${row.count}</div>
+                        </div>`;
+                }).join('');
+            } catch (e) {
+                console.error('Failed to load failure types:', e);
+            }
+        }
+
+        // ── Tool usage section ─────────────────────────────────────
+
+        function _toolColor(successRate) {
+            return successRate >= 0.9 ? '#22c55e' : successRate >= 0.7 ? '#eab308' : '#ef4444';
+        }
+
+        function applyToolFilter() {
+            const search = (document.getElementById('tool-search')?.value || '').toLowerCase();
+            const statusFilter = document.getElementById('tool-status-filter')?.value || '';
+            const sortOrder = document.getElementById('tool-sort-order')?.value || 'count';
+
+            let filtered = _allToolData.filter(t => {
+                if (search && !(t.tool || '').toLowerCase().includes(search)) return false;
+                if (statusFilter === 'ok'   && t.success_rate < 0.9)  return false;
+                if (statusFilter === 'warn' && (t.success_rate < 0.7 || t.success_rate >= 0.9)) return false;
+                if (statusFilter === 'bad'  && t.success_rate >= 0.7) return false;
+                return true;
+            });
+
+            filtered = [...filtered].sort((a, b) => {
+                if (sortOrder === 'fails')   return (b.fail_count || 0) - (a.fail_count || 0);
+                if (sortOrder === 'latency') return (b.avg_duration || 0) - (a.avg_duration || 0);
+                if (sortOrder === 'alpha')   return (a.tool || '').localeCompare(b.tool || '');
+                return b.count - a.count; // default: most used
+            });
+
+            // If a bar was clicked, highlight that row but keep full list
+            renderHorizontalToolChart(filtered);
+            renderToolTable(filtered);
+
+            const countEl = document.getElementById('tool-usage-count');
+            if (countEl) countEl.textContent = filtered.length !== _allToolData.length
+                ? `${filtered.length} of ${_allToolData.length} tools`
+                : `${filtered.length} tools`;
+        }
+
+        function renderHorizontalToolChart(tools) {
+            const container = document.getElementById('tool-hbar-chart');
+            if (!container) return;
+
+            // Show top 15 by count
+            const top = tools.slice(0, 15);
+            if (!top.length) {
+                container.innerHTML = '<div style="color:#64748b;font-size:0.78rem;padding:0.5rem 0;">No tool data</div>';
+                return;
+            }
+
+            const maxCount = Math.max(...top.map(t => t.count), 1);
+            container.innerHTML = top.map(t => {
+                const barPct = Math.round((t.count / maxCount) * 100);
+                const col = _toolColor(t.success_rate);
+                const isActive = _activeToolName === t.tool;
+                const failPct = ((1 - t.success_rate) * 100).toFixed(0);
+                return `
+                    <div class="hbar-row${isActive ? ' hbar-active' : ''}" onclick="onToolBarClick(${JSON.stringify(t.tool)})">
+                        <div class="hbar-name" title="${escapeHtml(t.tool || '')}">${escapeHtml(t.tool || 'Unknown')}</div>
+                        <div class="hbar-track"><div class="hbar-fill" style="width:${barPct}%;background:${col};"></div></div>
+                        <div class="hbar-count">${t.count}</div>
+                        <div class="hbar-rate" style="color:${col};">${failPct}% err</div>
+                    </div>`;
+            }).join('');
+        }
+
+        function renderToolTable(tools) {
+            const tbody = document.getElementById('tool-usage-body');
+            if (!tbody) return;
+            if (!tools.length) {
+                tbody.innerHTML = '<tr><td colspan="6" style="color:#64748b;text-align:center;padding:1rem;">No tools match filters</td></tr>';
+                return;
+            }
+            tbody.innerHTML = tools.map(t => {
+                const failRate = ((1 - t.success_rate) * 100).toFixed(0);
+                const col = _toolColor(t.success_rate);
+                const lastUsed = t.last_used ? new Date(t.last_used).toLocaleDateString() : '—';
+                const isHighlighted = _activeToolName === t.tool;
+                return `
+                    <tr class="${isHighlighted ? 'row-highlighted' : ''}">
+                        <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:${isHighlighted?'600':'400'};" title="${escapeHtml(t.tool || '')}">${escapeHtml(t.tool || 'Unknown')}</td>
+                        <td>${t.count}</td>
+                        <td><span style="color:${col};font-weight:600;">${failRate}%</span></td>
+                        <td>${(t.avg_duration || 0).toFixed(2)}s</td>
+                        <td style="color:${(t.fail_count||0) > 0 ? '#fca5a5' : '#64748b'};">${t.fail_count || 0}</td>
+                        <td style="color:#475569;">${lastUsed}</td>
+                    </tr>`;
+            }).join('');
+        }
+
+        function onToolBarClick(toolName) {
+            _activeToolName = _activeToolName === toolName ? null : toolName;
+            // Update search box to match, or clear it
+            const searchEl = document.getElementById('tool-search');
+            if (searchEl) searchEl.value = _activeToolName || '';
+            applyToolFilter();
+            // Scroll table to highlighted row
+            if (_activeToolName) {
+                setTimeout(() => {
+                    const highlighted = document.querySelector('#tool-usage-body tr.row-highlighted');
+                    if (highlighted) highlighted.scrollIntoView({block: 'nearest', behavior: 'smooth'});
+                }, 50);
+            }
+        }
+
+        let _forgeCurrentFilter = 'all';
+
+        async function loadForge(filter, chipEl) {
+            if (filter === undefined) filter = _forgeCurrentFilter;
+            _forgeCurrentFilter = filter;
+
+            // Update chip active state
+            if (chipEl) {
+                document.querySelectorAll('.forge-filter-chip').forEach(c => c.classList.remove('active'));
+                chipEl.classList.add('active');
+            }
+
+            const listEl = document.getElementById('forge-event-list');
+            if (!listEl) return;
+            listEl.innerHTML = '<div class="forge-empty">Loading…</div>';
+
+            try {
+                const params = filter && filter !== 'all' ? `?status=${filter}` : '';
+                const resp = await apiFetch(`${CONFIG.apiUrl}/api/forge${params}`, {
+                    credentials: 'include'
+                });
+                const data = await resp.json();
+
+                // Update stat cards
+                const counts = data.counts || {};
+                document.getElementById('forge-stat-total').textContent = data.total || 0;
+                document.getElementById('forge-stat-built').textContent = counts.built || 0;
+                document.getElementById('forge-stat-pending').textContent = counts.pending || 0;
+                document.getElementById('forge-stat-failed').textContent = (counts.failed || 0);
+
+                if (!data.events || data.events.length === 0) {
+                    listEl.innerHTML = '<div class="forge-empty">No forge events' + (filter !== 'all' ? ` with status "${filter}"` : '') + '.</div>';
+                    return;
+                }
+
+                listEl.innerHTML = data.events.map((ev, idx) => {
+                    const ts = ev.timestamp ? new Date(ev.timestamp).toLocaleString() : '—';
+                    const statusClass = ev.status || 'pending';
+                    const hasCode = ev.tool_code && ev.tool_code.trim();
+                    const codeId = `forge-code-${idx}`;
+                    return `
+                        <div class="forge-event-card status-${statusClass}">
+                            <div class="forge-event-header">
+                                <span class="forge-event-status ${statusClass}">${statusClass}</span>
+                                <span class="forge-event-time">${ts}</span>
+                            </div>
+                            <div class="forge-event-description">${escapeHtml(ev.description || '—')}</div>
+                            <div class="forge-event-trigger">Triggered by: "${escapeHtml((ev.trigger_message || '').substring(0, 120))}"</div>
+                            ${ev.tool_name ? `<div class="forge-event-tool">⚙ ${escapeHtml(ev.tool_name)}</div>` : ''}
+                            ${ev.result_message ? `<div class="forge-event-trigger" style="margin-top:0.25rem;color:#94a3b8;">${escapeHtml(ev.result_message)}</div>` : ''}
+                            ${hasCode ? `
+                                <button class="forge-code-toggle" onclick="toggleForgeCode('${codeId}', this)">Show code ▾</button>
+                                <div class="forge-code-viewer" id="${codeId}">${escapeHtml(ev.tool_code)}</div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (e) {
+                listEl.innerHTML = `<div class="forge-empty" style="color:#ef4444;">Failed to load: ${e.message}</div>`;
+                console.error('loadForge error:', e);
+            }
+        }
+
+        function toggleForgeCode(id, btn) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.classList.toggle('open');
+            btn.textContent = el.classList.contains('open') ? 'Hide code ▴' : 'Show code ▾';
+        }
+
+        // ── Registry ──────────────────────────────────────────────
+        let _registryData = null;
+
+        async function loadRegistry() {
+            const tbody = document.getElementById('registry-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '<tr><td colspan="6" style="color:#64748b;padding:1rem;">Loading…</td></tr>';
+            try {
+                const resp = await apiFetch(`${CONFIG.apiUrl}/api/tool_health`, {credentials: 'include'});
+                const data = await resp.json();
+
+                if (!data.available) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="color:#64748b;padding:1rem;">No audit data. Run tool_auditor.py to generate a report.</td></tr>';
+                    return;
+                }
+
+                _registryData = data;
+                _renderRegistryTable(data, '');
+
+                // Stats
+                const s = data.summary || {};
+                document.getElementById('reg-stat-total').textContent   = s.total || 0;
+                document.getElementById('reg-stat-passing').textContent  = s.passing || 0;
+                document.getElementById('reg-stat-failing').textContent  = s.failing || 0;
+                document.getElementById('reg-stat-notest').textContent   = s.no_test || 0;
+                document.getElementById('reg-stat-skipped').textContent  = s.skipped || 0;
+
+                // Health pill
+                const score = s.health_score || 0;
+                const pill = document.getElementById('registry-health-pill');
+                if (pill) {
+                    pill.textContent = `${(score * 100).toFixed(0)}% healthy`;
+                    pill.className = 'registry-health-pill ' + (score >= 0.9 ? 'ok' : score >= 0.7 ? 'warn' : 'bad');
+                }
+
+                // Timestamp
+                const tEl = document.getElementById('registry-audit-time');
+                if (tEl && data.timestamp) {
+                    tEl.textContent = `Last audit: ${new Date(data.timestamp).toLocaleString()}`;
+                }
+
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="6" style="color:#ef4444;padding:1rem;">Failed: ${e.message}</td></tr>`;
+            }
+        }
+
+        function _registryCategory(path) {
+            if (!path) return '—';
+            const parts = path.split('/');
+            const idx = parts.indexOf('tools');
+            return idx >= 0 && parts[idx + 1] ? parts[idx + 1] : '—';
+        }
+
+        function _renderRegistryTable(data, filter) {
+            const tbody = document.getElementById('registry-table-body');
+            if (!tbody) return;
+            const tools = data.tools || {};
+            const search = filter.toLowerCase();
+            const rows = Object.entries(tools)
+                .filter(([name]) => !search || name.includes(search))
+                .sort(([a], [b]) => a.localeCompare(b));
+
+            if (!rows.length) {
+                tbody.innerHTML = `<tr><td colspan="6" style="color:#64748b;padding:1rem;">No tools match "${escapeHtml(filter)}"</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = rows.map(([name, r]) => {
+                const score = r.score != null ? r.score : null;
+                const scoreColor = score == null ? '#64748b'
+                    : score >= 0.9 ? '#22c55e'
+                    : score >= 0.5 ? '#eab308' : '#ef4444';
+                const scorePct = score != null ? Math.round(score * 100) : null;
+
+                const scoreCell = score != null ? `
+                    <div class="tool-score-bar">
+                        <div class="tool-score-track">
+                            <div class="tool-score-fill" style="width:${scorePct}%;background:${scoreColor};"></div>
+                        </div>
+                        <span style="font-size:0.7rem;color:${scoreColor};">${scorePct}%</span>
+                    </div>` : '<span style="color:#64748b;font-size:0.7rem;">—</span>';
+
+                const dur = r.duration > 0 ? `${r.duration.toFixed(2)}s` : '—';
+                const slowFlag = r.slow ? ' ⚠️' : '';
+                const issueFlag = r.static_issues?.length ? `<span class="tool-issue-icon" title="${escapeHtml(r.static_issues.join('; '))}">🔍</span>` : '';
+                const msgText = r.error || r.message || '';
+
+                const category = _registryCategory(r.path);
+
+                return `<tr>
+                    <td style="font-weight:500;">${escapeHtml(name)}${issueFlag}</td>
+                    <td style="color:#64748b;">${escapeHtml(category)}</td>
+                    <td><span class="tool-status-badge ${r.status}">${r.status}</span></td>
+                    <td>${scoreCell}</td>
+                    <td style="color:#64748b;">${dur}${slowFlag}</td>
+                    <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:${r.error ? '#fca5a5' : '#94a3b8'};" title="${escapeHtml(msgText)}">${escapeHtml(msgText.substring(0, 120))}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        function filterRegistry(value) {
+            if (_registryData) _renderRegistryTable(_registryData, value);
         }
 
         function renderBarChart(containerId, data, maxBars) {
@@ -5054,58 +6273,110 @@
            ============================================= */
         let currentActionFilter = 'all';
 
+        let _allActionsData = [];
+
         async function loadActions(filter = 'all') {
             currentActionFilter = filter;
             const tbody = document.getElementById('actions-table-body');
-            
+
             try {
-                const params = new URLSearchParams({ limit: 100 });
-                if (filter === 'failed') params.append('result', 'failed');
-                
-                const response = await fetch(`${CONFIG.apiUrl}/api/audit_log?${params}`, {
+                const params = new URLSearchParams({ limit: 200 });
+                const response = await apiFetch(`${CONFIG.apiUrl}/api/audit_log?${params}`, {
                     credentials: 'include',
                     headers: {'Content-Type': 'application/json'}
                 });
                 const data = await response.json();
-                
+
                 if (data.error) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="empty-cell">Error: ${data.error}</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="6" class="empty-cell">Error: ${data.error}</td></tr>`;
                     return;
                 }
-                
+
                 // Update stats
                 document.getElementById('actions-total').textContent = data.total || 0;
                 document.getElementById('actions-today').textContent = data.today_count || 0;
                 document.getElementById('actions-failures').textContent = data.failures_today || 0;
-                document.getElementById('actions-last-time').textContent = 
+                document.getElementById('actions-last-time').textContent =
                     data.last_action_time ? data.last_action_time.substring(11, 16) : '--:--';
-                
-                // Render table
-                if (!data.actions || data.actions.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="empty-cell">No actions found</td></tr>`;
-                    return;
-                }
-                
-                tbody.innerHTML = data.actions.map(action => {
-                    const actionType = action.action.replace('_', ' ');
-                    const badgeClass = getActionBadgeClass(action.action);
-                    const resultClass = action.result === 'success' ? 'result-success' : 'result-failed';
-                    const resultIcon = action.result === 'success' ? '✔' : '✘';
-                    
-                    return `
-                        <tr>
-                            <td>${action.timestamp ? action.timestamp.substring(11, 16) : '--:--'}</td>
-                            <td><span class="action-badge ${badgeClass}">${actionType}</span></td>
-                            <td>${escapeHtml(action.target)}</td>
-                            <td class="${resultClass}">${resultIcon} ${action.result}</td>
-                            <td>${action.by || 'user'}</td>
-                        </tr>
-                    `;
-                }).join('');
-                
+
+                _allActionsData = data.actions || [];
+                applyActionsFilter();
+
             } catch (error) {
-                tbody.innerHTML = `<tr><td colspan="5" class="empty-cell">Error loading actions: ${error.message}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="empty-cell">Error loading actions: ${error.message}</td></tr>`;
             }
+        }
+
+        function applyActionsFilter() {
+            const tbody = document.getElementById('actions-table-body');
+            if (!tbody) return;
+            const search = (document.getElementById('actions-search')?.value || '').toLowerCase();
+            const typeFilter = currentActionFilter || 'all';
+
+            let rows = _allActionsData.filter(a => {
+                if (typeFilter === 'failed' && a.result !== 'failed') return false;
+                if (typeFilter === 'block'   && !a.action.includes('block')) return false;
+                if (typeFilter === 'approve' && !a.action.includes('approve') && !a.action.includes('unblock')) return false;
+                if (typeFilter === 'restart' && !a.action.includes('restart')) return false;
+                if (search) {
+                    const haystack = `${a.target||''} ${a.detail||''} ${a.action||''}`.toLowerCase();
+                    if (!haystack.includes(search)) return false;
+                }
+                return true;
+            });
+
+            if (!rows.length) {
+                tbody.innerHTML = `<tr><td colspan="6" class="empty-cell">No actions match</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = rows.map((action, idx) => {
+                const actionType = (action.action || '').replace(/_/g, ' ');
+                const badgeClass = getActionBadgeClass(action.action || '');
+                const resultClass = action.result === 'success' ? 'result-success' : 'result-failed';
+                const resultIcon = action.result === 'success' ? '✔' : '✘';
+                const detailShort = (action.detail || '').substring(0, 60) + (action.detail?.length > 60 ? '…' : '');
+                const hasDetail = action.detail || action.parameters;
+                const ts = action.timestamp || '';
+                // Show date if not today
+                const tsDate = ts ? ts.substring(0, 10) : '';
+                const tsTime = ts ? ts.substring(11, 16) : '--:--';
+                const today = new Date().toISOString().substring(0, 10);
+                const timeDisplay = tsDate === today ? tsTime : `${tsDate.substring(5)} ${tsTime}`;
+
+                return `
+                    <tr class="${hasDetail ? 'clickable' : ''}" onclick="${hasDetail ? `toggleActionDetail('adr-${idx}')` : ''}">
+                        <td style="white-space:nowrap;color:#64748b;">${timeDisplay}</td>
+                        <td><span class="action-badge ${badgeClass}">${actionType}</span></td>
+                        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(action.target||'')}">${escapeHtml(action.target||'—')}</td>
+                        <td class="${resultClass}">${resultIcon} ${action.result||'?'}</td>
+                        <td style="color:#64748b;font-size:0.75rem;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(action.detail||'')}">${escapeHtml(detailShort||'—')}</td>
+                        <td style="color:#475569;">${escapeHtml(action.by||'user')}</td>
+                    </tr>
+                    ${hasDetail ? `
+                    <tr class="action-detail-row" id="adr-${idx}" style="display:none;">
+                        <td colspan="6">
+                            <div class="action-detail-box">
+                                ${action.detail ? `
+                                    <div class="detail-label">Result Detail</div>
+                                    <div class="detail-value ${action.result !== 'success' ? 'error' : ''}">${escapeHtml(action.detail)}</div>
+                                ` : ''}
+                                ${action.parameters ? `
+                                    <div class="detail-label" style="margin-top:0.5rem;">Parameters</div>
+                                    <div class="detail-value">${escapeHtml(formatJson(action.parameters))}</div>
+                                ` : ''}
+                                ${action.chat_id ? `<div class="detail-label" style="margin-top:0.35rem;">Chat ID: <span class="detail-value" style="display:inline">${escapeHtml(String(action.chat_id))}</span></div>` : ''}
+                            </div>
+                        </td>
+                    </tr>` : ''}
+                `;
+            }).join('');
+        }
+
+        function toggleActionDetail(id) {
+            const row = document.getElementById(id);
+            if (!row) return;
+            row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
         }
 
         function getActionBadgeClass(actionType) {
@@ -5121,7 +6392,8 @@
             document.querySelectorAll('.filter-chip').forEach(chip => {
                 chip.classList.toggle('active', chip.dataset.filter === filter);
             });
-            loadActions(filter);
+            currentActionFilter = filter;
+            applyActionsFilter();
         }
 
         function refreshActions() {
@@ -5144,11 +6416,15 @@
             document.querySelectorAll('.mobile-nav-item').forEach(item => {
                 item.classList.toggle('active', item.dataset.mobileTab === tabName);
             });
+            localStorage.setItem('styx-active-mobile-tab', tabName);
 
             // Hide all mobile views
-            document.querySelectorAll('.mobile-view, .mobile-conversation-view, .mobile-analytics-view, .mobile-actions-view, .mobile-actions-view').forEach(view => {
+            document.querySelectorAll('.mobile-view, .mobile-conversation-view, .mobile-analytics-view, .mobile-actions-view').forEach(view => {
                 view.classList.remove('active');
             });
+
+            // For registry (Tools): show desktop tab-content directly (no fixed overlay needed)
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
 
             // Show selected view
             if (tabName === 'sessions') {
@@ -5159,7 +6435,6 @@
                     document.getElementById('mobile-conversation-view').classList.add('active');
                     renderMobileConversation();
                 } else {
-                    // No session selected, go back to sessions
                     switchMobileTab('sessions');
                 }
             } else if (tabName === 'analytics') {
@@ -5171,6 +6446,12 @@
             } else if (tabName === 'actions') {
                 document.getElementById('mobile-actions-view').classList.add('active');
                 loadMobileActions();
+            } else if (tabName === 'registry') {
+                const rt = document.getElementById('registry-tab');
+                rt.classList.add('active');
+                rt.scrollTop = 0;
+                loadRegistry();
+                loadForge();
             }
         }
 
@@ -5432,7 +6713,7 @@
         // Mobile analytics
         async function loadMobileAnalytics() {
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/conversations/stats`, {
+                const response = await apiFetch(`${CONFIG.apiUrl}/api/conversations/stats`, {
                     credentials: 'include',
                     headers: {'Content-Type': 'application/json'}
                 });
@@ -5507,7 +6788,7 @@
         // Mobile tool logs
         async function loadMobileToolLogs() {
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/tools/logs`, {
+                const response = await apiFetch(`${CONFIG.apiUrl}/api/tools/logs`, {
                     credentials: 'include',
                     headers: {'Content-Type': 'application/json'}
                 });
@@ -5536,7 +6817,7 @@
             content.innerHTML = '<div class="loading" style="padding: 2rem;"><div class="spinner"></div></div>';
 
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/api/audit_log?limit=50`, {
+                const response = await apiFetch(`${CONFIG.apiUrl}/api/audit_log?limit=50`, {
                     credentials: 'include',
                     headers: {'Content-Type': 'application/json'}
                 });
